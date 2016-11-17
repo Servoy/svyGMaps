@@ -1,2 +1,2 @@
 # svyGMaps
-Google Maps Components for Servoy NGClient
+Google Maps Component for use with Servoy's NGClient
