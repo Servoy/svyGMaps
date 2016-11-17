@@ -41,7 +41,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     mapTypeId: google.maps.MapTypeId.ROADMAP
                 }
                 map = new google.maps.Map($element[0], mapOptions)
-
+                
                 marker = new google.maps.Marker({
                     position: point,
                     title: 'position' //$scope.title
@@ -54,6 +54,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     google.maps.event.trigger(map, "resize");
                     map.setCenter(center);
                 });
+                
             }
 
             $scope.$watch('googleMapsLoaded', function(newValue, oldValue) {
@@ -74,7 +75,8 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 script = document.createElement("script")
                 script.type = "text/javascript"
                 script.src = "http://maps.googleapis.com/maps/api/js?key=" + $scope.model.apiKey + "&callback=googleMapsLoadedCallback"
-                document.body.appendChild(script);
+                document.body.appendChild(script);                              
+                
             }
 
             if (window.google && window.google.maps) {
