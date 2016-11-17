@@ -1,0 +1,81 @@
+body,html{
+	overflow:hidden;
+}
+
+.map-responsive {
+	position:relative;
+	margin:3px;
+	/* padding-bottom determines the height of the map */
+	padding-bottom:56%;
+	border: 3px black solid;
+}
+
+/* css for tabless mapView form  */
+[ng-style="layout.mapView"] {
+  border: 3px black solid;
+}
+
+
+.header {
+	height:100px;
+}
+
+.logo {
+	position:absolute;
+	top:-25px;
+}
+
+.orange-line {
+	padding : 0px;
+	margin: 0px;
+	border: solid #ff8000;
+	border-width: 0px 0px 2px 0px;
+}
+
+.title {
+	position:absolute;
+	left:17px;
+	top:70px;
+	font-size: 16px;
+	font-weight:bold;
+}
+
+.svy-label
+{
+	Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.body_main
+{
+	width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+	background-color: #fff;
+}
+.svy-label.banner-orange
+{
+	margin-top: -30px;
+	padding-top:0px;
+}
+
+.svy-label.banner
+{
+	font-size: 30px;
+	font-style: oblique;
+	font-stretch: wider;
+}
+
+.svy-field
+{
+	font-size: 14px;
+}
+.svy-combobox
+{
+	font-size: 14px;
+}
+
+.ui-grid-row-selected div.ui-grid-cell
+{
+	background-color: #DEF !important;
+	color: #222;
+	font-weight: bold;
+}

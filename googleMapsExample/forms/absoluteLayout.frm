@@ -4,7 +4,7 @@ items:[
 {
 customProperties:"",
 fontType:"Lucida Grande,0,14",
-location:"292,363",
+location:"291,478",
 onActionMethodID:"67294327-DDA3-4350-A82E-8978E431728D",
 onDoubleClickMethodID:"-1",
 onRightClickMethodID:"-1",
@@ -27,7 +27,7 @@ parameters:[\
 }\
 }",
 fontType:"Lucida Grande,0,14",
-location:"226,363",
+location:"225,478",
 onActionMethodID:"2FCFD2F9-7CA6-4B82-94AB-8D26C3E91B59",
 onDoubleClickMethodID:"-1",
 onRightClickMethodID:"-1",
@@ -35,6 +35,24 @@ size:"60,29",
 text:"France",
 typeid:7,
 uuid:"256F990F-D4FF-4EA2-A461-E36A5C079DFD"
+},
+{
+items:[
+{
+containsFormID:"0460B964-DB9C-468F-80E2-DFA55A79EA15",
+location:"22,128",
+text:"mapView",
+typeid:15,
+uuid:"57FE70D0-7D12-45CE-90ED-F4075CFA909D"
+}
+],
+location:"22,98",
+name:"tab_mapView",
+printable:false,
+size:"623,372",
+transparent:true,
+typeid:16,
+uuid:"5E8BA694-9FE3-462F-A266-8342B8AD013F"
 },
 {
 customProperties:"methods:{\
@@ -50,7 +68,7 @@ parameters:[\
 }\
 }",
 fontType:"Lucida Grande,0,14",
-location:"8,363",
+location:"7,478",
 onActionMethodID:"2FCFD2F9-7CA6-4B82-94AB-8D26C3E91B59",
 onDoubleClickMethodID:"-1",
 onRightClickMethodID:"-1",
@@ -73,7 +91,7 @@ parameters:[\
 }\
 }",
 fontType:"Lucida Grande,0,14",
-location:"160,363",
+location:"159,478",
 onActionMethodID:"2FCFD2F9-7CA6-4B82-94AB-8D26C3E91B59",
 onDoubleClickMethodID:"-1",
 onRightClickMethodID:"-1",
@@ -83,13 +101,34 @@ typeid:7,
 uuid:"7D1D8271-7587-4AFA-A9B0-1C3B33149388"
 },
 {
-fontType:"ArialMT,1,22,Arial",
-location:"7,7",
-size:"489,42",
-text:"Google Maps Example (Absolute)",
+location:"18,73",
+showFocus:false,
+size:"324,20",
+styleClass:"orange-line",
 transparent:true,
 typeid:7,
-uuid:"93D4E723-C3EA-46B0-A88F-98C743662C9A"
+uuid:"9B3A91EB-5E1D-414B-B592-9FDC7480E8C1"
+},
+{
+anchors:11,
+imageMediaID:"D9CD9F81-6A94-4BFA-85ED-D79F6771724F",
+location:"17,4",
+size:"627,119",
+styleClass:"banner-orange",
+text:"",
+transparent:true,
+typeid:7,
+uuid:"A1235D77-76A0-40C8-806B-F327565D203A",
+verticalAlignment:3
+},
+{
+fontType:"ArialMT,1,17,Arial",
+location:"18,56",
+size:"321,49",
+text:"Google Maps Absolute Layout Example",
+transparent:true,
+typeid:7,
+uuid:"B2FAB447-6170-4A8A-85BB-ED37E32E059B"
 },
 {
 customProperties:"methods:{\
@@ -105,7 +144,7 @@ parameters:[\
 }\
 }",
 fontType:"Lucida Grande,0,14",
-location:"57,363",
+location:"56,478",
 onActionMethodID:"2FCFD2F9-7CA6-4B82-94AB-8D26C3E91B59",
 onDoubleClickMethodID:"-1",
 onRightClickMethodID:"-1",
@@ -115,27 +154,7 @@ typeid:7,
 uuid:"D3EE8E84-B7BA-4FDD-AED1-2333EC02A43E"
 },
 {
-items:[
-{
-containsFormID:"0460B964-DB9C-468F-80E2-DFA55A79EA15",
-location:"6,83",
-text:"mapView",
-typeid:15,
-uuid:"6848E088-FF5C-4784-A33C-66B05DC0E898"
-}
-],
-location:"6,53",
-name:"mapView",
-printable:false,
-size:"490,294",
-styleClass:"map-absolute",
-tabOrientation:-1,
-transparent:true,
-typeid:16,
-uuid:"DD071F4C-C311-47DC-B064-0B1E94FC54AA"
-},
-{
-height:480,
+height:572,
 partType:5,
 typeid:19,
 uuid:"F275EC94-7575-4FED-80CC-7B1E190AC608"
@@ -144,5 +163,6 @@ uuid:"F275EC94-7575-4FED-80CC-7B1E190AC608"
 name:"absoluteLayout",
 navigatorID:"-1",
 showInMenu:true,
+size:"1095,572",
 typeid:3,
 uuid:"AA924FF8-B030-48F8-A562-77D056647780"
