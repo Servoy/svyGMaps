@@ -4,7 +4,8 @@ Google Maps Component for use with Servoy's NGClient
 
 Getting started
 -------------
-...
+
+Get the latest version from the [releases](https://github.com/Servoy/svyGMaps/releases). Download and import the [googleMapsExample.servoy](https://github.com/Servoy/svyPDFViewer/releases/download/v1.0.0/googleMapsExample.servoy) example solution or check out source directly from github.
 
 Documentation
 -------------
