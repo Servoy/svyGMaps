@@ -104,7 +104,7 @@ uuid:"7D1D8271-7587-4AFA-A9B0-1C3B33149388"
 formIndex:2,
 location:"18,64",
 showFocus:false,
-size:"1088,20",
+size:"626,20",
 styleClass:"orange-line",
 transparent:true,
 typeid:7,
@@ -112,7 +112,6 @@ uuid:"9B3A91EB-5E1D-414B-B592-9FDC7480E8C1"
 },
 {
 anchors:11,
-formIndex:1,
 imageMediaID:"D9CD9F81-6A94-4BFA-85ED-D79F6771724F",
 location:"16,11",
 size:"627,119",
@@ -124,8 +123,10 @@ verticalAlignment:3
 },
 {
 fontType:"ArialMT,1,17,Arial",
+formIndex:1,
 location:"323,40",
 size:"321,49",
+styleClass:"abs-title",
 text:"Google Maps Absolute Layout Example",
 transparent:true,
 typeid:7,

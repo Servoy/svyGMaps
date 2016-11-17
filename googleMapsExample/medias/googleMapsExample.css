@@ -3,6 +3,7 @@ body,html{
 }
 
 .map-responsive {
+	width:95vw;
 	position:relative;
 	margin:3px;
 	/* padding-bottom determines the height of the map */
@@ -26,12 +27,15 @@ body,html{
 .title {
 	white-space: nowrap;
 	position:absolute;
-	left:48%;
+	left:40vw;
 	top:52px;
 	font-size: 17px;
 	font-weight:bold;
 }
 
+.abs-title{
+	left:0vw;
+}
 
 .header {
 	height:100px;
@@ -43,8 +47,7 @@ body,html{
 }
 
 .orange-line {
-	padding : 0px;
-	margin: 0px;
+	width: 5000px !important;	
 	border: solid #ff8000;
 	border-width: 0px 0px 2px 0px;
 }
