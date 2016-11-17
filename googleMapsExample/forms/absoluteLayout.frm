@@ -104,7 +104,7 @@ uuid:"7D1D8271-7587-4AFA-A9B0-1C3B33149388"
 formIndex:2,
 location:"18,64",
 showFocus:false,
-size:"1077,20",
+size:"1088,20",
 styleClass:"orange-line",
 transparent:true,
 typeid:7,

@@ -219,12 +219,11 @@ size:{
 height:100,
 width:100
 },
-styleClass:"map-responsive"
+styleClass:"map"
 },
 location:"1,1",
 name:"theMap",
 size:"100,100",
-styleClass:"map-responsive",
 typeName:"googlemaps-svy-G-Maps",
 typeid:47,
 uuid:"BC705D54-FF63-47F9-921E-5E1C13F1ADBC"
