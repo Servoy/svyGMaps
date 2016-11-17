@@ -69,26 +69,39 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
             });
         },
         controller: function($scope, $element, $attrs) {
-//        	console.log($scope.model.apiKey)        	         	 
-        	         if (window.google && window.google.maps) {
-        	             $scope.googleMapsLoaded = true
-        	         } else {
-        	             script = document.createElement("script")
-        	             script.type = "text/javascript"
-//        	             script.src = "http://maps.googleapis.com/maps/api/js?key=" + $scope.model.apiKey + "&callback=googleMapsLoadedCallback"
-        	             script.src = "http://maps.googleapis.com/maps/api/js?key=AIzaSyCIMCLz10vJRVnMBkClq7qbAQbc1Ojx6pY&callback=googleMapsLoadedCallback"
-        	             document.body.appendChild(script)
-        	         }
+            //set interval to wait for apiKey to be binded.
+            var getScript = function() {
+                script = document.createElement("script")
+                script.type = "text/javascript"
+                script.src = "http://maps.googleapis.com/maps/api/js?key=" + $scope.model.apiKey + "&callback=googleMapsLoadedCallback"
+                document.body.appendChild(script);
+            }
 
-        	         // note this method is defined in root scope
-        	         window.googleMapsLoadedCallback = function() {
-        	             // might be better to use a rootScope object for the Geocoder
-        	             $scope.$apply(function() { // use apply to notify angular about change in scope variable
-        	                 $scope.geocoder = new google.maps.Geocoder()
-        	                 $scope.googleMapsLoaded = true
-        	             })
-        	         }
-        	     },
+            if (window.google && window.google.maps) {
+                $scope.googleMapsLoaded = true
+            } else {
+                var getScriptInt = setInterval(function() {
+                    if ($scope.model.apiKey === undefined) {
+
+                    } else {
+                        clearInterval(getScriptInt);
+                        getScript();
+                    }
+                });
+            }
+
+            // note this method is defined in root scope
+            window.googleMapsLoadedCallback = function() {
+                // might be better to use a rootScope object for the Geocoder
+                $scope.$apply(function() { // use apply to notify angular about change in scope variable
+                    $scope.geocoder = new google.maps.Geocoder()
+                    $scope.googleMapsLoaded = true
+                })
+            }
+
+
+
+        },
         templateUrl: 'googlemaps/svyGMaps/svyGMaps.html'
     };
 })
