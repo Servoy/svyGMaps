@@ -1,0 +1,12 @@
+{
+    "name":"googlemaps",
+    "displayName":"Google Maps",
+    "packageType": "Web-Component",
+    "icon": "https://upload.wikimedia.org/wikipedia/commons/5/5b/174-free-google-maps-pointer.png",
+    "description": "A component for viewing Google Maps in Servoy's NGClient",
+    "wikiUrl": "https://github.com/Servoy/svyGMaps/wiki",
+    "sourceUrl" : "https://github.com/Servoy/svyGMaps",
+    "releases" : [{
+    	"version":"1.0.0",
+    	"url":"https://github.com/Servoy/svyGMaps/releases/download/v1.0.0/googlemaps.zip"}]
+}
