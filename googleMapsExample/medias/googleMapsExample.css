@@ -1,8 +1,10 @@
 body,html{
-	overflow:hidden;
+	overflow:hidden;	
 }
 
 .map-responsive {
+   	width: 94vw !important;
+   	margin-right:50px;
 	position:relative;
 	margin:3px;
 	/* padding-bottom determines the height of the map */
@@ -10,7 +12,7 @@ body,html{
 	border: 3px black solid;
 }
 
-/* css for tabless mapView form  */
+/* CSS for Tabless mapView form  */
 [ng-style="layout.mapView"] {
   border: 3px black solid;
 }
@@ -43,6 +45,7 @@ body,html{
 }
 
 .orange-line {
+	width:5000px !important;
 	padding : 0px;
 	margin: 0px;
 	border: solid #ff8000;

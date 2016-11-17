@@ -83,7 +83,6 @@ typeid:47,
 uuid:"100F57BA-7FEF-47AF-9C35-2250DEF27F25"
 },
 {
-customProperties:"",
 json:{
 location:{
 x:142,
@@ -220,11 +219,12 @@ size:{
 height:100,
 width:100
 },
-styleClass:"map"
+styleClass:"map-responsive"
 },
 location:"1,1",
 name:"theMap",
 size:"100,100",
+styleClass:"map-responsive",
 typeName:"googlemaps-svy-G-Maps",
 typeid:47,
 uuid:"BC705D54-FF63-47F9-921E-5E1C13F1ADBC"
@@ -262,7 +262,6 @@ visible:true
 location:"2,2",
 name:"Title",
 size:"100,100",
-styleClass:"title",
 typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"2B79CECC-A2AA-4204-9250-F4752117E50E"

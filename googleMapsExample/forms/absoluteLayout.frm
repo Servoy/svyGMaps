@@ -2,7 +2,6 @@ customProperties:"formComponent:false",
 encapsulation:60,
 items:[
 {
-customProperties:"",
 fontType:"Lucida Grande,0,14",
 location:"291,478",
 onActionMethodID:"67294327-DDA3-4350-A82E-8978E431728D",
@@ -37,6 +36,7 @@ typeid:7,
 uuid:"256F990F-D4FF-4EA2-A461-E36A5C079DFD"
 },
 {
+formIndex:3,
 items:[
 {
 containsFormID:"0460B964-DB9C-468F-80E2-DFA55A79EA15",
@@ -101,9 +101,10 @@ typeid:7,
 uuid:"7D1D8271-7587-4AFA-A9B0-1C3B33149388"
 },
 {
+formIndex:2,
 location:"18,64",
 showFocus:false,
-size:"1088,20",
+size:"1077,20",
 styleClass:"orange-line",
 transparent:true,
 typeid:7,
@@ -111,11 +112,11 @@ uuid:"9B3A91EB-5E1D-414B-B592-9FDC7480E8C1"
 },
 {
 anchors:11,
+formIndex:1,
 imageMediaID:"D9CD9F81-6A94-4BFA-85ED-D79F6771724F",
 location:"16,11",
 size:"627,119",
 styleClass:"banner-orange",
-text:"",
 transparent:true,
 typeid:7,
 uuid:"A1235D77-76A0-40C8-806B-F327565D203A",
