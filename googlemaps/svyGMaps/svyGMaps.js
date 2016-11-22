@@ -103,7 +103,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
             } else {
                 //set an interval to wait for apiKey dataprovider to be binded before trying to load google's api.
                 getScriptInt = setInterval(function() {
-                    if ($scope.model.apiKey === undefined) {
+                    if (!$scope.model.apiKey) {
                         showErrMessage();
                         unloadScript();
                     } else {
