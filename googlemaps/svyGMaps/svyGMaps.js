@@ -41,7 +41,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     mapTypeId: google.maps.MapTypeId.ROADMAP
                 }
                 map = new google.maps.Map($element[0], mapOptions)
-                
+
                 marker = new google.maps.Marker({
                     position: point,
                     title: 'position' //$scope.title
@@ -54,7 +54,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     google.maps.event.trigger(map, "resize");
                     map.setCenter(center);
                 });
-                
+
             }
 
             $scope.$watch('googleMapsLoaded', function(newValue, oldValue) {
@@ -70,45 +70,45 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
             });
         },
         controller: function($scope, $element, $attrs) {
-        	var getScriptInt = null;
-        	//load google api
+            var getScriptInt = null;
+            //load google api
             var getScript = function() {
                 script = document.createElement("script")
-				script.id = "googleMapsScript"
+                script.id = "googleMapsScript"
                 script.type = "text/javascript"
                 script.src = "http://maps.googleapis.com/maps/api/js?key=" + $scope.model.apiKey + "&callback=googleMapsLoadedCallback"
-                document.body.appendChild(script);                                           
+                document.body.appendChild(script);
             }
-            
+
             //unload google api
-            var unloadScript = function() {      
-            	try {            		
-            	var script = document.getElementById('googleMapsScript');
-            	script.parentElement.removeChild(script);
-            	var errContainer = document.getElementsByClassName('gm-err-container')[0];
-            	errContainer.parentElement.removeChild(errContainer);
-            	}catch(e) {
-            		
-            	}
+            var unloadScript = function() {
+                    try {
+                        var script = document.getElementById('googleMapsScript');
+                        script.parentElement.removeChild(script);
+                        var errContainer = document.getElementsByClassName('gm-err-container')[0];
+                        errContainer.parentElement.removeChild(errContainer);
+                    } catch (e) {
+
+                    }
+                }
+                //show error message indicating API key not yet loaded.
+            var showErrMessage = function() {
+                try {
+                    document.getElementById($scope.model.svyMarkupId).innerHTML = '<h2> : ( NO API KEY LOADED YET... </h2>'
+                } catch (e) {}
             }
-            //show error message indicating API key not yet loaded.
-            var showErrMessage = function () {
-            	try {          		
-            		document.getElementById($scope.model.svyMarkupId).innerHTML = '<h2> : ( NO API KEY LOADED YET... </h2>'
-            	} catch (e) {}
-            }
-            
+
             if (window.google && window.google.maps) {
                 $scope.googleMapsLoaded = true
             } else {
-            	 //set an interval to wait for apiKey dataprovider to be binded before trying to load google's api.
-                getScriptInt = setInterval(function() {                	
+                //set an interval to wait for apiKey dataprovider to be binded before trying to load google's api.
+                getScriptInt = setInterval(function() {
                     if ($scope.model.apiKey === undefined) {
-						showErrMessage();
-                    	unloadScript();
+                        showErrMessage();
+                        unloadScript();
                     } else {
-                        clearInterval(getScriptInt);                        
-                        getScript();                     
+                        clearInterval(getScriptInt);
+                        getScript();
                     }
                 });
             }
