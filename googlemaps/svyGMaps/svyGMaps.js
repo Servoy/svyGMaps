@@ -101,8 +101,9 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 })
             }
 
-
-
+            $scope.$watch('model.apiKey', function() {
+            	getScript();
+            });
         },
         templateUrl: 'googlemaps/svyGMaps/svyGMaps.html'
     };
