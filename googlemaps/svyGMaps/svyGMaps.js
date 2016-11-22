@@ -37,14 +37,14 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
 
                 var mapOptions = {
                     center: point,
-                    zoom: 12,
+                    zoom: $scope.model.zoom,
                     mapTypeId: google.maps.MapTypeId.ROADMAP
                 }
                 map = new google.maps.Map($element[0], mapOptions)
 
                 marker = new google.maps.Marker({
                     position: point,
-                    title: 'position' //$scope.title
+                    title: 'position' 
                 })
                 marker.setMap(map);
 
@@ -68,6 +68,11 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
             $scope.$watch('model.address', function() {
                 createMap()
             });
+          
+            $scope.$watch('model.zoom', function(nv) {
+            	map.setZoom(nv);
+            });
+                  
         },
         controller: function($scope, $element, $attrs) {
             var getScriptInt = null;
@@ -121,7 +126,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     $scope.googleMapsLoaded = true;
                 })
             }
-
+            
         },
         templateUrl: 'googlemaps/svyGMaps/svyGMaps.html'
     };

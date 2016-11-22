@@ -10,6 +10,7 @@
 	"latitude": {"type": "double", "default": 0.0},
 	"longitude": {"type": "double", "default": 0.0},
 	"address": "dataprovider",
+	"zoom": "dataprovider",
 	"addressTitle": { "type" : "dataprovider" , "tags" : {"scope" : "private"}},
 	"styleClass": {
 		"type": "styleclass", 
