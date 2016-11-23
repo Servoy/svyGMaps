@@ -34,10 +34,10 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 if ($($element).length == 0) {
                     return;
                 }
-
+                
                 var mapOptions = {
                     center: point,
-                    zoom: $scope.model.zoom,
+                    zoom: $scope.model.zoom === null || $scope.model.zoom === undefined ? 6 : $scope.model.zoom,
                     mapTypeId: google.maps.MapTypeId.ROADMAP
                 }
                 map = new google.maps.Map($element[0], mapOptions)
