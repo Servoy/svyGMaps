@@ -110,7 +110,13 @@ function onMarkerDragged(event, marker, latLng) {
  * @properties={typeid:24,uuid:"7408EEA6-D5DD-4B81-BDA3-A5C156C7E4DB"}
  */
 function onAction_btnAddMarkers(event) {
+	//clear destination address, so we are out of "route" mode
+	mapRouteDestination = null;
+	
+	//remove all previous markers except address
 	elements.map.removeMarkers(true);
+	
+	//add markers
 	elements.map.addMarker({
 		address: 'Servoy BV Fred. Roeskestraat 97c 1076 EC Amsterdam', 
 		title: 'Servoy',
@@ -135,7 +141,10 @@ function onAction_btnAddMarkers(event) {
  * @properties={typeid:24,uuid:"56F6F44D-0463-4AB8-97BE-8B8C7A338FFB"}
  */
 function onAction_btnCreateRoute(event) {
+	//clear destination address, so a custom route can be provided
 	mapRouteDestination = null;
+	
+	//setup route
 	var route = {
 		origin: foundset.displayAddressMap,
 		destination: 'Servoy BV Fred. Roeskestraat 97c 1076 EC Amsterdam',

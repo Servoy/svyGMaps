@@ -172,6 +172,10 @@ angular.module('googlemapsSvyGMaps', ['servoy', 'ngMap']).directive('googlemapsS
 				 * Adds the given marker and centers the map to that
 				 */
 				$scope.addMarker = function(marker) {
+					if ($scope.model.route) {
+						//clear route
+						$scope.model.route = null;
+					}
 					$scope.model.markers.push(marker);
 					$scope.svyServoyapi.apply('markers');
 					if ($scope.model.autoFitBounds != false) {
@@ -219,7 +223,7 @@ angular.module('googlemapsSvyGMaps', ['servoy', 'ngMap']).directive('googlemapsS
 						}, function(error) {
 							marker.lat = 0;
 							marker.lng = 0;
-							marker.icon = '/googlemaps/svyGMaps/images/unknown_48.png'
+							marker.iconUrl = '/googlemaps/svyGMaps/images/unknown_48.png'
 								//https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png
 							$scope.addMarker(marker);
 							$log.warn('svy gmaps * geocoding error: ' + error);
