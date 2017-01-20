@@ -6,3 +6,16 @@ data-googlemaps-svy-G-Maps {
 	width: 100%;
 	height: 100%;
 }
+
+.svy-wrapper > * > .svy-g-Maps {
+	width: 100%;
+	height: 100%;
+	
+	overflow: auto;
+    white-space: nowrap;
+	
+}
+
+.svy-wrapper > * > .svy-g-Maps ng-map {
+	height: 100%;
+}

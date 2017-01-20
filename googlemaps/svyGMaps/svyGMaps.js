@@ -1,136 +1,340 @@
-angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps', function() {
-    return {
-        restrict: 'E',
-        scope: {
-            model: '=svyModel'
-        },
-        link: function($scope, $element, $attrs, $timeout) {
-            var map;
-            var marker;
+angular.module('googlemapsSvyGMaps', ['servoy', 'ngMap']).directive('googlemapsSvyGMaps', ['NgMap', '$log', '$q', '$window', function(NgMap, $log, $q, $window) {
+		return {
+			restrict: 'E',
+			scope: {
+				model: '=svyModel',
+				api: "=svyApi",
+				handlers: "=svyHandlers",
+				svyServoyapi: "="
+			},
+			link: function($scope, $element, $attrs) {
+				
+				//init scope vars
+				
+				//ID of this map
+				$scope.mapId = 'map-' + $scope.model.svyMarkupId;
+				//used by events fired
+				$scope.elementName = null;
+				
+				//initialize the map
+				if (!$scope.map) {
+					NgMap.getMap($scope.mapId).then(
+						function(ngmap) {
+							$scope.map = ngmap;
+							if ($log.debugEnabled) $log.debug('svy gmaps * map initialized');
+							if ($scope.model.address) {
+								$scope.api.addMarker({ address: $scope.model.address });
+							}
+						},
+						function(error) {
+							if ($log.debugEnabled) $log.debug('svy gmaps * ' + error);
+						});
+				}
+				
+				// API
 
-            function createMap() {
-                if (!$scope.googleMapsLoaded == true) {
-                    //TODO return error
-                    return;
-                }
+				/**
+				 * Adds the given marker and shows it on the map
+				 * 
+				 * When the marker contains no lat/lng but only an address property
+				 * the component will try to geocode the given address
+				 * 
+				 * @param {googlemaps-svy-G-Maps.Marker} marker with either an address or lat/lng properties
+				 */
+				$scope.api.addMarker = function(marker) {
+					if ($scope.model.markers == null) {
+						$scope.model.markers = [];
+					}
+					
+					if (marker.id && !(marker.id instanceof String)) {
+						marker.id = marker.id + '';
+					}
+					
+					if (!marker.address && !(marker.lat && marker.lng)) {
+						$log.warn('svyGmaps gmaps: Marker without address or lat/lng provided');
+					} else if (!(marker.lat && marker.lng)) {
+						$scope.geoCodeAndAddMarker(marker);
+					} else {
+						$scope.addMarker(marker);
+					}
+				}
+				
+				/**
+				 * Removes the marker with the given index (int) or id (string)
+				 * 
+				 * @param {String|Number} markerIndexOrId
+				 */
+				$scope.api.removeMarker = function(markerIndexOrId) {
+					if (markerIndexOrId instanceof Number) {
+						$scope.model.markers.splice(markerIndexOrId, 1);
+					} else {
+						for (var i = 0; i < $scope.model.markers.length; i++) {
+							if ($scope.model.markers[i].id == markerIndexOrId) {
+								$scope.model.markers.splice(i, 1);
+								break;
+							}
+						}
+					}
+				}
+				
+				$scope.api.removeMarkers = function(keepAddress) {
+					if (keepAddress && $scope.model.address) {
+						$scope.model.markers.splice(1, $scope.model.markers.length - 1);
+					} else {
+						$scope.model.markers = [];						
+					}
+				}
+				
+				/**
+				 * Geocodes the given address and returns a google GeocoderResult object
+				 * @see https://developers.google.com/maps/documentation/javascript/3.exp/reference#GeocoderResult
+				 * 
+				 * @param {String} address Address to geocode - can be left null when the options parameter has one of these properties: address, location or placeId
+				 * @param {Function} successCallback method to call when geocoding was successful
+				 * @param {Function} errorCallback method to call when geocoding failed
+				 * @param {Object} options optional options, see https://developers.google.com/maps/documentation/javascript/3.exp/reference#GeocoderRequest
+				 * 
+				 * @return {Object} GeocoderResult
+				 */
+				$scope.api.geocodeAddress = function(address, successCallback, errorCallback, options) {
+					var promise = $scope.geocodeAddress(address, options);
+					promise.then(
+						function(geocodeResult) {
+							$window.executeInlineScript(successCallback.formname, successCallback.script, [geocodeResult]);
+						}, function(reason) {
+							$window.executeInlineScript(errorCallback.formname, errorCallback.script, [reason]);
+						});
+				}	
 
-                var location = new google.maps.LatLng($scope.model.latitude, $scope.model.longitude)
-                if ($scope.model.address) {
-                    $scope.geocoder.geocode({
-                        address: $scope.model.address
-                    }, function(results, status) {
-                        if (status == google.maps.GeocoderStatus.OK) {
-                            createMapAtPoint(results[0].geometry.location)
-                        } else {
-                            createMapAtPoint(location)
-                        }
-                    })
-                } else {
-                    createMapAtPoint(location)
-                }
-            }
+				/**
+				 * Sets the viewport to contain all markers or the given bounds
+				 * 
+				 * @param {googlemaps-svy-G-Maps.LatLng} [bounds] bounds to fit
+				 */
+				$scope.api.fitBounds = function(bounds) {
+					$scope.fitBounds(bounds, true);
+				}
+				
+				//data binding
+				
+				$scope.zoomChanged = function() {
+					if ($scope.map && $scope.model.zoom != $scope.map.getZoom()) {
+						$scope.model.zoom = $scope.map.getZoom()
+						$scope.svyServoyapi.apply('zoom');
+						if ($log.debugEnabled) if ($log.debugEnabled) $log.debug('svy gmaps * Zoom level changed to ' + $scope.model.zoom);
+					}
+				}				
+				
+				//handlers
+				
+				$scope.onDragEnd = function() {
+					var marker = $scope.model.markers[this.markerIndex];
+					var jsEvent = createJSEvent('onDragEnd');
+					
+					var latLng = {};
+					latLng.lat = this.getPosition().lat();
+					latLng.lng = this.getPosition().lng();
+					
+					jsEvent.data = latLng;
+					
+					if ($log.debugEnabled) $log.debug('svy gmaps * marker ' + this.markerId + ' dragged to ' + latLng.lat + ',' + latLng.lng);
+					$scope.handlers.onMarkerDragged(jsEvent, marker, latLng);
+				}
+				
+				$scope.onMarkerClicked = function() {
+					var marker = $scope.model.markers[this.markerIndex];
+					var jsEvent = createJSEvent('onAction');
+					
+					if ($log.debugEnabled) $log.debug('svy gmaps * marker ' + this.markerId + ' clicked');
+					$scope.handlers.onMarkerClicked(jsEvent, marker);
+				}
+				
+				$scope.onMapClicked = function(mouseEvent) {
+					var jsEvent = createJSEvent('onMapClicked');
+					if ($log.debugEnabled) $log.debug('svy gmaps * map clicked on at ' + mouseEvent.latLng.lat() + ',' + mouseEvent.latLng.lng());
+					$scope.handlers.onMapClicked(jsEvent, { lat: mouseEvent.latLng.lat(), lng: mouseEvent.latLng.lng() });
+				}
+				
+				//local
+				
+				/**
+				 * Adds the given marker and centers the map to that
+				 */
+				$scope.addMarker = function(marker) {
+					$scope.model.markers.push(marker);
+					$scope.svyServoyapi.apply('markers');
+					if ($scope.model.autoFitBounds != false) {
+						$scope.fitBounds(null, false);
+					} else {
+						$scope.model.latitude = marker.lat;
+						$scope.model.longitude = marker.lng;
+					}
+					if ($log.debugEnabled) $log.debug('svy gmaps * Marker added at ' + marker.lat + ',' + marker.lng);
+				}
+				
+				/**
+				 * fits the bounds to the given bounds or calculates the bounds from the current markes if no bounds given
+				 * 
+				 * @param latLngBounds 
+				 * @param {Boolean} ignoreAutoBounds if not true the map will zoom to model.maxAutoFitBoundsZoom if the zoom after fitting is smaller than that
+				 */
+				$scope.fitBounds = function(bounds, ignoreAutoBounds) {
+					if (!bounds) {
+						bounds = new google.maps.LatLngBounds();
+						for (var i = 0; i < $scope.model.markers.length; i++) {
+							if ($scope.model.markers[i].lat != null && $scope.model.markers[i].lng != null) {
+								bounds.extend(new google.maps.LatLng($scope.model.markers[i].lat, $scope.model.markers[i].lng));
+							}
+						}
+					}
+					if (ignoreAutoBounds !== true && $scope.model.maxAutoFitBoundsZoom) {
+						$scope.map.fitBounds(bounds);
+						if ($scope.map.getZoom() > $scope.model.maxAutoFitBoundsZoom) {
+							$scope.map.setZoom($scope.model.maxAutoFitBoundsZoom);
+							$scope.model.zoom = $scope.model.maxAutoFitBoundsZoom;
+						}
+					} else {
+						$scope.map.fitBounds(bounds);
+					}
+				}			
 
-            function createMapAtPoint(point) {
-                if ($($element).length == 0) {
-                    return;
-                }
-                
-                var mapOptions = {
-                    center: point,
-                    zoom: $scope.model.zoom === null || $scope.model.zoom === undefined ? 6 : $scope.model.zoom,
-                    mapTypeId: google.maps.MapTypeId.ROADMAP
-                }
-                map = new google.maps.Map($element[0], mapOptions)
+				$scope.geoCodeAndAddMarker = function(marker) {
+					NgMap.getGeoLocation(marker.address).then(
+						function(latlng) {
+							marker.lat = latlng.lat();
+							marker.lng = latlng.lng();
+							if ($log.debugEnabled) $log.debug('svy gmaps * Found geolocation for "' + marker.address + '" as ' + marker.lat + ',' + marker.lng);
+							$scope.addMarker(marker);
+						}, function(error) {
+							marker.lat = 0;
+							marker.lng = 0;
+							marker.icon = '/googlemaps/svyGMaps/images/unknown_48.png'
+								//https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png
+							$scope.addMarker(marker);
+							$log.warn('svy gmaps * geocoding error: ' + error);
+						}
+					);
+				}
+				
+				$scope.geocodeAddress = function(address, options) {
+					var deferred = $q.defer();
+					var geocoder = new google.maps.Geocoder();
+					
+					if (!options) options = {address: address};
+					if (!options.address) {
+						options.address = address;
+					}
+				    geocoder.geocode(options, function (results, status) {
+				      if (status == google.maps.GeocoderStatus.OK) {
+				        deferred.resolve(results);
+				      } else {
+				        deferred.reject(status);
+				      }
+				    });
+				    return deferred.promise;
+				}				
 
-                marker = new google.maps.Marker({
-                    position: point,
-                    title: 'position'
-                })
-                marker.setMap(map);
+				//Watches
+				$scope.$watch('model.address', function(newValue, oldValue) {
+						if (newValue != oldValue || ($scope.map && !$scope.model.markers) || ($scope.map && $scope.model.destinationAddress && !$scope.model.route)) {
+							//address changed or no markers yet; clear all markers
+							$scope.model.markers = [];
+							
+							//route or markers?
+							if ($scope.model.destinationAddress) {
+								//TODO: probably need to use google to get directions because an old route will not be cleared when no route could be calculated
+								//https://github.com/allenhwkim/angularjs-google-maps/issues/739
+								if (!$scope.model.route) {
+									$scope.model.route = {
+										origin: newValue,
+										destination: $scope.model.destinationAddress
+									}
+								} else {
+									$scope.model.route.origin = newValue;
+								}
+								if ($log.debugEnabled) $log.debug('svy gmaps * New address found: creating route to destination')
+							} else {
+								if ($scope.model.route) {
+									//there was a route before
+									$scope.model.route = null;
+								}
+								$scope.api.addMarker({ address: newValue });
+								if ($log.debugEnabled) $log.debug('svy gmaps * New address found: cleared all markers')
+							}
+						}
+					});
+				
+				$scope.$watch('model.destinationAddress', function(newValue, oldValue) {
+					if (newValue != oldValue || ($scope.map && !$scope.model.route)) {
+						//destination address changed or no route yet
 
-                //when resizing page re-center the map marker
-                google.maps.event.addDomListener(window, "resize", function() {
-                    var center = map.getCenter();
-                    google.maps.event.trigger(map, "resize");
-                    map.setCenter(center);
-                });
+						//either destination is now set or removed
+						//in both cases we need to clear markers
+						$scope.model.markers = [];
+						if (newValue) {
+							//create route
+							if ($scope.model.destinationAddress) {
+								if (!$scope.model.route) {
+									$scope.model.route = {
+										origin: $scope.model.address,
+										destination: $scope.model.destinationAddress
+									}
+								} else {
+									$scope.model.route.origin = newValue;
+								}
+								if ($log.debugEnabled) $log.debug('svy gmaps * Destination address now set, creating route')
+							}
+						} else {
+							//destination cleared, remove route and create markers
+							$scope.model.route = null;
+							$scope.api.addMarker({ address: $scope.model.address });
+							if ($log.debugEnabled) $log.debug('svy gmaps * Destination address cleared, removing route and adding markers instead')
+						}
+					}
+				});
+				
+				/**
+				 * Create a JSEvent with the given type
+				 */
+				function createJSEvent(type) {
+					if (!$scope.elementName) {
+						var form;
+						var parent = $element[0];
+						var targetElNameChain = new Array();
+						while (parent) {
+							form = parent.getAttribute("ng-controller");
+							if (form) {
+								break;
+							}
+							if (parent.getAttribute("name")) targetElNameChain.push(parent.getAttribute("name"));
+							parent = parent.parentNode;
+						}
+						var formScope = angular.element(parent).scope();
+						for (var i = 0; i < targetElNameChain.length; i++) {
+							if (formScope.model[targetElNameChain[i]]) {
+								$scope.elementName = targetElNameChain[i];
+								break;
+							}
+						}
+					}
 
-            }
+					//create JSEvent
+					var jsEvent = { svyType: 'JSEvent' };
+					
+					jsEvent.elementName = $scope.elementName;
+					jsEvent.type = type;
 
-            $scope.$watch('googleMapsLoaded', function(newValue, oldValue) {
-                if ($scope.googleMapsLoaded == true) { // gmaps loaded. create geocoder and create map
-                    $scope.geocoder = new google.maps.Geocoder()
-                    $scope.googleMapsLoaded = true;
-                    setTimeout(createMap, 0);
-                }
-            }, true)
+					//get modifiers
+					var modifiers = (event.altKey ? 8 : 0) | (event.shiftKey ? 1 : 0) | (event.ctrlKey ? 2 : 0) | (event.metaKey ? 4 : 0);
+					jsEvent.modifiers = modifiers;
 
-            $scope.$watch('model.address', function() {
-                createMap()
-            });
+					jsEvent.data = null;
+					return jsEvent;
+				}
 
-            $scope.$watch('model.zoom', function(nv) {
-                try {
-                    map.setZoom(nv);
-                } catch (e) {}
-            });
 
-        },
-        controller: function($scope, $element, $attrs) {
-
-            var getScriptInt = null;
-            //load google api
-            var getScript = function() {
-                script = document.createElement("script")
-                script.id = "googleMapsScript"
-                script.type = "text/javascript"
-                script.src = "http://maps.googleapis.com/maps/api/js?key=" + $scope.model.apiKey + "&callback=googleMapsLoadedCallback"
-                document.body.appendChild(script);
-            }
-
-            //unload google api
-            var unloadScript = function() {
-                    try {
-                        var script = document.getElementById('googleMapsScript');
-                        script.parentElement.removeChild(script);
-                        var errContainer = document.getElementsByClassName('gm-err-container')[0];
-                        errContainer.parentElement.removeChild(errContainer);
-                    } catch (e) {
-
-                    }
-                }
-                //show error message indicating API key not yet loaded.
-            var showErrMessage = function() {
-                try {
-                    document.getElementById($scope.model.svyMarkupId).innerHTML = '<h2> : ( NO API KEY LOADED YET... </h2>'
-                } catch (e) {}
-            }
-
-            if (window.google && window.google.maps) {
-                $scope.googleMapsLoaded = true
-            } else {
-                //set an interval to wait for apiKey dataprovider to be binded before trying to load google's api.
-                getScriptInt = setInterval(function() {
-                    if (!$scope.model.apiKey) {
-                        showErrMessage();
-                        unloadScript();
-                    } else {
-                        clearInterval(getScriptInt);
-                        getScript();
-                    }
-                });
-            }
-
-            // note this method is defined in root scope
-            window.googleMapsLoadedCallback = function() {
-                // might be better to use a rootScope object for the Geocoder
-                $scope.$apply(function() { // use apply to notify angular about change in scope variable
-                    $scope.geocoder = new google.maps.Geocoder()
-                    $scope.googleMapsLoaded = true;
-                })
-            }
-
-        },
-        templateUrl: 'googlemaps/svyGMaps/svyGMaps.html'
-    };
-})
+			},
+			controller: function($scope, $element, $attrs) { },
+			templateUrl: 'googlemaps/svyGMaps/svyGMaps.html'
+		};
+	}]);

@@ -1,3 +1,37 @@
 <div 
-id="{{::model.svyMarkupId}}">
+	id="{{::model.svyMarkupId}}" 
+	class="svy-g-Maps" 
+ 	map-lazy-load="{{'https://maps.google.com/maps/api/js?key=' + model.apiKey}}">
+	<ng-map 
+		id="{{::'map-' + model.svyMarkupId}}" 
+		center="{{model.latitude}},{{model.longitude}}" 
+		zoom="{{model.zoom}}"
+		draggable="{{model.draggable == false ? false : true}}" 
+		map-type-id="{{model.mapType}}" 
+		on-zoom_changed="zoomChanged()"
+		on-click="onMapClicked()">
+		<directions 
+			ng-if="model.route"
+			draggable="model.route.draggable"
+			panel="directions-panel"
+			travel-mode="{{model.route.travelMode}}"
+			waypoints="{{model.route.waypoints ? model.route.waypoints : []}}"
+			origin="{{model.route.origin}}"
+			destination="{{model.route.destination}}">
+        </directions>
+		<marker
+			ng-if="!model.route" 
+			ng-repeat="marker in model.markers" 
+			marker-id="{{marker.id}}"
+			marker-index="{{$index}}" 
+			position="{{[marker.lat, marker.lng]}}" 
+			title="{{marker.title ? marker.title : marker.address}}" 
+			visible="{{marker.visible == false ? false : true}}" 
+			on-click="onMarkerClicked()" 
+			icon="{{marker.iconUrl}}" 
+ 			animation="{{marker.animation}}" 
+			draggable="{{marker.draggable}}" 
+			on-dragend="onDragEnd()" 
+		</marker>
+	</ng-map>
 </div>
