@@ -23,11 +23,22 @@ angular.module('googlemapsSvyGMaps', ['servoy', 'ngMap']).directive('googlemapsS
 							$scope.map = ngmap;
 							if ($log.debugEnabled) $log.debug('svy gmaps * map initialized');
 							if ($scope.model.address) {
-								$scope.api.addMarker({ address: $scope.model.address });
+								if ($scope.model.destinationAddress) {
+									$scope.model.route = {
+										origin: $scope.model.address,
+										destination: $scope.model.destinationAddress
+									}
+								} else {
+									$scope.api.addMarker({ address: $scope.model.address });
+								}
 							}
 						},
 						function(error) {
 							if ($log.debugEnabled) $log.debug('svy gmaps * ' + error);
+							if (!$scope.model.apiKey) {
+								$element.find('.gm-err-title').html('No API key?');
+								$element.find('.gm-err-message').html('You have not assigned an API key to the map.');
+							}
 						});
 				}
 				
@@ -280,7 +291,7 @@ angular.module('googlemapsSvyGMaps', ['servoy', 'ngMap']).directive('googlemapsS
 										destination: $scope.model.destinationAddress
 									}
 								} else {
-									$scope.model.route.origin = newValue;
+									$scope.model.route.destination = $scope.model.destinationAddress;
 								}
 								if ($log.debugEnabled) $log.debug('svy gmaps * Destination address now set, creating route')
 							}
