@@ -68,6 +68,14 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
             $scope.$watch('model.address', function() {
                 createMap()
             });
+            
+            $scope.$watch('model.latitude', function() {
+                createMap()
+            });
+            
+            $scope.$watch('model.longitude', function() {
+                createMap()
+            });
 
             $scope.$watch('model.zoom', function(nv) {
                 try {
@@ -84,7 +92,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 script = document.createElement("script")
                 script.id = "googleMapsScript"
                 script.type = "text/javascript"
-                script.src = "http://maps.googleapis.com/maps/api/js?key=" + $scope.model.apiKey + "&callback=googleMapsLoadedCallback"
+                script.src = "https://maps.googleapis.com/maps/api/js?key=" + $scope.model.apiKey + "&callback=googleMapsLoadedCallback"
                 document.body.appendChild(script);
             }
 
