@@ -6,7 +6,8 @@
     "description": "A component for viewing Google Maps in Servoy's NGClient",
     "wikiUrl": "https://github.com/Servoy/svyGMaps/wiki",
     "sourceUrl" : "https://github.com/Servoy/svyGMaps",
-    "releases" : [{
-    	"version":"1.0.0",
-    	"url":"https://github.com/Servoy/svyGMaps/releases/download/1.0.0/googlemaps.zip"}]
+    "releases" : [
+        {"version":"1.0.0","url":"https://github.com/Servoy/svyGMaps/releases/download/1.0.0/googlemaps.zip"}
+        {"version":"1.0.1","url":"https://github.com/Servoy/svyGMaps/releases/download/1.0.1/googlemaps.zip"}
+    ]
 }
