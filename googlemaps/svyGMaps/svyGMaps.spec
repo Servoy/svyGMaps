@@ -4,7 +4,7 @@
 	"version": 1,
 	"definition": "googlemaps/svyGMaps/svyGMaps.js",
 	"libraries": [{"name":"svyGMaps.css", "version":"1", "url":"googlemaps/svyGMaps/svyGMaps.css", "mimetype":"text/css"},
-				 {"name":"svyMarkerCluster.js", "verison":"1", "url":"https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js", "mimetype":"text/javascript", "group":"false"}],
+				 {"name":"svyMarkerCluster.js", "version":"1", "url":"https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js", "mimetype":"text/javascript", "group":false}],
 	"model":
 	{
 	"markers": {"type":"googleMarkers[]", "pushToServer": "shallow"},
