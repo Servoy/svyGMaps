@@ -1,8 +1,9 @@
-angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps', function() {
+angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps', function($log) {
     return {
         restrict: 'E',
         scope: {
-            model: '=svyModel'
+            model: '=svyModel',
+            svyServoyapi: '='
         },
         link: function($scope, $element, $attrs, $timeout) {
             var map;
@@ -14,39 +15,108 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     return;
                 }
 
-                var location = new google.maps.LatLng($scope.model.latitude, $scope.model.longitude)
-                if ($scope.model.address) {
-                    $scope.geocoder.geocode({
-                        address: $scope.model.address
-                    }, function(results, status) {
-                        if (status == google.maps.GeocoderStatus.OK) {
-                            createMapAtPoint(results[0].geometry.location)
-                        } else {
-                            createMapAtPoint(location)
-                        }
-                    })
-                } else {
-                    createMapAtPoint(location)
+                var location = [];
+                for(var i in $scope.model.markers) {
+                    var googleMarker = $scope.model.markers[i];
+                    location[i] = new google.maps.LatLng(googleMarker.latitude, googleMarker.longitude);
+                    if (googleMarker.addressDataprovider || googleMarker.addressString) {
+                        location[i] = getLatLng(googleMarker.addressDataprovider || googleMarker.addressString);
+                    }
                 }
+                Promise.all(location).then(function(returnVals) {
+                    for(var i in returnVals) {
+                        location[i] = returnVals[i]
+                    }
+                }).then(function() {
+                    if(location.length) {
+                        createMapAtPoint(location)
+                    }
+                })
             }
 
-            function createMapAtPoint(point) {
+            function getLatLng(address) {
+                return new Promise(function(resolve, reject) {
+                    $scope.geocoder.geocode({
+                        address: address
+                    }, function(results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            resolve(results[0].geometry.location);
+                        } else {
+                            reject(new Error('Couldnt\'t find the location ' + address));
+                        }
+                    });
+                })
+            }
+
+            function calculateAndDisplayRoute(directionsService, directionsDisplay, location) {
+                var waypts = [];
+                for (var i = 1; i < (location.length -1); i++) {
+                      waypts.push({
+                        location: new google.maps.LatLng(loc.lat(), loc.lng()),
+                        stopover: true
+                      });
+                  }
+
+                directionsService.route({
+                    origin: new google.maps.LatLng(location[0].lat(), location[0].lng()),
+                    destination: new google.maps.LatLng(location[location.length -1].lat(), location[location.length -1].lng()),
+                    waypoints: waypts,
+                    optimizeWaypoints: true,
+                    travelMode: 'DRIVING'
+                  }, function(response, status) {
+                    if (status === 'OK') {
+                      directionsDisplay.setDirections(response);
+                    } else {
+                      window.alert('Directions request failed due to ' + status);
+                    }
+                  });
+            }
+
+            function createMapAtPoint(location) {
                 if ($($element).length == 0) {
                     return;
                 }
                 
                 var mapOptions = {
-                    center: point,
+                    center: new google.maps.LatLng(location[0].lat(), location[0].lng()),
                     zoom: $scope.model.zoom === null || $scope.model.zoom === undefined ? 6 : $scope.model.zoom,
-                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                    zoomControl: $scope.model.zoomControl,
+                    mapTypeControl: $scope.model.mapTypeControl,
+                    streetViewControl: $scope.model.streetViewControl,
+                    fullscreenControl: $scope.model.fullscreenControl,
+                    mapTypeId: google.maps.MapTypeId[$scope.model.mapType]
                 }
-                map = new google.maps.Map($element[0], mapOptions)
 
-                marker = new google.maps.Marker({
-                    position: point,
-                    title: 'position'
-                })
-                marker.setMap(map);
+                map = new google.maps.Map($element[0], mapOptions)
+                
+
+                //If google maps directions is enabled, create route map.
+                if($scope.model.useGoogleMapDirections == true) {
+                    $log.log('Google Directions enabled, start building route');
+                    if(location.length > 1) {
+                        var directionsService = new google.maps.DirectionsService;
+                        var directionsDisplay = new google.maps.DirectionsRenderer;
+    
+                        directionsDisplay.setMap(map);
+                        calculateAndDisplayRoute(directionsService, directionsDisplay, location);
+                    } else {
+                        $log.error('Google maps directions needs a minimum of 2 locations')
+                    }
+                } else {
+
+                    var markers = location.map(function(loc, i) {
+                        return new google.maps.Marker({
+                            position: new google.maps.LatLng(loc.lat(), loc.lng()),
+                            map: map
+                        })
+                    });
+                    
+                    if($scope.model.useGoogleMapCluster == true) {
+                        $log.log('Google Map Clusterview enabled');
+                        new MarkerClusterer(map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+                    } 
+                                        
+                }
 
                 //when resizing page re-center the map marker
                 google.maps.event.addDomListener(window, "resize", function() {
@@ -59,23 +129,34 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
 
             $scope.$watch('googleMapsLoaded', function(newValue, oldValue) {
                 if ($scope.googleMapsLoaded == true) { // gmaps loaded. create geocoder and create map
+                    $log.log('Google maps loaded, create geocoder & map');
                     $scope.geocoder = new google.maps.Geocoder()
                     $scope.googleMapsLoaded = true;
                     setTimeout(createMap, 0);
                 }
             }, true)
 
-            $scope.$watch('model.address', function() {
-                createMap()
-            });
+            //var markerWatches = [];
+            var markerKeysToWatch =['addressDataprovider',
+                                    'addressString',
+                                    'latitude',
+                                    'longitude'
+                                    ];
             
-            $scope.$watch('model.latitude', function() {
-                createMap()
-            });
-            
-            $scope.$watch('model.longitude', function() {
-                createMap()
-            });
+            $scope.$watchCollection('model.markers', function(newValue, oldValue) {
+                $log.log('Google Maps Markers changed');
+                for(var i = 0; i < $scope.model.markers.length; i++) {
+                    for( var j = 0; j < markerKeysToWatch.length; j++) {
+                        var watch = $scope.$watch("model.markers[" + i + "]['" + markerKeysToWatch[j] + "']",
+                            function(newValue, oldValue) {
+                                if(newValue != oldValue) {
+                                    $log.log('Marker property changed');
+                                    createMap()
+                                }
+                            });
+                    }
+                }
+            })
 
             $scope.$watch('model.zoom', function(nv) {
                 try {
