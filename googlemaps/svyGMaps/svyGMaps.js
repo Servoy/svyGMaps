@@ -52,7 +52,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 var waypts = [];
                 for (var i = 1; i < (location.length -1); i++) {
                       waypts.push({
-                        location: new google.maps.LatLng(loc.lat(), loc.lng()),
+                        location: new google.maps.LatLng(location[i].lat(), location[i].lng()),
                         stopover: true
                       });
                   }
