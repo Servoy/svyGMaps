@@ -7,7 +7,7 @@
 				 {"name":"svyMarkerCluster.js", "version":"1", "url":"https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js", "mimetype":"text/javascript", "group":false}],
 	"model":
 	{
-	"markers": {"type":"googleMarkers[]", "pushToServer": "shallow"},
+	"markers": {"type":"googleMarkers[]", "pushToServer": "shallow", "default": []},
 	"apiKey": "dataprovider",
 	"zoom": "dataprovider",
 	
@@ -29,6 +29,29 @@
 			"addressString": "string",
 			"latitude": {"type": "double", "default": 0.0},
 			"longitude": {"type": "double", "default": 0.0}
+		}
+	},
+	"api": {
+		"newMarker": {
+			"parameters": [{
+				"name": "googleMarker",
+				"type": "googleMarkers"
+				},{
+				"name": "index",
+				"type": "int",
+				"optional": true
+			}],
+			"returns": "googleMarkers"
+		},
+		"removeMarker": {
+			"parameters": [{
+				  "name": "index",
+				  "type": "int"
+			  }],
+			  "returns": "boolean"
+	   },
+		"removeAllMarkers": {
+			"returns": "boolean"
 		}
 	}
 	

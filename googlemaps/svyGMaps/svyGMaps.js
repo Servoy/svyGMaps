@@ -3,11 +3,11 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
         restrict: 'E',
         scope: {
             model: '=svyModel',
-            svyServoyapi: '='
+            svyServoyapi: '=',
+            api: "=svyApi"
         },
         link: function($scope, $element, $attrs, $timeout) {
             var map;
-            var marker;
 
             function createMap() {
                 if (!$scope.googleMapsLoaded == true) {
@@ -28,9 +28,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                         location[i] = returnVals[i]
                     }
                 }).then(function() {
-                    if(location.length) {
-                        createMapAtPoint(location)
-                    }
+                    createMapAtPoint(location)
                 })
             }
 
@@ -78,7 +76,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 }
                 
                 var mapOptions = {
-                    center: new google.maps.LatLng(location[0].lat(), location[0].lng()),
+                    center: (location.length > 0 ? new google.maps.LatLng(location[0].lat(), location[0].lng()) : null),
                     zoom: $scope.model.zoom === null || $scope.model.zoom === undefined ? 6 : $scope.model.zoom,
                     zoomControl: $scope.model.zoomControl,
                     mapTypeControl: $scope.model.mapTypeControl,
@@ -151,11 +149,12 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                             function(newValue, oldValue) {
                                 if(newValue != oldValue) {
                                     $log.log('Marker property changed');
-                                    createMap()
+                                    setTimeout(createMap, 0);
                                 }
                             });
                     }
                 }
+                setTimeout(createMap, 0);
             })
 
             $scope.$watch('model.zoom', function(nv) {
@@ -219,6 +218,44 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 })
             }
 
+            /**
+             * Add a new google marker to the map
+             * @example %%prefix%%%%elementName%%.newMarker({addressString: 'Fred. Roeskestraat 97, Amsterdam, NL'});
+             * @param {{addressString: String, latitude: Number, longitude: Number}} googleMarker
+             * @param {Number} [index] optional
+             */
+            $scope.api.newMarker = function(googleMarker, index) {
+                if(googleMarker) {
+                    if(index != null) {
+                        $scope.model.markers.splice(index, 0, googleMarker);
+                    } else {
+                        $scope.model.markers.push(googleMarker);
+                    }
+                    return true;
+                }
+                return false;
+            }
+
+            /**
+             * Remove google marker at given index
+             * @example %%prefix%%%%elementName%%.removeMarker(index);
+             * @param {Number} index
+             */
+            $scope.api.removeMarker = function(index) {
+                if(index != null) {
+                    $scope.model.markers.splice(index, 1);
+                    return true;
+                }
+                return false;
+            }
+            /**
+             * Remove all google markers
+             * @example %%prefix%%%%elementName%%.removeAllMarkers();
+             */
+            $scope.api.removeAllMarkers = function() {
+                $scope.model.markers = [];
+                return true;
+            }
         },
         templateUrl: 'googlemaps/svyGMaps/svyGMaps.html'
     };
