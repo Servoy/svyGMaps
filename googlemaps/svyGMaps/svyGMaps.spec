@@ -7,7 +7,7 @@
 				 {"name":"svyMarkerCluster.js", "version":"1", "url":"https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js", "mimetype":"text/javascript", "group":false}],
 	"model":
 	{
-	"markers": {"type":"googleMarkers[]", "pushToServer": "shallow", "default": []},
+	"markers": {"type":"googleMarkers[]", "pushToServer": "allow", "default": [], "tags": { "scope" :"runtime" }},
 	"apiKey": "dataprovider",
 	"zoom": "dataprovider",
 	
@@ -17,8 +17,8 @@
 	"fullscreenControl": {"type":"boolean", "default": "true", "tags": { "scope" :"design" }},
 	"mapType": { "type":"string", "values":["ROADMAP", "SATELLITE","HYBRID","TERRAIN"], "default":"ROADMAP", "tags": { "scope" :"design" }},
 	
-	"useGoogleMapCluster": {"type":"boolean", "default": "false", "tags": { "scope" :"design" }},
-	"useGoogleMapDirections": {"type":"boolean", "default": "false", "tags": { "scope" :"design" }},
+	"useGoogleMapCluster": {"type":"boolean", "default": "false", "tags": { "scope" :"runtime" }},
+	"useGoogleMapDirections": {"type":"boolean", "default": "false", "tags": { "scope" :"runtime" }},
 	
 	"addressTitle": { "type" : "dataprovider" , "tags" : {"scope" : "private"}},
 	"styleClass": {"type": "styleclass", "tags": { "scope" :"design" }
@@ -51,6 +51,9 @@
 			  "returns": "boolean"
 	   },
 		"removeAllMarkers": {
+			"returns": "boolean"
+		},
+		"refresh": {
 			"returns": "boolean"
 		}
 	}

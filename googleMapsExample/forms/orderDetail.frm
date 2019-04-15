@@ -3,6 +3,14 @@ dataSource:"db:/example_data/orders",
 encapsulation:60,
 items:[
 {
+location:"615,122",
+onActionMethodID:"CDE560C2-4EB6-4145-B649-E92B0CF5F1C4",
+size:"164,20",
+text:"Enable Route",
+typeid:7,
+uuid:"0B905097-9021-4295-883A-3A6BE10BF5E9"
+},
+{
 anchors:11,
 displaysTags:true,
 location:"20,250",
@@ -47,15 +55,30 @@ json:{
 address:"displayAddressMap",
 anchors:15,
 apiKey:"apiKey",
+disableStreetview:true,
+fullscreenControl:false,
 location:{
 x:20,
 y:290
 },
+mapType:null,
+mapTypeControl:false,
+markers:[
+{
+addressDataprovider:"displayAddressMap",
+svyUUID:"A64212E5-4D05-4A7D-8662-618EA118E5CE"
+}
+],
 size:{
 height:170,
 width:590
 },
-styleClass:"tabpanel-border"
+streetViewControl:true,
+streetviewControl:true,
+styleClass:"tabpanel-border",
+useGoogleMapCluster:false,
+useGoogleMapDirections:false,
+zoomControl:false
 },
 location:"20,290",
 name:"map",
@@ -111,6 +134,22 @@ typeid:7,
 uuid:"7B3398E5-F32E-4B47-832D-ED2E3C6867F1"
 },
 {
+location:"614,181",
+onActionMethodID:"6EF3FDB2-1EA4-4142-8A0C-29F70F0FB81D",
+size:"164,20",
+text:"Enable cluster",
+typeid:7,
+uuid:"8DA38025-62D2-4821-A250-359D4CE4AE99"
+},
+{
+location:"614,204",
+onActionMethodID:"613665B7-E5C3-4A49-B09B-2DFD7EABB1E3",
+size:"164,20",
+text:"Disable cluster",
+typeid:7,
+uuid:"91D80C28-9354-4661-8E06-90D87E0EEAB1"
+},
+{
 dataProviderID:"shipcountry",
 location:"350,200",
 name:"shipcountry",
@@ -139,6 +178,14 @@ typeid:4,
 uuid:"AA15238C-5E85-43C8-80EA-F533D42E5C0F"
 },
 {
+location:"616,59",
+onActionMethodID:"F4CF8FC5-3F73-454F-A064-7E226A2568C1",
+size:"164,20",
+text:"Test value based on API",
+typeid:7,
+uuid:"ABC3B81F-396A-4B59-9284-C99A887EC1A4"
+},
+{
 labelFor:"shipaddress",
 location:"350,60",
 name:"shipaddress_label",
@@ -147,6 +194,14 @@ text:"Address",
 transparent:true,
 typeid:7,
 uuid:"C24DA9F0-F189-4A40-A9D5-FBB8EFBB6E3C"
+},
+{
+location:"615,145",
+onActionMethodID:"C752CCF4-07F6-45FF-8025-9E9DA1F6CB70",
+size:"164,20",
+text:"Disable Route",
+typeid:7,
+uuid:"DEE238A2-46E3-4B6C-B73F-F50894A424A8"
 },
 {
 labelFor:"shipcountry",
@@ -167,10 +222,19 @@ text:"Customer",
 typeid:4,
 uuid:"ECD7B519-BCD0-49E2-8E6E-CA384C0C4CC2",
 valuelistID:"46AC7E83-19D0-40B1-B20D-D544218C7D56"
+},
+{
+location:"615,84",
+onActionMethodID:"46A16B75-8A0F-4EC5-939F-2D7886A73656",
+size:"164,20",
+text:"Test multi value based on API",
+typeid:7,
+uuid:"FA63319F-B2F1-437F-B77A-18F67D3A47AD"
 }
 ],
 name:"orderDetail",
 onShowMethodID:"E9DC7CF8-14F8-4C8C-8697-FB78B56883F3",
 showInMenu:true,
+size:"782,480",
 typeid:3,
 uuid:"E15DEFF2-D55C-49B0-8C1F-FC17A458C9C1"

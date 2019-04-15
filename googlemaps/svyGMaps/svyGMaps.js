@@ -9,7 +9,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
         link: function($scope, $element, $attrs, $timeout) {
             var map;
 
-            function createMap() {
+            $scope.createMap = function() {
                 if (!$scope.googleMapsLoaded == true) {
                     //TODO return error
                     return;
@@ -130,7 +130,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     $log.log('Google maps loaded, create geocoder & map');
                     $scope.geocoder = new google.maps.Geocoder()
                     $scope.googleMapsLoaded = true;
-                    setTimeout(createMap, 0);
+                    $scope.createMap();
                 }
             }, true)
 
@@ -141,7 +141,13 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                                     'longitude'
                                     ];
             
+            $scope.watchArray = [];
             $scope.$watchCollection('model.markers', function(newValue, oldValue) {
+                $log.log('Remove existing watchers to fix array unwatch error');
+                for(var i in $scope.watchArray) {
+                    $scope.watchArray[i]();
+                }
+
                 $log.log('Google Maps Markers changed');
                 for(var i = 0; i < $scope.model.markers.length; i++) {
                     for( var j = 0; j < markerKeysToWatch.length; j++) {
@@ -149,12 +155,13 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                             function(newValue, oldValue) {
                                 if(newValue != oldValue) {
                                     $log.log('Marker property changed');
-                                    setTimeout(createMap, 0);
+                                    $scope.createMap()
                                 }
                             });
+                            $scope.watchArray.push(watch)
                     }
                 }
-                setTimeout(createMap, 0);
+                $scope.createMap()
             })
 
             $scope.$watch('model.zoom', function(nv) {
@@ -231,6 +238,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     } else {
                         $scope.model.markers.push(googleMarker);
                     }
+                    scope.svyServoyapi.apply("markers");
                     return true;
                 }
                 return false;
@@ -244,6 +252,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
             $scope.api.removeMarker = function(index) {
                 if(index != null) {
                     $scope.model.markers.splice(index, 1);
+                    scope.svyServoyapi.apply("markers");
                     return true;
                 }
                 return false;
@@ -253,7 +262,19 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
              * @example %%prefix%%%%elementName%%.removeAllMarkers();
              */
             $scope.api.removeAllMarkers = function() {
-                $scope.model.markers = [];
+                if($scope.model.markers && $scope.model.markers.length > 0) {
+                    for(var i in $scope.watchArray) {
+                        $scope.watchArray[i]();
+                    }
+                    //$scope.model.markers = [];
+                    $scope.model.markers.length = 0;
+                    $scope.svyServoyapi.apply("markers");
+                }
+                return true;
+            }
+
+            $scope.api.refresh = function() {
+                $scope.createMap()
                 return true;
             }
         },
