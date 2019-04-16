@@ -7,7 +7,7 @@
 				 {"name":"svyMarkerCluster.js", "version":"1", "url":"https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js", "mimetype":"text/javascript", "group":false}],
 	"model":
 	{
-	"markers": {"type":"googleMarkers[]", "pushToServer": "allow", "default": [], "tags": { "scope" :"runtime" }},
+	"markers": {"type":"googleMarkers[]", "pushToServer": "allow", "default": [], "tags": { "scope" :"design" }},
 	"apiKey": "dataprovider",
 	"zoom": "dataprovider",
 	
@@ -32,16 +32,15 @@
 		}
 	},
 	"api": {
-		"newMarker": {
+		"newMarkers": {
 			"parameters": [{
-				"name": "googleMarker",
-				"type": "googleMarkers"
+				"name": "markers",
+				"type": "googleMarkers[]"
 				},{
 				"name": "index",
 				"type": "int",
 				"optional": true
-			}],
-			"returns": "googleMarkers"
+			}]
 		},
 		"removeMarker": {
 			"parameters": [{

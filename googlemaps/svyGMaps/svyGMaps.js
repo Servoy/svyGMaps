@@ -74,10 +74,10 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 if ($($element).length == 0) {
                     return;
                 }
-                
+
                 var mapOptions = {
-                    center: (location.length > 0 ? new google.maps.LatLng(location[0].lat(), location[0].lng()) : null),
-                    zoom: $scope.model.zoom === null || $scope.model.zoom === undefined ? 6 : $scope.model.zoom,
+                    center: (location.length == 1 ? new google.maps.LatLng(location[0].lat(), location[0].lng()) : null),
+                    zoom: $scope.model.zoom === null || $scope.model.zoom === undefined ? 7 : $scope.model.zoom,
                     zoomControl: $scope.model.zoomControl,
                     mapTypeControl: $scope.model.mapTypeControl,
                     streetViewControl: $scope.model.streetViewControl,
@@ -86,8 +86,6 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 }
 
                 map = new google.maps.Map($element[0], mapOptions)
-                
-
                 //If google maps directions is enabled, create route map.
                 if($scope.model.useGoogleMapDirections == true) {
                     $log.log('Google Directions enabled, start building route');
@@ -101,13 +99,22 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                         $log.error('Google maps directions needs a minimum of 2 locations')
                     }
                 } else {
-
                     var markers = location.map(function(loc, i) {
                         return new google.maps.Marker({
                             position: new google.maps.LatLng(loc.lat(), loc.lng()),
                             map: map
                         })
                     });
+
+                    if(location.length > 1) {
+                        var bounds = new google.maps.LatLngBounds();
+                        for(var i in markers) {
+                            bounds.extend(markers[i].position);
+                        }
+                        map.fitBounds(bounds);
+                    }
+
+
                     
                     if($scope.model.useGoogleMapCluster == true) {
                         $log.log('Google Map Clusterview enabled');
@@ -227,18 +234,22 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
 
             /**
              * Add a new google marker to the map
-             * @example %%prefix%%%%elementName%%.newMarker({addressString: 'Fred. Roeskestraat 97, Amsterdam, NL'});
-             * @param {{addressString: String, latitude: Number, longitude: Number}} googleMarker
-             * @param {Number} [index] optional
+             * @example %%prefix%%%%elementName%%.newMarkers([{addressString: 'Fred. Roeskestraat 97, Amsterdam, NL'}]);
+             * @param {Array<{addressString: String, latitude: Number, longitude: Number}>} markers
+             * @param {Number} [index] optional starting point where to add the markers
              */
-            $scope.api.newMarker = function(googleMarker, index) {
-                if(googleMarker) {
-                    if(index != null) {
-                        $scope.model.markers.splice(index, 0, googleMarker);
+            $scope.api.newMarkers = function(markers, index) {
+                if(markers) {
+                    if($scope.model.markers.length > 0) {
+                        if(index != null) {
+                            $scope.model.markers.splice(index, 0, markers);
+                        } else {
+                            $scope.model.markers.concat(markers);
+                        }
                     } else {
-                        $scope.model.markers.push(googleMarker);
+                        $scope.model.markers = markers;
                     }
-                    scope.svyServoyapi.apply("markers");
+                    $scope.svyServoyapi.apply("markers");
                     return true;
                 }
                 return false;
@@ -250,9 +261,9 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
              * @param {Number} index
              */
             $scope.api.removeMarker = function(index) {
-                if(index != null) {
+                if(index != null && $scope.model.markers[index]) {
                     $scope.model.markers.splice(index, 1);
-                    scope.svyServoyapi.apply("markers");
+                    $scope.svyServoyapi.apply("markers");
                     return true;
                 }
                 return false;

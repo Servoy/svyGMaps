@@ -38,7 +38,10 @@ function singleMarkerAPI(event) {
 	elements.map.removeAllMarkers()
 	/**@type {googlemaps-svy-G-Maps.googleMarkers} */
 	var marker = {addressString: "Fred. Roeskestraat 97, Amsterdam, NL"};
-	elements.map.markers.push(marker);
+	var array = [];
+	array.push(marker)
+	
+	elements.map.newMarkers(array)
 }
 
 
@@ -49,15 +52,20 @@ function singleMarkerAPI(event) {
  */
 function multiMarkerAPI(event) {
 	elements.map.removeAllMarkers()
+	var arrayMarkers = [];
 	/**@type {googlemaps-svy-G-Maps.googleMarkers} */
 	var marker = {addressString: "Fred. Roeskestraat 97, Amsterdam, NL"};
-	elements.map.markers.push(marker);
+	arrayMarkers.push(marker);
 	
 	marker = {addressString: "Evert van de Beekstraat 202, Schiphol, NL"};
-	elements.map.markers.push(marker);
+	arrayMarkers.push(marker);
 	
 	marker = {addressString: "Leopoldlaan, Zaventem, BE"};
-	elements.map.markers.push(marker);
+	arrayMarkers.push(marker);
+	
+	marker = {latitude: 33, longitude: -111};
+	arrayMarkers.push(marker);
+	elements.map.newMarkers(arrayMarkers)
 }
 
 /**
