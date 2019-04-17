@@ -22,6 +22,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     if (googleMarker.addressDataprovider || googleMarker.addressString) {
                         location[i] = getLatLng(googleMarker.addressDataprovider || googleMarker.addressString);
                     }
+                    
                 }
                 Promise.all(location).then(function(returnVals) {
                     for(var i in returnVals) {
@@ -39,8 +40,11 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     }, function(results, status) {
                         if (status == google.maps.GeocoderStatus.OK) {
                             resolve(results[0].geometry.location);
+                        } else if(status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT){
+                        	sleep(2000);
+                        	resolve(getLatLng(address));
                         } else {
-                            reject(new Error('Couldnt\'t find the location ' + address));
+                           reject(new Error('Couldnt\'t find the location ' + address));
                         }
                     });
                 })
@@ -292,3 +296,9 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
         templateUrl: 'googlemaps/svyGMaps/svyGMaps.html'
     };
 })
+
+function sleep(ms) {
+	var d = new Date();
+	d.setTime(d.getTime()+ms);
+	while(new Date().getTime() < d){}
+}
