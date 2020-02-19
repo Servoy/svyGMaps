@@ -28,7 +28,11 @@
 			"addressDataprovider": "dataprovider",
 			"addressString": "string",
 			"latitude": {"type": "double", "default": 0.0},
-			"longitude": {"type": "double", "default": 0.0}
+            "longitude": {"type": "double", "default": 0.0},
+            "iconLabel": {"type": "string"},
+            "tooltip": {"type": "string"},
+            "iconUrl": {"type": "string"},
+            "infoWindowString": {"type": "tagstring"}
 		}
 	},
 	"api": {

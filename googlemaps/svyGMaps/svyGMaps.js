@@ -104,10 +104,25 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     }
                 } else {
                     var markers = location.map(function(loc, i) {
-                        return new google.maps.Marker({
+                        var mark = new google.maps.Marker({
                             position: new google.maps.LatLng(loc.lat(), loc.lng()),
-                            map: map
+                            map: map,
+                            title: $scope.model.markers[i].tooltip,
+							label: $scope.model.markers[i].iconLabel,
+                            icon : {
+                                url: $scope.model.markers[i].iconUrl
+                            }
                         })
+                        
+                        if ($scope.model.markers[i].infoWindowString) {
+                        	var infowindow = new google.maps.InfoWindow({
+                                content: $scope.model.markers[i].infoWindowString
+                              });
+                        	mark.addListener('click', function() {
+                                infowindow.open(map, mark);
+                            });
+                        }
+                        return mark
                     });
 
                     if(location.length > 1) {

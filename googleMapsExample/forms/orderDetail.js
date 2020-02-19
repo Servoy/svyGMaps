@@ -36,7 +36,7 @@ function onShow(firstShow, event) {
  */
 function singleMarkerAPI(event) {
 	elements.map.removeAllMarkers()
-	/**@type {googlemaps-svy-G-Maps.googleMarkers} */
+	/**@type {CustomType<googlemaps-svy-G-Maps.googleMarkers>} */
 	var marker = {addressString: "Fred. Roeskestraat 97, Amsterdam, NL"};
 	var array = [];
 	array.push(marker)
@@ -53,17 +53,26 @@ function singleMarkerAPI(event) {
 function multiMarkerAPI(event) {
 	elements.map.removeAllMarkers()
 	var arrayMarkers = [];
-	/**@type {googlemaps-svy-G-Maps.googleMarkers} */
+	/**@type {CustomType<googlemaps-svy-G-Maps.googleMarkers>} */
 	var marker = {addressString: "Fred. Roeskestraat 97, Amsterdam, NL"};
 	arrayMarkers.push(marker);
-	
+	marker.tooltip = 'Servoy Amsterdam'
+	marker.iconUrl = 'http://maps.google.com/mapfiles/ms/icons/orange.png'
+	marker.infoWindowString = '<strong>Servoy Amsterdam</strong><br>Software company at Amsterdam'
+		
 	marker = {addressString: "Evert van de Beekstraat 202, Schiphol, NL"};
+	marker.tooltip = 'Airport Schiphol NL'
+	marker.iconUrl = 'http://maps.google.com/mapfiles/ms/icons/blue.png'
 	arrayMarkers.push(marker);
 	
-	marker = {addressString: "Leopoldlaan, Zaventem, BE"};
+	marker = {addressString: "Machlaan 14A, Eelde, NL"};
+	marker.tooltip = 'Airport Eelde NL'
+	marker.iconLabel = 'G'
 	arrayMarkers.push(marker);
 	
-	marker = {latitude: 33, longitude: -111};
+	marker = {addressString: "Luchthavenweg 25, Eindhoven, NL"};
+	marker.tooltip = 'Airport Eindhoven NL'
+	marker.iconLabel = 'E'
 	arrayMarkers.push(marker);
 	elements.map.newMarkers(arrayMarkers)
 }
