@@ -104,25 +104,46 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     }
                 } else {
                     var markers = location.map(function(loc, i) {
-                        var mark = new google.maps.Marker({
+                        var markerObj = {
                             position: new google.maps.LatLng(loc.lat(), loc.lng()),
                             map: map,
                             title: $scope.model.markers[i].tooltip,
-							label: $scope.model.markers[i].iconLabel,
-                            icon : {
-                                url: $scope.model.markers[i].iconUrl
+                            label: $scope.model.markers[i].iconLabel
+                        }
+
+                        if($scope.model.markers[i].iconUrl) {
+                            markerObj.icon = $scope.model.markers[i].iconUrl
+                        } else if($scope.model.markers[i].drawRadius == true) {
+                            markerObj.icon = {
+                                path: google.maps.SymbolPath.CIRCLE,
+                                fillColor: $scope.model.markers[i].rediusColor||"AA0000",
+                                fillOpacity: 0.4,
+                                strokeColor: $scope.model.markers[i].rediusColor||"AA0000",
+                                strokeWeight: 0.4
                             }
-                        })
-                        
+                        }
+
+                        var marker = new google.maps.Marker(markerObj)
+
                         if ($scope.model.markers[i].infoWindowString) {
                         	var infowindow = new google.maps.InfoWindow({
                                 content: $scope.model.markers[i].infoWindowString
                               });
-                        	mark.addListener('click', function() {
-                                infowindow.open(map, mark);
+                              marker.addListener('click', function() {
+                                infowindow.open(map, marker);
                             });
                         }
-                        return mark
+
+                        if($scope.model.markers[i].drawRadius == true) {
+                            var circle = new google.maps.Circle({
+                                map: map,
+                                radius: $scope.model.markers[i].radiusMeters||2000,
+                                fillColor: $scope.model.markers[i].rediusColor||"AA0000",
+                                strokeColor: $scope.model.markers[i].rediusColor||"AA0000"
+                              });
+                              circle.bindTo('center', marker, 'position');
+                        }
+                        return marker
                     });
 
                     if(location.length > 1) {

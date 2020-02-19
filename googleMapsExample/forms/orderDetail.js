@@ -68,6 +68,9 @@ function multiMarkerAPI(event) {
 	marker = {addressString: "Machlaan 14A, Eelde, NL"};
 	marker.tooltip = 'Airport Eelde NL'
 	marker.iconLabel = 'G'
+	marker.drawRadius = true
+	marker.radiusMeters = 1000
+	marker.rediusColor = '#ffa500'
 	arrayMarkers.push(marker);
 	
 	marker = {addressString: "Luchthavenweg 25, Eindhoven, NL"};

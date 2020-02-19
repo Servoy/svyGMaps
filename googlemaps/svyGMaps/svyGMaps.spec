@@ -32,7 +32,10 @@
             "iconLabel": {"type": "string"},
             "tooltip": {"type": "string"},
             "iconUrl": {"type": "string"},
-            "infoWindowString": {"type": "tagstring"}
+            "infoWindowString": {"type": "tagstring"},
+            "drawRadius": {"type": "boolean", "default": false},
+            "radiusMeters": {"type": "int", "default": 2000},
+            "rediusColor": {"type": "color", "default": "AA0000"}
 		}
 	},
 	"api": {
