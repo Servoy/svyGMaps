@@ -2,11 +2,11 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
     return {
         restrict: 'E',
         scope: {
-            model: '=svyModel',
-            svyServoyapi: '=',
-            api: "=svyApi"
+            model: "=svyModel",
+            api: "=svyApi",
+            svyServoyapi: "="
         },
-        link: function($scope, $element, $attrs, $timeout) {
+        link: function($scope, $element, $attrs) {
             var map;
 
             $scope.createMap = function() {
@@ -81,7 +81,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
 
                 var mapOptions = {
                     center: (location.length == 1 ? new google.maps.LatLng(location[0].lat(), location[0].lng()) : null),
-                    zoom: $scope.model.zoom === null || $scope.model.zoom === undefined ? 7 : $scope.model.zoom,
+                    zoom: $scope.model.zoomLevel === null || $scope.model.zoomLevel === undefined ? 7 : $scope.model.zoomLevel,
                     zoomControl: $scope.model.zoomControl,
                     mapTypeControl: $scope.model.mapTypeControl,
                     streetViewControl: $scope.model.streetViewControl,
@@ -211,12 +211,11 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 $scope.createMap()
             })
 
-            $scope.$watch('model.zoom', function(nv) {
+            $scope.$watch('model.zoomLevel', function(nv) {
                 try {
                     map.setZoom(nv);
                 } catch (e) {}
             });
-
         },
         controller: function($scope, $element, $attrs) {
 

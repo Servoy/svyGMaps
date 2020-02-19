@@ -1,4 +1,11 @@
 /**
+ * @type {Number}
+ *
+ * @properties={typeid:35,uuid:"8BBAD926-14A3-4A24-99ED-5981823BFF6D",variableType:4}
+ */
+var zoomLevel = 7;
+
+/**
  * @type {String}
  *
  * @properties={typeid:35,uuid:"CF3D747F-652E-445E-A738-7E5B83A05406"}

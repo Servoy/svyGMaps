@@ -3,25 +3,24 @@
 	"displayName": "svyGMaps",
 	"version": 1,
 	"definition": "googlemaps/svyGMaps/svyGMaps.js",
-	"libraries": [{"name":"svyGMaps.css", "version":"1", "url":"googlemaps/svyGMaps/svyGMaps.css", "mimetype":"text/css"},
-				 {"name":"svyMarkerCluster.js", "version":"1", "url":"https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js", "mimetype":"text/javascript", "group":false}],
+	"libraries": [
+                    {"name":"svyGMaps.css", "version":"1", "url":"googlemaps/svyGMaps/svyGMaps.css", "mimetype":"text/css"},
+                    {"name":"markerclustererplus.min.js", "version":"4.0.1", "url":"googlemaps/svyGMaps/libs/markerclustererplus.min.js", "mimetype":"text/javascript", "group":false}
+                ],
 	"model":
 	{
-	"markers": {"type":"googleMarkers[]", "pushToServer": "allow", "default": [], "tags": { "scope" :"design" }},
-	"apiKey": "dataprovider",
-	"zoom": "dataprovider",
-	
-	"mapTypeControl": {"type":"boolean", "default": "true", "tags": { "scope" :"design" }},
-	"zoomControl": {"type":"boolean", "default": "true", "tags": { "scope" :"design" }},
-	"streetViewControl": {"type":"boolean", "default": "true", "tags": { "scope" :"design" }},
-	"fullscreenControl": {"type":"boolean", "default": "true", "tags": { "scope" :"design" }},
-	"mapType": { "type":"string", "values":["ROADMAP", "SATELLITE","HYBRID","TERRAIN"], "default":"ROADMAP", "tags": { "scope" :"design" }},
-	
-	"useGoogleMapCluster": {"type":"boolean", "default": "false", "tags": { "scope" :"runtime" }},
-	"useGoogleMapDirections": {"type":"boolean", "default": "false", "tags": { "scope" :"runtime" }},
-	
-	"addressTitle": { "type" : "dataprovider" , "tags" : {"scope" : "private"}},
-	"styleClass": {"type": "styleclass", "tags": { "scope" :"design" }
+        "markers": {"type":"googleMarkers[]", "pushToServer": "allow", "default": [], "tags": { "scope" :"design" }},
+        "apiKey": "dataprovider",
+        "zoomLevel": {"type": "dataprovider", "pushToServer": "allow", "tags": { "scope" :"design" }},
+        "mapTypeControl": {"type":"boolean", "default": "true", "tags": { "scope" :"design" }},
+        "zoomControl": {"type":"boolean", "default": "true", "tags": { "scope" :"design" }},
+        "streetViewControl": {"type":"boolean", "default": "true", "tags": { "scope" :"design" }},
+        "fullscreenControl": {"type":"boolean", "default": "true", "tags": { "scope" :"design" }},
+        "mapType": { "type":"string", "values":["ROADMAP", "SATELLITE","HYBRID","TERRAIN"], "default":"ROADMAP", "tags": { "scope" :"design" }},
+        "useGoogleMapCluster": {"type":"boolean", "default": "false" },
+        "useGoogleMapDirections": {"type":"boolean", "default": "false" },
+        "addressTitle": { "type" : "dataprovider" , "tags" : {"scope" : "private"}},
+        "styleClass": {"type": "styleclass", "tags": { "scope" :"design" }
 	}},
 	"types": {
 		"googleMarkers" : {
