@@ -116,9 +116,9 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                         } else if($scope.model.markers[i].drawRadius == true) {
                             markerObj.icon = {
                                 path: google.maps.SymbolPath.CIRCLE,
-                                fillColor: $scope.model.markers[i].rediusColor||"AA0000",
+                                fillColor: $scope.model.markers[i].radiusColor||"AA0000",
                                 fillOpacity: 0.4,
-                                strokeColor: $scope.model.markers[i].rediusColor||"AA0000",
+                                strokeColor: $scope.model.markers[i].radiusColor||"AA0000",
                                 strokeWeight: 0.4
                             }
                         }
@@ -138,8 +138,8 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                             var circle = new google.maps.Circle({
                                 map: map,
                                 radius: $scope.model.markers[i].radiusMeters||2000,
-                                fillColor: $scope.model.markers[i].rediusColor||"AA0000",
-                                strokeColor: $scope.model.markers[i].rediusColor||"AA0000"
+                                fillColor: $scope.model.markers[i].radiusColor||"AA0000",
+                                strokeColor: $scope.model.markers[i].radiusColor||"AA0000"
                               });
                               circle.bindTo('center', marker, 'position');
                         }

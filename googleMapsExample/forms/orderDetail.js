@@ -70,7 +70,7 @@ function multiMarkerAPI(event) {
 	marker.iconLabel = 'G'
 	marker.drawRadius = true
 	marker.radiusMeters = 1000
-	marker.rediusColor = '#ffa500'
+	marker.radiusColor = '#ffa500'
 	arrayMarkers.push(marker);
 	
 	marker = {addressString: "Luchthavenweg 25, Eindhoven, NL"};

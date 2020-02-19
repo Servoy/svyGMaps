@@ -35,7 +35,7 @@
             "infoWindowString": {"type": "tagstring"},
             "drawRadius": {"type": "boolean", "default": false},
             "radiusMeters": {"type": "int", "default": 2000},
-            "rediusColor": {"type": "color", "default": "AA0000"}
+            "radiusColor": {"type": "color", "default": "AA0000"}
 		}
 	},
 	"api": {
