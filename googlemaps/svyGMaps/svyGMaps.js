@@ -158,7 +158,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     
                     if($scope.model.useGoogleMapCluster == true) {
                         $log.log('Google Map Clusterview enabled');
-                        new MarkerClusterer(map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+                        new MarkerClusterer(map, markers, {imagePath: 'googlemaps/svyGMaps/libs/images/m'});
                     } 
                                         
                 }
