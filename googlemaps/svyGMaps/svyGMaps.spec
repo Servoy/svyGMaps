@@ -20,8 +20,9 @@
         "useGoogleMapCluster": {"type":"boolean", "default": false },
         "useGoogleMapDirections": {"type":"boolean", "default": false },
         "addressTitle": { "type" : "dataprovider" , "tags" : {"scope" : "private"}},
-        "styleClass": {"type": "styleclass", "tags": { "scope" :"design" }
-	}},
+        "styleClass": {"type": "styleclass", "tags": { "scope" :"design" }},
+        "gestureHandling": {"type":"string", "values":["auto", "greedy","cooperative","none"], "default":"auto", "tags": { "scope" :"design" }}
+	},
 	"types": {
 		"googleMarkers" : {
 			"addressDataprovider": "dataprovider",

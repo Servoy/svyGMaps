@@ -86,7 +86,8 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     mapTypeControl: $scope.model.mapTypeControl,
                     streetViewControl: $scope.model.streetViewControl,
                     fullscreenControl: $scope.model.fullscreenControl,
-                    mapTypeId: google.maps.MapTypeId[$scope.model.mapType]
+                    mapTypeId: google.maps.MapTypeId[$scope.model.mapType],
+                    gestureHandling: $scope.model.gestureHandling
                 }
 
                 map = new google.maps.Map($element[0], mapOptions)
