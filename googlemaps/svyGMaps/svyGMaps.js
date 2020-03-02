@@ -87,15 +87,24 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                         var calculatedRoute = {};
                         calculatedRoute.legs = [];
 
+                        var totalMeters = 0;
+                        var totalSeconds = 0;
                         response.routes[0].legs.forEach(function(routeLeg) {
                             var leg = {
                                 start_address: routeLeg.start_address,
                                 end_address: routeLeg.end_address,
                                 distance: routeLeg.distance.text,
+                                distance_meters: routeLeg.distance.value,
                                 duration: routeLeg.duration.text,
+                                duration_seconds: routeLeg.duration.value,
                             }
+                            totalMeters += leg.distance_meters;
+                            totalSeconds += leg.duration_seconds;
                             calculatedRoute.legs.push(leg);
                         });
+                        
+                        calculatedRoute.total_distance = totalMeters;
+                        calculatedRoute.total_duration = totalSeconds;
                         
                         $scope.model.resultRoute = calculatedRoute;
 
@@ -366,11 +375,11 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 $scope.createMap()
                 return true;
             }
-
+            
             /**
              * Refresh google maps
              * @example %%prefix%%%%elementName%%.getCalculatedRoute();
-             * @returns {{legs: Array<{start_address: String, end_address: String, distance: String, duration: String}>}}
+             * @returns {{total_distance: Number, total_duration: Number, legs: Array<{start_address: String, end_address: String, distance: String, duration: String}>}}
              */
             $scope.api.getCalculatedRoute = function() {
                 if($scope.model.useGoogleMapDirections == true) {
