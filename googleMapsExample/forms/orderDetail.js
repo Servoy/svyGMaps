@@ -43,12 +43,9 @@ function onShow(firstShow, event) {
  */
 function singleMarkerAPI(event) {
 	elements.map.removeAllMarkers()
-	/**@type {CustomType<googlemaps-svy-G-Maps.googleMarkers>} */
-	var marker = {addressString: "Fred. Roeskestraat 97, Amsterdam, NL"};
-	var array = [];
-	array.push(marker)
-	
-	elements.map.newMarkers(array)
+	/**@type {Array<CustomType<googlemaps-svy-G-Maps.googleMarkers>>} */
+	var marker = [{addressString: "Fred. Roeskestraat 97, Amsterdam, NL"}];
+	elements.map.newMarkers(marker)
 }
 
 
@@ -66,11 +63,6 @@ function multiMarkerAPI(event) {
 	marker.tooltip = 'Servoy Amsterdam'
 	marker.iconUrl = 'http://maps.google.com/mapfiles/ms/icons/orange.png'
 	marker.infoWindowString = '<strong>Servoy Amsterdam</strong><br>Software company at Amsterdam'
-		
-	marker = {addressString: "Evert van de Beekstraat 202, Schiphol, NL"};
-	marker.tooltip = 'Airport Schiphol NL'
-	marker.iconUrl = 'http://maps.google.com/mapfiles/ms/icons/blue.png'
-	arrayMarkers.push(marker);
 	
 	marker = {addressString: "Machlaan 14A, Eelde, NL"};
 	marker.tooltip = 'Airport Eelde NL'
@@ -83,6 +75,12 @@ function multiMarkerAPI(event) {
 	marker = {addressString: "Luchthavenweg 25, Eindhoven, NL"};
 	marker.tooltip = 'Airport Eindhoven NL'
 	marker.iconLabel = 'E'
+	arrayMarkers.push(marker);
+	
+	marker = {addressString: "Evert van de Beekstraat 202, Schiphol, NL"};
+	marker.tooltip = 'Airport Schiphol NL'
+	marker.iconUrl = 'http://maps.google.com/mapfiles/ms/icons/blue.png'
+
 	arrayMarkers.push(marker);
 	elements.map.newMarkers(arrayMarkers)
 }
@@ -121,4 +119,18 @@ function disableClusterMode() {
 	elements.map.useGoogleMapCluster = false;
 	elements.map.useGoogleMapDirections = false;
 	elements.map.refresh();
+}
+
+/**
+ * Perform the element onclick action.
+ *
+ * @param {JSEvent} event the event that triggered the action
+ *
+ * @private
+ *
+ * @properties={typeid:24,uuid:"C0F56E32-E3AC-4BB9-88F7-DED1500A364C"}
+ */
+function getRouteJson(event) {
+	var routeJson = elements.map.getCalculatedRoute();
+	application.output(JSON.stringify(routeJson))
 }

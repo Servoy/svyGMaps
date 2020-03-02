@@ -51,6 +51,19 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
             }
 
             function calculateAndDisplayRoute(directionsService, directionsDisplay, location) {
+                /** @type {{optimize: boolean, travelMode: String, showAlternativesRoute: boolean}} */
+                var routeSettings = $scope.model.directionsSettings;
+                //When not set go for defaults
+                if(!routeSettings) {
+                    routeSettings = {
+                        "optimize": true,
+                        "travelMode": "driving",
+                        "avoidFerries": false,
+                        "avoidHighways": false,
+                        "avoidTolls": false
+                    }
+                }
+
                 var waypts = [];
                 for (var i = 1; i < (location.length -1); i++) {
                       waypts.push({
@@ -63,11 +76,29 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     origin: new google.maps.LatLng(location[0].lat(), location[0].lng()),
                     destination: new google.maps.LatLng(location[location.length -1].lat(), location[location.length -1].lng()),
                     waypoints: waypts,
-                    optimizeWaypoints: true,
-                    travelMode: 'DRIVING'
+                    travelMode: routeSettings.travelMode.toUpperCase(),
+                    optimizeWaypoints: routeSettings.optimize,
+                    avoidFerries: routeSettings.avoidFerries,
+                    avoidHighways: routeSettings.avoidHighways,
+                    avoidTolls: routeSettings.avoidTolls
                   }, function(response, status) {
                     if (status === 'OK') {
-                      directionsDisplay.setDirections(response);
+                        directionsDisplay.setDirections(response);
+                        var calculatedRoute = {};
+                        calculatedRoute.legs = [];
+
+                        response.routes[0].legs.forEach(function(routeLeg) {
+                            var leg = {
+                                start_address: routeLeg.start_address,
+                                end_address: routeLeg.end_address,
+                                distance: routeLeg.distance.text,
+                                duration: routeLeg.duration.text,
+                            }
+                            calculatedRoute.legs.push(leg);
+                        });
+                        
+                        $scope.model.resultRoute = calculatedRoute;
+
                     } else {
                       window.alert('Directions request failed due to ' + status);
                     }
@@ -299,6 +330,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
              * Remove google marker at given index
              * @example %%prefix%%%%elementName%%.removeMarker(index);
              * @param {Number} index
+             * @returns {Boolean}
              */
             $scope.api.removeMarker = function(index) {
                 if(index != null && $scope.model.markers[index]) {
@@ -311,6 +343,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
             /**
              * Remove all google markers
              * @example %%prefix%%%%elementName%%.removeAllMarkers();
+             * @returns {Boolean}
              */
             $scope.api.removeAllMarkers = function() {
                 if($scope.model.markers && $scope.model.markers.length > 0) {
@@ -324,9 +357,28 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 return true;
             }
 
+            /**
+             * Refresh google maps
+             * @example %%prefix%%%%elementName%%.refresh();
+             * @returns {Boolean}
+             */
             $scope.api.refresh = function() {
                 $scope.createMap()
                 return true;
+            }
+
+            /**
+             * Refresh google maps
+             * @example %%prefix%%%%elementName%%.getCalculatedRoute();
+             * @returns {{legs: Array<{start_address: String, end_address: String, distance: String, duration: String}>}}
+             */
+            $scope.api.getCalculatedRoute = function() {
+                if($scope.model.useGoogleMapDirections == true) {
+                    if($scope.model.resultRoute) {
+                        return $scope.model.resultRoute;
+                    }
+                }
+                return null;
             }
         },
         templateUrl: 'googlemaps/svyGMaps/svyGMaps.html'

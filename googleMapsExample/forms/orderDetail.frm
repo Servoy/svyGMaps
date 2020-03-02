@@ -3,7 +3,7 @@ dataSource:"db:/example_data/orders",
 encapsulation:60,
 items:[
 {
-location:"615,122",
+location:"615,121",
 onActionMethodID:"CDE560C2-4EB6-4145-B649-E92B0CF5F1C4",
 size:"164,20",
 text:"Enable Route",
@@ -55,6 +55,9 @@ json:{
 address:"displayAddressMap",
 anchors:15,
 apiKey:"apiKey",
+directionsSettings:{
+svyUUID:"97B5FD94-A2D6-4B48-B13E-7FE90486CF98"
+},
 disableStreetview:true,
 fullscreenControl:false,
 location:{
@@ -73,7 +76,7 @@ size:{
 height:170,
 width:590
 },
-streetViewControl:true,
+streetViewControl:false,
 streetviewControl:true,
 styleClass:"tabpanel-border",
 useGoogleMapCluster:false,
@@ -169,7 +172,7 @@ typeid:7,
 uuid:"7B3398E5-F32E-4B47-832D-ED2E3C6867F1"
 },
 {
-location:"614,181",
+location:"614,201",
 onActionMethodID:"6EF3FDB2-1EA4-4142-8A0C-29F70F0FB81D",
 size:"164,20",
 text:"Enable cluster",
@@ -177,7 +180,7 @@ typeid:7,
 uuid:"8DA38025-62D2-4821-A250-359D4CE4AE99"
 },
 {
-location:"614,204",
+location:"614,224",
 onActionMethodID:"613665B7-E5C3-4A49-B09B-2DFD7EABB1E3",
 size:"164,20",
 text:"Disable cluster",
@@ -221,6 +224,14 @@ typeid:7,
 uuid:"ABC3B81F-396A-4B59-9284-C99A887EC1A4"
 },
 {
+location:"616,143",
+onActionMethodID:"C0F56E32-E3AC-4BB9-88F7-DED1500A364C",
+size:"164,20",
+text:"Route JSON",
+typeid:7,
+uuid:"AEDBB842-769C-4224-9EDE-0EF2AB89BD58"
+},
+{
 labelFor:"shipaddress",
 location:"350,60",
 name:"shipaddress_label",
@@ -231,7 +242,7 @@ typeid:7,
 uuid:"C24DA9F0-F189-4A40-A9D5-FBB8EFBB6E3C"
 },
 {
-location:"615,145",
+location:"615,164",
 onActionMethodID:"C752CCF4-07F6-45FF-8025-9E9DA1F6CB70",
 size:"164,20",
 text:"Disable Route",

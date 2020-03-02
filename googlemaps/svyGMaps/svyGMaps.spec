@@ -21,7 +21,9 @@
         "useGoogleMapDirections": {"type":"boolean", "default": false },
         "addressTitle": { "type" : "dataprovider" , "tags" : {"scope" : "private"}},
         "styleClass": {"type": "styleclass", "tags": { "scope" :"design" }},
-        "gestureHandling": {"type":"string", "values":["auto", "greedy","cooperative","none"], "default":"auto", "tags": { "scope" :"design" }}
+        "gestureHandling": {"type":"string", "values":["auto", "greedy","cooperative","none"], "default":"auto", "tags": { "scope" :"design" }},
+        "directionsSettings" : { "type": "routeSettings" },
+        "resultRoute": {"type": "object", "tags": { "scope" :"private" }}
 	},
 	"types": {
 		"googleMarkers" : {
@@ -36,6 +38,13 @@
             "drawRadius": {"type": "boolean", "default": false},
             "radiusMeters": {"type": "int", "default": 2000},
             "radiusColor": {"type": "color", "default": "AA0000"}
+        }, 
+        "routeSettings": {
+			"optimize" : { "type": "boolean", "default": true }, 
+            "travelMode" : { "type": "string", "values":["driving", "walking","bicycling","transit"], "default":"driving"},
+            "avoidFerries" : {"type": "boolean", "default": false},
+            "avoidHighways" : {"type": "boolean", "default": false},
+            "avoidTolls" : {"type": "boolean", "default": false}
 		}
 	},
 	"api": {
@@ -61,7 +70,9 @@
 		},
 		"refresh": {
 			"returns": "boolean"
-		}
+        },
+		"getCalculatedRoute": {
+			"returns": "object"
+        }
 	}
-	
 }
