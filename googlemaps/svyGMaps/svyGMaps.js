@@ -4,7 +4,8 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
         scope: {
             model: "=svyModel",
             api: "=svyApi",
-            svyServoyapi: "="
+            svyServoyapi: "=",
+            handlers: "=svyHandlers"
         },
         link: function($scope, $element, $attrs) {
             var map;
@@ -105,8 +106,10 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                         
                         calculatedRoute.total_distance = totalMeters;
                         calculatedRoute.total_duration = totalSeconds;
-                        
-                        $scope.model.resultRoute = calculatedRoute;
+
+                        if($scope.handlers.onRouteChanged) {
+                            $scope.handlers.onRouteChanged(calculatedRoute);
+                        }
 
                     } else {
                       window.alert('Directions request failed due to ' + status);
@@ -301,20 +304,6 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
             $scope.api.refresh = function() {
                 $scope.createMap()
                 return true;
-            }
-            
-            /**
-             * Refresh google maps
-             * @example %%prefix%%%%elementName%%.getCalculatedRoute();
-             * @returns {{total_distance: Number, total_duration: Number, legs: Array<{start_address: String, end_address: String, distance: String, duration: String}>}}
-             */
-            $scope.api.getCalculatedRoute = function() {
-                if($scope.model.useGoogleMapDirections == true) {
-                    if($scope.model.resultRoute) {
-                        return $scope.model.resultRoute;
-                    }
-                }
-                return null;
             }
         },
         templateUrl: 'googlemaps/svyGMaps/svyGMaps.html'

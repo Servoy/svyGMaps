@@ -21,6 +21,14 @@ typeid:7,
 uuid:"14980A6A-2F43-4BC1-82CA-CF07FBAEAF85"
 },
 {
+anchors:3,
+location:"561,349",
+size:"80,20",
+text:"Route details",
+typeid:7,
+uuid:"207558BA-CAD9-4211-B010-5D9997C2038C"
+},
+{
 labelFor:"shipcity",
 location:"350,120",
 name:"shipcity_label",
@@ -72,9 +80,10 @@ addressDataprovider:"displayAddressMap",
 svyUUID:"A64212E5-4D05-4A7D-8662-618EA118E5CE"
 }
 ],
+onRouteChanged:"1162BE1C-9833-4717-B179-F589CDE762E5",
 size:{
 height:170,
-width:590
+width:534
 },
 streetViewControl:false,
 streetviewControl:true,
@@ -86,7 +95,7 @@ zoomLevel:"zoomLevel"
 },
 location:"20,290",
 name:"map",
-size:"590,170",
+size:"534,170",
 typeName:"googlemaps-svy-G-Maps",
 typeid:47,
 uuid:"39852305-1923-42D7-B6EC-91B05C6A3493"
@@ -107,19 +116,19 @@ json:{
 anchors:3,
 dataProviderID:"zoomLevel",
 location:{
-x:617,
+x:561,
 y:316
 },
 max:20,
 min:5,
 size:{
 height:29,
-width:159
+width:215
 }
 },
-location:"617,316",
+location:"561,316",
 name:"slider_1",
-size:"159,29",
+size:"215,29",
 typeName:"servoycore-slider",
 typeid:47,
 uuid:"430F201E-B757-4006-BEF6-815534B4FD7D"
@@ -147,13 +156,23 @@ valuelistID:"0B278E08-D559-4D27-B1F1-0A7DE73C4F9D"
 {
 anchors:3,
 labelFor:"shipcountry",
-location:"616,290",
+location:"560,290",
 name:"shipcountry_labelc",
-size:"160,20",
+size:"216,20",
 text:"Zoom level",
 transparent:true,
 typeid:7,
 uuid:"6BCB09DA-A54D-4E5D-A29F-627A6FACD3BD"
+},
+{
+anchors:7,
+dataProviderID:"routeDetails",
+displayType:1,
+editable:false,
+location:"561,373",
+size:"215,88",
+typeid:4,
+uuid:"7280C6EF-BA42-460C-B54B-39A8BACE2CA8"
 },
 {
 height:480,
@@ -224,14 +243,6 @@ typeid:7,
 uuid:"ABC3B81F-396A-4B59-9284-C99A887EC1A4"
 },
 {
-location:"616,143",
-onActionMethodID:"C0F56E32-E3AC-4BB9-88F7-DED1500A364C",
-size:"164,20",
-text:"Route JSON",
-typeid:7,
-uuid:"AEDBB842-769C-4224-9EDE-0EF2AB89BD58"
-},
-{
 labelFor:"shipaddress",
 location:"350,60",
 name:"shipaddress_label",
@@ -242,7 +253,7 @@ typeid:7,
 uuid:"C24DA9F0-F189-4A40-A9D5-FBB8EFBB6E3C"
 },
 {
-location:"615,164",
+location:"615,145",
 onActionMethodID:"C752CCF4-07F6-45FF-8025-9E9DA1F6CB70",
 size:"164,20",
 text:"Disable Route",

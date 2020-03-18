@@ -1,4 +1,11 @@
 /**
+ * @type {String}
+ *
+ * @properties={typeid:35,uuid:"954CE5D7-3AE3-4353-AE1F-2BEF56FDF29D"}
+ */
+var routeDetails = null;
+
+/**
  * @type {Number}
  *
  * @properties={typeid:35,uuid:"8BBAD926-14A3-4A24-99ED-5981823BFF6D",variableType:4}
@@ -91,6 +98,7 @@ function multiMarkerAPI(event) {
 function enableRouteMode() {
 	elements.map.useGoogleMapCluster = false;
 	elements.map.useGoogleMapDirections = true;
+	routeDetails = null;
 	elements.map.refresh();
 }
 
@@ -100,6 +108,7 @@ function enableRouteMode() {
 function disableRouteMode() {
 	elements.map.useGoogleMapCluster = false;
 	elements.map.useGoogleMapDirections = false;
+	routeDetails = null;
 	elements.map.refresh();
 }
 
@@ -122,15 +131,28 @@ function disableClusterMode() {
 }
 
 /**
- * Perform the element onclick action.
- *
- * @param {JSEvent} event the event that triggered the action
+ * @param {{
+	    legs: Array<{
+	        start_address: String,
+	        end_address: String,
+	        distance: String,
+	        distance_meters: Number,
+	        duration: String,
+	        duration_seconds: Number,
+	    }>,
+	    total_distance: Number,
+	    total_duration: Number
+	}} route
  *
  * @private
  *
- * @properties={typeid:24,uuid:"C0F56E32-E3AC-4BB9-88F7-DED1500A364C"}
+ * @properties={typeid:24,uuid:"1162BE1C-9833-4717-B179-F589CDE762E5"}
  */
-function getRouteJson(event) {
-	var routeJson = elements.map.getCalculatedRoute();
-	application.output(JSON.stringify(routeJson))
+function onRouteChanged(route) {
+	if(route) {
+		routeDetails = 'Total distance: ' + route.total_distance + ' meters\nTotal duration:' + route.total_duration + ' seconds' 
+	} else {
+		routeDetails = null;
+	}
+
 }

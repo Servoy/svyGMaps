@@ -23,8 +23,7 @@
         "addressTitle": { "type" : "dataprovider" , "tags" : {"scope" : "private"}},
         "styleClass": {"type": "styleclass", "tags": { "scope" :"design" }},
         "gestureHandling": {"type":"string", "values":["auto", "greedy","cooperative","none"], "default":"auto", "tags": { "scope" :"design" }},
-        "directionsSettings" : { "type": "routeSettings" },
-        "resultRoute": {"type": "object", "tags": { "scope" :"private" }}
+        "directionsSettings" : { "type": "routeSettings" }
 	},
 	"types": {
 		"googleMarkers" : {
@@ -47,7 +46,15 @@
             "avoidHighways" : {"type": "boolean", "default": false},
             "avoidTolls" : {"type": "boolean", "default": false}
 		}
-	},
+    },
+    "handlers":
+	{
+        "onRouteChanged" : {
+            "parameters" : [
+                { "name" : "routeDetails", "type" : "object" }
+            ]
+        }
+    },
 	"api": {
 		"newMarkers": {
 			"parameters": [{
