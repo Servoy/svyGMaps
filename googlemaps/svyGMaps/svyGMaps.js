@@ -215,42 +215,23 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
 
             $scope.$watch('googleMapsLoaded', function(newValue, oldValue) {
                 if ($scope.googleMapsLoaded == true) { // gmaps loaded. create geocoder and create map
-                    $log.log('Google maps loaded, create geocoder & map');
+                    $log.debug('Google maps loaded, create geocoder & map');
                     $scope.geocoder = new google.maps.Geocoder()
                     $scope.googleMapsLoaded = true;
                     $scope.createMap();
                 }
             }, true)
 
-            //var markerWatches = [];
             var markerKeysToWatch =['addressDataprovider',
                                     'addressString',
                                     'latitude',
                                     'longitude'
                                     ];
             
-            $scope.watchArray = [];
-            $scope.$watchCollection('model.markers', function(newValue, oldValue) {
-                $log.log('Remove existing watchers to fix array unwatch error');
-                for(var i in $scope.watchArray) {
-                    $scope.watchArray[i]();
-                }
-
-                $log.log('Google Maps Markers changed');
-                for(var i = 0; i < $scope.model.markers.length; i++) {
-                    for( var j = 0; j < markerKeysToWatch.length; j++) {
-                        var watch = $scope.$watch("model.markers[" + i + "]['" + markerKeysToWatch[j] + "']",
-                            function(newValue, oldValue) {
-                                if(newValue != oldValue) {
-                                    $log.log('Marker property changed');
-                                    $scope.createMap()
-                                }
-                            });
-                            $scope.watchArray.push(watch)
-                    }
-                }
+            $scope.$watch('model.markers', function(newValue, oldValue) {
+                $log.debug('Google Maps Markers changed');
                 $scope.createMap()
-            })
+            }, true);
 
             $scope.$watch('model.zoomLevel', function(nv) {
                 try {
@@ -310,60 +291,6 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     $scope.geocoder = new google.maps.Geocoder()
                     $scope.googleMapsLoaded = true;
                 })
-            }
-
-            /**
-             * Add a new google marker to the map
-             * @example %%prefix%%%%elementName%%.newMarkers([{addressString: 'Fred. Roeskestraat 97, Amsterdam, NL'}]);
-             * @param {Array<{addressString: String, latitude: Number, longitude: Number}>} markers
-             * @param {Number} [index] optional starting point where to add the markers
-             */
-            $scope.api.newMarkers = function(markers, index) {
-                if(markers) {
-                    if($scope.model.markers.length > 0) {
-                        if(index != null) {
-                            $scope.model.markers.splice(index, 0, markers);
-                        } else {
-                            $scope.model.markers.concat(markers);
-                        }
-                    } else {
-                        $scope.model.markers = markers;
-                    }
-                    $scope.svyServoyapi.apply("markers");
-                    return true;
-                }
-                return false;
-            }
-
-            /**
-             * Remove google marker at given index
-             * @example %%prefix%%%%elementName%%.removeMarker(index);
-             * @param {Number} index
-             * @returns {Boolean}
-             */
-            $scope.api.removeMarker = function(index) {
-                if(index != null && $scope.model.markers[index]) {
-                    $scope.model.markers.splice(index, 1);
-                    $scope.svyServoyapi.apply("markers");
-                    return true;
-                }
-                return false;
-            }
-            /**
-             * Remove all google markers
-             * @example %%prefix%%%%elementName%%.removeAllMarkers();
-             * @returns {Boolean}
-             */
-            $scope.api.removeAllMarkers = function() {
-                if($scope.model.markers && $scope.model.markers.length > 0) {
-                    for(var i in $scope.watchArray) {
-                        $scope.watchArray[i]();
-                    }
-                    //$scope.model.markers = [];
-                    $scope.model.markers.length = 0;
-                    $scope.svyServoyapi.apply("markers");
-                }
-                return true;
             }
 
             /**

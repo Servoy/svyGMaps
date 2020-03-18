@@ -2,14 +2,15 @@
 	"name": "googlemaps-svy-G-Maps",
 	"displayName": "svyGMaps",
 	"version": 1,
-	"definition": "googlemaps/svyGMaps/svyGMaps.js",
+    "definition": "googlemaps/svyGMaps/svyGMaps.js",
+    "serverscript" : "googlemaps/svyGMaps/svyGMaps_server.js",
 	"libraries": [
                     {"name":"svyGMaps.css", "version":"1", "url":"googlemaps/svyGMaps/svyGMaps.css", "mimetype":"text/css"},
                     {"name":"markerclustererplus.min.js", "version":"4.0.1", "url":"googlemaps/svyGMaps/libs/markerclustererplus.min.js", "mimetype":"text/javascript", "group":false}
                 ],
 	"model":
 	{
-        "markers": {"type":"googleMarkers[]", "pushToServer": "allow", "default": [], "tags": { "scope" :"design" }},
+        "markers": {"type":"googleMarkers[]", "pushToServer": "shallow", "default": [], "tags": { "scope" :"design" }},
         "apiKey": "dataprovider",
         "zoomLevel": {"type": "dataprovider", "pushToServer": "allow", "tags": { "scope" :"design" }},
         "mapTypeControl": {"type":"boolean", "default": true, "tags": { "scope" :"design" }},
