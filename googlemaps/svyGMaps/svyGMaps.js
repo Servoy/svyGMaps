@@ -19,11 +19,11 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 var location = [];
                 for(var i in $scope.model.markers) {
                     var googleMarker = $scope.model.markers[i];
-                    location[i] = new google.maps.LatLng(googleMarker.latitude, googleMarker.longitude);
-                    if (googleMarker.addressDataprovider || googleMarker.addressString) {
-                        location[i] = getLatLng(googleMarker.addressDataprovider || googleMarker.addressString);
+                    if(googleMarker.latitude && googleMarker.longitude) {
+                        location[i] = new google.maps.LatLng(googleMarker.latitude, googleMarker.longitude);
+                    } else if (googleMarker.addressDataprovider || googleMarker.addressString) {
+                        location[i] = $scope.getLatLng(googleMarker.addressDataprovider || googleMarker.addressString);
                     }
-                    
                 }
                 Promise.all(location).then(function(returnVals) {
                     for(var i in returnVals) {
@@ -34,7 +34,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 })
             }
 
-            function getLatLng(address) {
+            $scope.getLatLng = function(address) {
                 return new Promise(function(resolve, reject) {
                     $scope.geocoder.geocode({
                         address: address
@@ -43,7 +43,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                             resolve(results[0].geometry.location);
                         } else if(status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT){
                         	sleep(2000);
-                        	resolve(getLatLng(address));
+                        	resolve($scope.getLatLng(address));
                         } else {
                            reject(new Error('Couldnt\'t find the location ' + address));
                         }
@@ -214,6 +214,16 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     map.setCenter(center);
                 });
 
+                map.addListener('zoom_changed', function() {
+                    if($scope.model.zoomLevel !== null && $scope.model.zoomLevel !== undefined) {
+                        $scope.model.zoomLevel = map.getZoom();
+                        $scope.svyServoyapi.apply("zoomLevel");
+                    }
+                });
+            }
+
+            $scope.centerMap = function(latlong) {
+                map.setCenter(latlong);
             }
 
             $scope.$watch('googleMapsLoaded', function(newValue, oldValue) {
@@ -314,6 +324,34 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
             $scope.api.refresh = function() {
                 $scope.createMap()
                 return true;
+            }
+
+            /**
+             * Center google maps at the given address
+             * @example %%prefix%%%%elementName%%.centerAtAddress(address);
+             * @returns {Boolean}
+             */
+            $scope.api.centerAtAddress = function(address) {
+                if(address) {
+                    $scope.getLatLng(address).then(function(location) {
+                        $scope.centerMap(location);
+                        return true;
+                    });
+                }
+                return false;
+            }
+
+             /**
+             * Center google maps at LatLng
+             * @example %%prefix%%%%elementName%%.centerAtLatLng(lat, lng);
+             * @returns {Boolean}
+             */
+            $scope.api.centerAtLatLng= function(lat, lng) {
+                if(lat && lng) {
+                    $scope.centerMap(new google.maps.LatLng(lat, lng))
+                    return true;
+                }
+                return false;
             }
         },
         templateUrl: 'googlemaps/svyGMaps/svyGMaps.html'

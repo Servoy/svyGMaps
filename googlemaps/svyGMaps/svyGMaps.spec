@@ -80,8 +80,24 @@
 		"refresh": {
 			"returns": "boolean"
         },
-		"getCalculatedRoute": {
-			"returns": "object"
+		"centerAtAddress": {
+            "parameters": [{
+                "name": "address",
+                "type": "string"
+            }],
+            "delayUntilFormLoads": true,
+            "returns": "boolean"
+        },
+		"centerAtLatLng": {
+            "parameters": [{
+                "name": "lat",
+                "type": "number"
+            },{
+                "name": "lng",
+                "type": "number"
+            }],
+            "delayUntilFormLoads": true,
+            "returns": "boolean"
         }
 	}
 }

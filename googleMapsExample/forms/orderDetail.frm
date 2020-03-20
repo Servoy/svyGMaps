@@ -25,7 +25,7 @@ uuid:"14980A6A-2F43-4BC1-82CA-CF07FBAEAF85"
 },
 {
 anchors:3,
-location:"561,460",
+location:"561,500",
 size:"80,20",
 text:"Route details",
 typeid:7,
@@ -86,7 +86,7 @@ svyUUID:"A64212E5-4D05-4A7D-8662-618EA118E5CE"
 ],
 onRouteChanged:"1162BE1C-9833-4717-B179-F589CDE762E5",
 size:{
-height:283,
+height:322,
 width:534
 },
 streetViewControl:false,
@@ -99,7 +99,7 @@ zoomLevel:"zoomLevel"
 },
 location:"20,290",
 name:"map",
-size:"534,283",
+size:"534,322",
 typeName:"googlemaps-svy-G-Maps",
 typeid:47,
 uuid:"39852305-1923-42D7-B6EC-91B05C6A3493"
@@ -138,6 +138,16 @@ typeid:47,
 uuid:"430F201E-B757-4006-BEF6-815534B4FD7D"
 },
 {
+anchors:3,
+location:"668,446",
+name:"centerLoc",
+onActionMethodID:"07A118DF-55C8-491D-8DFC-BBE868506F72",
+size:"110,23",
+text:"Center lat/lng",
+typeid:7,
+uuid:"4C0134F0-CAA2-4E7E-B31E-00DB2F49F44D"
+},
+{
 labelFor:"customerid",
 location:"20,60",
 name:"customerid_label",
@@ -172,13 +182,13 @@ anchors:7,
 dataProviderID:"routeDetails",
 displayType:1,
 editable:false,
-location:"561,478",
+location:"561,518",
 size:"215,95",
 typeid:4,
 uuid:"7280C6EF-BA42-460C-B54B-39A8BACE2CA8"
 },
 {
-height:580,
+height:618,
 partType:5,
 typeid:19,
 uuid:"74E45EC6-FE67-4803-81CB-317AD076849F"
@@ -221,6 +231,16 @@ size:"219,20",
 text:"Enable Chicago KML",
 typeid:7,
 uuid:"995CB002-F6FD-4D22-8899-34920D0EF773"
+},
+{
+anchors:3,
+location:"560,446",
+name:"centerAddress",
+onActionMethodID:"07A118DF-55C8-491D-8DFC-BBE868506F72",
+size:"103,23",
+text:"Center address",
+typeid:7,
+uuid:"A624D70C-3290-4B25-9D07-4B1DC535C41D"
 },
 {
 dataProviderID:"shipcity",

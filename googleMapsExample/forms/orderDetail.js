@@ -196,3 +196,20 @@ function enableSwissKML(event) {
 		elements.enableKML.text = "Enable Chicago KML";
 	}
 }
+
+/**
+ * Perform the element onclick action.
+ *
+ * @param {JSEvent} event the event that triggered the action
+ *
+ * @private
+ *
+ * @properties={typeid:24,uuid:"07A118DF-55C8-491D-8DFC-BBE868506F72"}
+ */
+function applyCenter(event) {
+	if(event.getElementName() == 'centerAddress') {
+		elements.map.centerAtAddress(shipaddress + ' ' + shipcity + ' ' + shipcountry);
+	} else {
+		elements.map.centerAtLatLng(33,-111);
+	}
+}
