@@ -224,12 +224,6 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     $scope.createMap();
                 }
             }, true)
-
-            var markerKeysToWatch =['addressDataprovider',
-                                    'addressString',
-                                    'latitude',
-                                    'longitude'
-                                    ];
             
             $scope.$watch('model.markers', function(newValue, oldValue) {
                 $log.debug('Google Maps Markers changed');
@@ -241,6 +235,22 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     map.setZoom(nv);
                 } catch (e) {}
             });
+
+            var kmlLayer;
+            $scope.$watch('model.KmlLayerURL', function(newValue) {
+                if(newValue) {
+                    kmlLayer = new google.maps.KmlLayer({
+                        url: newValue,
+                        map: map
+                    });
+                } else {
+                    if(kmlLayer) {
+                        kmlLayer.setMap(null);
+                    }
+                }
+            });
+
+
         },
         controller: function($scope, $element, $attrs) {
 

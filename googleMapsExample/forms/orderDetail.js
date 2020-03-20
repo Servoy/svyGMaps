@@ -1,4 +1,11 @@
 /**
+ * @type {String}
+ *
+ * @properties={typeid:35,uuid:"CEE2A920-00D6-40D6-9945-3B3EAF0885AB"}
+ */
+var KmlLayerURL = null;
+
+/**
  * @type {Number}
  *
  * @properties={typeid:35,uuid:"9F45DF66-7451-4CD5-88C0-B98DF76F1F95",variableType:4}
@@ -169,4 +176,23 @@ function onDataChangeCluster(oldValue, newValue, event) {
 	}
 	elements.map.refresh();
 	return true
+}
+
+/**
+ * Perform the element onclick action.
+ *
+ * @param {JSEvent} event the event that triggered the action
+ *
+ * @private
+ *
+ * @properties={typeid:24,uuid:"6914FAA1-EA79-4865-A249-740EE6551BA6"}
+ */
+function enableSwissKML(event) {
+	if(elements.enableKML.text == 'Enable Chicago KML') {
+		KmlLayerURL = 'https://googlearchive.github.io/js-v2-samples/ggeoxml/cta.kml';
+		elements.enableKML.text = "Disable Chicago KML";
+	} else {
+		KmlLayerURL = null;
+		elements.enableKML.text = "Enable Chicago KML";
+	}
 }

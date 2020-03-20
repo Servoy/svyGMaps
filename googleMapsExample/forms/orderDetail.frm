@@ -63,6 +63,7 @@ uuid:"38D509BF-2A18-4CB2-B3D7-3E12803711CD"
 {
 anchors:15,
 json:{
+KmlLayerURL:"KmlLayerURL",
 address:"displayAddressMap",
 anchors:15,
 apiKey:"apiKey",
@@ -210,6 +211,16 @@ size:"260,30",
 text:"Ordered",
 typeid:4,
 uuid:"943DCD6C-4A96-40AB-A177-C084A130A410"
+},
+{
+anchors:3,
+location:"559,422",
+name:"enableKML",
+onActionMethodID:"6914FAA1-EA79-4865-A249-740EE6551BA6",
+size:"219,20",
+text:"Enable Chicago KML",
+typeid:7,
+uuid:"995CB002-F6FD-4D22-8899-34920D0EF773"
 },
 {
 dataProviderID:"shipcity",

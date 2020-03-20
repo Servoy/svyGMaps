@@ -23,7 +23,8 @@
         "addressTitle": { "type" : "dataprovider" , "tags" : {"scope" : "private"}},
         "styleClass": {"type": "styleclass", "tags": { "scope" :"design" }},
         "gestureHandling": {"type":"string", "values":["auto", "greedy","cooperative","none"], "default":"auto", "tags": { "scope" :"design" }},
-        "directionsSettings" : { "type": "routeSettings" }
+        "directionsSettings" : { "type": "routeSettings" },
+        "KmlLayerURL": {"type": "dataprovider", "pushToServer": "allow", "tags": { "scope" :"design" }}
 	},
 	"types": {
 		"googleMarkers" : {
