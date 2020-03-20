@@ -91,10 +91,10 @@
 		"centerAtLatLng": {
             "parameters": [{
                 "name": "lat",
-                "type": "number"
+                "type": "int"
             },{
                 "name": "lng",
-                "type": "number"
+                "type": "int"
             }],
             "delayUntilFormLoads": true,
             "returns": "boolean"
