@@ -3,12 +3,15 @@ dataSource:"db:/example_data/orders",
 encapsulation:60,
 items:[
 {
-location:"615,121",
-onActionMethodID:"CDE560C2-4EB6-4145-B649-E92B0CF5F1C4",
-size:"164,20",
-text:"Enable Route",
-typeid:7,
-uuid:"0B905097-9021-4295-883A-3A6BE10BF5E9"
+anchors:3,
+dataProviderID:"enableClusterMode",
+displayType:4,
+location:"561,397",
+onDataChangeMethodID:"7F69F525-AD63-430E-BDA6-48C1E4358223",
+size:"216,20",
+text:"Cluster",
+typeid:4,
+uuid:"0F8D8224-7309-497A-9E90-485577616EBB"
 },
 {
 anchors:11,
@@ -22,7 +25,7 @@ uuid:"14980A6A-2F43-4BC1-82CA-CF07FBAEAF85"
 },
 {
 anchors:3,
-location:"561,349",
+location:"561,460",
 size:"80,20",
 text:"Route details",
 typeid:7,
@@ -82,7 +85,7 @@ svyUUID:"A64212E5-4D05-4A7D-8662-618EA118E5CE"
 ],
 onRouteChanged:"1162BE1C-9833-4717-B179-F589CDE762E5",
 size:{
-height:170,
+height:283,
 width:534
 },
 streetViewControl:false,
@@ -95,7 +98,7 @@ zoomLevel:"zoomLevel"
 },
 location:"20,290",
 name:"map",
-size:"534,170",
+size:"534,283",
 typeName:"googlemaps-svy-G-Maps",
 typeid:47,
 uuid:"39852305-1923-42D7-B6EC-91B05C6A3493"
@@ -150,8 +153,7 @@ name:"employeeid",
 size:"260,30",
 text:"Sales Rep",
 typeid:4,
-uuid:"5F2B5236-1549-4D79-A417-8D56AD32BC43",
-valuelistID:"0B278E08-D559-4D27-B1F1-0A7DE73C4F9D"
+uuid:"5F2B5236-1549-4D79-A417-8D56AD32BC43"
 },
 {
 anchors:3,
@@ -169,13 +171,13 @@ anchors:7,
 dataProviderID:"routeDetails",
 displayType:1,
 editable:false,
-location:"561,373",
-size:"215,88",
+location:"561,478",
+size:"215,95",
 typeid:4,
 uuid:"7280C6EF-BA42-460C-B54B-39A8BACE2CA8"
 },
 {
-height:480,
+height:580,
 partType:5,
 typeid:19,
 uuid:"74E45EC6-FE67-4803-81CB-317AD076849F"
@@ -189,22 +191,6 @@ text:"Sales Rep",
 transparent:true,
 typeid:7,
 uuid:"7B3398E5-F32E-4B47-832D-ED2E3C6867F1"
-},
-{
-location:"614,201",
-onActionMethodID:"6EF3FDB2-1EA4-4142-8A0C-29F70F0FB81D",
-size:"164,20",
-text:"Enable cluster",
-typeid:7,
-uuid:"8DA38025-62D2-4821-A250-359D4CE4AE99"
-},
-{
-location:"614,224",
-onActionMethodID:"613665B7-E5C3-4A49-B09B-2DFD7EABB1E3",
-size:"164,20",
-text:"Disable cluster",
-typeid:7,
-uuid:"91D80C28-9354-4661-8E06-90D87E0EEAB1"
 },
 {
 dataProviderID:"shipcountry",
@@ -235,14 +221,6 @@ typeid:4,
 uuid:"AA15238C-5E85-43C8-80EA-F533D42E5C0F"
 },
 {
-location:"616,59",
-onActionMethodID:"F4CF8FC5-3F73-454F-A064-7E226A2568C1",
-size:"164,20",
-text:"Test value based on API",
-typeid:7,
-uuid:"ABC3B81F-396A-4B59-9284-C99A887EC1A4"
-},
-{
 labelFor:"shipaddress",
 location:"350,60",
 name:"shipaddress_label",
@@ -251,14 +229,6 @@ text:"Address",
 transparent:true,
 typeid:7,
 uuid:"C24DA9F0-F189-4A40-A9D5-FBB8EFBB6E3C"
-},
-{
-location:"615,145",
-onActionMethodID:"C752CCF4-07F6-45FF-8025-9E9DA1F6CB70",
-size:"164,20",
-text:"Disable Route",
-typeid:7,
-uuid:"DEE238A2-46E3-4B6C-B73F-F50894A424A8"
 },
 {
 labelFor:"shipcountry",
@@ -281,16 +251,30 @@ uuid:"ECD7B519-BCD0-49E2-8E6E-CA384C0C4CC2",
 valuelistID:"46AC7E83-19D0-40B1-B20D-D544218C7D56"
 },
 {
-location:"615,84",
-onActionMethodID:"46A16B75-8A0F-4EC5-939F-2D7886A73656",
-size:"164,20",
-text:"Test multi value based on API",
-typeid:7,
-uuid:"FA63319F-B2F1-437F-B77A-18F67D3A47AD"
+anchors:3,
+dataProviderID:"enablePrivacy",
+displayType:4,
+location:"561,349",
+size:"216,20",
+text:"Privacy mode",
+typeid:4,
+uuid:"F4952ED8-F276-4335-A307-F756A3F5CA0D"
+},
+{
+anchors:3,
+dataProviderID:"enableRoute",
+displayType:4,
+location:"561,373",
+onDataChangeMethodID:"2B39570E-A2E5-4F47-863F-5BBC8B1D71C2",
+size:"216,20",
+text:"Route",
+typeid:4,
+uuid:"F7628573-0B9E-4BA2-97C4-889330EB8171"
 }
 ],
 name:"orderDetail",
 onShowMethodID:"E9DC7CF8-14F8-4C8C-8697-FB78B56883F3",
+selectionMode:2,
 showInMenu:true,
 size:"782,480",
 typeid:3,

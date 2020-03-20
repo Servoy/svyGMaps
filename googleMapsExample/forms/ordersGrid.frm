@@ -5,7 +5,7 @@ items:[
 {
 anchors:3,
 dataProviderID:"shipcity",
-location:"90,210",
+location:"120,20",
 name:"shipcity",
 size:"120,30",
 transparent:true,
@@ -35,7 +35,7 @@ uuid:"553F7B24-D0F4-4C14-9918-364B01B56058"
 {
 anchors:3,
 labelFor:"shipcountry",
-location:"120,0",
+location:"240,0",
 name:"shipcountry_label",
 size:"120,20",
 text:"Country",
@@ -52,7 +52,7 @@ uuid:"9D6D7672-ABD7-4E3E-B08A-93A500248674"
 {
 anchors:3,
 labelFor:"shipcity",
-location:"90,190",
+location:"120,0",
 name:"shipcity_label",
 size:"120,20",
 text:"City",
@@ -63,7 +63,7 @@ uuid:"C05627A6-290B-4501-BA07-6C97E936E74B"
 {
 anchors:3,
 dataProviderID:"shipcountry",
-location:"120,20",
+location:"240,20",
 name:"shipcountry",
 size:"120,30",
 transparent:true,
@@ -72,7 +72,9 @@ uuid:"EBCB3591-9B1C-458F-939E-01590A63A2EA"
 }
 ],
 name:"ordersGrid",
+onRecordSelectionMethodID:"6E374EFD-64F0-4929-B5AE-285AA35512F5",
 scrollbars:32,
+selectionMode:2,
 showInMenu:true,
 size:"360,480",
 typeid:3,

@@ -5,6 +5,7 @@ arguments:null,\
 parameters:null\
 }\
 }",
+dataSource:"db:/example_data/orders",
 extendsID:"E8B2A839-18F1-4D54-9A85-9CB949C9841E",
 items:[
 {
@@ -28,6 +29,7 @@ items:[
 {
 containsFormID:"E15DEFF2-D55C-49B0-8C1F-FC17A458C9C1",
 location:"170,210",
+relationName:"orders$foundset",
 text:"orderDetail",
 typeid:15,
 uuid:"BF4AA0FC-2FDC-46CF-8011-420855AF225F"
@@ -35,6 +37,7 @@ uuid:"BF4AA0FC-2FDC-46CF-8011-420855AF225F"
 {
 containsFormID:"919E5A86-25B5-4AC7-96CE-CA3661C912E0",
 location:"90,210",
+relationName:"orders$foundset",
 text:"ordersGrid",
 typeid:15,
 uuid:"ECE5DA27-608F-4D60-96FB-504AFE37D4C8"

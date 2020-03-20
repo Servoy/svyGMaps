@@ -1,4 +1,25 @@
 /**
+ * @type {Number}
+ *
+ * @properties={typeid:35,uuid:"9F45DF66-7451-4CD5-88C0-B98DF76F1F95",variableType:4}
+ */
+var enablePrivacy = 0;
+
+/**
+ * @type {Number}
+ *
+ * @properties={typeid:35,uuid:"E2E05F6C-445F-4384-AF36-5437DCCFFF9C",variableType:4}
+ */
+var enableRoute = 0;
+
+/**
+ * @type {Number}
+ *
+ * @properties={typeid:35,uuid:"81D4239D-6BC5-4510-BF31-E01CDD087B32",variableType:4}
+ */
+var enableClusterMode = 0;
+
+/**
  * @type {String}
  *
  * @properties={typeid:35,uuid:"954CE5D7-3AE3-4353-AE1F-2BEF56FDF29D"}
@@ -39,95 +60,36 @@ function onShow(firstShow, event) {
 	}
 }
 
-/**
- * Perform the element default action.
- *
- * @param {JSEvent} event the event that triggered the action
- *
- * @protected
- *
- * @properties={typeid:24,uuid:"F4CF8FC5-3F73-454F-A064-7E226A2568C1"}
- */
-function singleMarkerAPI(event) {
-	elements.map.removeAllMarkers()
-	/**@type {Array<CustomType<googlemaps-svy-G-Maps.googleMarkers>>} */
-	var marker = [{addressString: "Fred. Roeskestraat 97, Amsterdam, NL"}];
-	elements.map.newMarkers(marker)
-}
-
 
 /**
+ * @public
+ * 
  * @param {JSEvent} event the event that triggered the action
- *
+ * @param {Array<JSRecord<db:/example_data/orders>>} records
  * @properties={typeid:24,uuid:"46A16B75-8A0F-4EC5-939F-2D7886A73656"}
  */
-function multiMarkerAPI(event) {
+function multiMarkerAPI(event, records) {
 	elements.map.removeAllMarkers()
 	var arrayMarkers = [];
-	/**@type {CustomType<googlemaps-svy-G-Maps.googleMarkers>} */
-	var marker = {addressString: "Fred. Roeskestraat 97, Amsterdam, NL"};
-	arrayMarkers.push(marker);
-	marker.tooltip = 'Servoy Amsterdam'
-	marker.iconUrl = 'http://maps.google.com/mapfiles/ms/icons/orange.png'
-	marker.infoWindowString = '<strong>Servoy Amsterdam</strong><br>Software company at Amsterdam'
 	
-	marker = {addressString: "Machlaan 14A, Eelde, NL"};
-	marker.tooltip = 'Airport Eelde NL'
-	marker.iconLabel = 'G'
-	marker.drawRadius = true
-	marker.radiusMeters = 1000
-	marker.radiusColor = '#ffa500'
-	arrayMarkers.push(marker);
+	for each(var record in records) {
+		/**@type {CustomType<googlemaps-svy-G-Maps.googleMarkers>} */
+		var marker = {
+			addressString: record.shipaddress + ' ' + record.shipcity + ' ' + record.shipcountry,
+			tooltip: record.orders_to_customers.companyname,
+			iconUrl: 'http://maps.google.com/mapfiles/ms/icons/orange.png'
+		}
+		
+		if(enablePrivacy) {
+			marker.iconLabel = record.orders_to_customers.companyname.charAt(0).toUpperCase();
+			marker.drawRadius = true;
+			marker.radiusMeters = 1000;
+			marker.radiusColor = '#ffa500'
+		}
+		arrayMarkers.push(marker);
+	}
 	
-	marker = {addressString: "Luchthavenweg 25, Eindhoven, NL"};
-	marker.tooltip = 'Airport Eindhoven NL'
-	marker.iconLabel = 'E'
-	arrayMarkers.push(marker);
-	
-	marker = {addressString: "Evert van de Beekstraat 202, Schiphol, NL"};
-	marker.tooltip = 'Airport Schiphol NL'
-	marker.iconUrl = 'http://maps.google.com/mapfiles/ms/icons/blue.png'
-
-	arrayMarkers.push(marker);
 	elements.map.newMarkers(arrayMarkers)
-}
-
-/**
- * @properties={typeid:24,uuid:"CDE560C2-4EB6-4145-B649-E92B0CF5F1C4"}
- */
-function enableRouteMode() {
-	elements.map.useGoogleMapCluster = false;
-	elements.map.useGoogleMapDirections = true;
-	routeDetails = null;
-	elements.map.refresh();
-}
-
-/**
- * @properties={typeid:24,uuid:"C752CCF4-07F6-45FF-8025-9E9DA1F6CB70"}
- */
-function disableRouteMode() {
-	elements.map.useGoogleMapCluster = false;
-	elements.map.useGoogleMapDirections = false;
-	routeDetails = null;
-	elements.map.refresh();
-}
-
-/**
- * @properties={typeid:24,uuid:"6EF3FDB2-1EA4-4142-8A0C-29F70F0FB81D"}
- */
-function enableClusterMode() {
-	elements.map.useGoogleMapCluster = true;
-	elements.map.useGoogleMapDirections = false;
-	elements.map.refresh();
-}
-
-/**
- * @properties={typeid:24,uuid:"613665B7-E5C3-4A49-B09B-2DFD7EABB1E3"}
- */
-function disableClusterMode() {
-	elements.map.useGoogleMapCluster = false;
-	elements.map.useGoogleMapDirections = false;
-	elements.map.refresh();
 }
 
 /**
@@ -155,4 +117,56 @@ function onRouteChanged(route) {
 		routeDetails = null;
 	}
 
+}
+
+/**
+ * Handle changed data, return false if the value should not be accepted. In NGClient you can return also a (i18n) string, instead of false, which will be shown as a tooltip.
+ *
+ * @param {Number} oldValue old value
+ * @param {Number} newValue new value
+ * @param {JSEvent} event the event that triggered the action
+ *
+ * @return {Boolean}
+ *
+ * @private
+ *
+ * @properties={typeid:24,uuid:"2B39570E-A2E5-4F47-863F-5BBC8B1D71C2"}
+ */
+function onDataChangeRoute(oldValue, newValue, event) {
+	if(enableRoute) {
+		enableClusterMode = 0;
+		elements.map.useGoogleMapCluster = false;
+		elements.map.useGoogleMapDirections = true;
+	} else {
+		routeDetails = null;
+		elements.map.useGoogleMapDirections = false;
+	}
+	elements.map.refresh();
+	return true
+}
+
+/**
+ * Handle changed data, return false if the value should not be accepted. In NGClient you can return also a (i18n) string, instead of false, which will be shown as a tooltip.
+ *
+ * @param {Number} oldValue old value
+ * @param {Number} newValue new value
+ * @param {JSEvent} event the event that triggered the action
+ *
+ * @return {Boolean}
+ *
+ * @private
+ *
+ * @properties={typeid:24,uuid:"7F69F525-AD63-430E-BDA6-48C1E4358223"}
+ */
+function onDataChangeCluster(oldValue, newValue, event) {
+	if(enableClusterMode) {
+		enableRoute = 0;
+		routeDetails = null;
+		elements.map.useGoogleMapCluster = true;
+		elements.map.useGoogleMapDirections = false;
+	} else {
+		elements.map.useGoogleMapCluster = false;
+	}
+	elements.map.refresh();
+	return true
 }
