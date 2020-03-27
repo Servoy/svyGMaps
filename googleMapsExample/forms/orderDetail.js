@@ -88,6 +88,7 @@ function multiMarkerAPI(event, records) {
 		}
 		
 		if(enablePrivacy) {
+			marker.iconUrl = null;
 			marker.iconLabel = record.orders_to_customers.companyname.charAt(0).toUpperCase();
 			marker.drawRadius = true;
 			marker.radiusMeters = 1000;

@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-SymbolicName: googlemaps
 Bundle-Name: googlemaps
-Bundle-Version: 2.1.0
+Bundle-Version: 2.1.1
 Package-Type: Web-Component
 
 Name: svyGMaps/svyGMaps.spec

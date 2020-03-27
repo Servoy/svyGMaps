@@ -38,7 +38,7 @@
             "infoWindowString": {"type": "tagstring"},
             "drawRadius": {"type": "boolean", "default": false},
             "radiusMeters": {"type": "int", "default": 2000},
-            "radiusColor": {"type": "color", "default": "AA0000"}
+            "radiusColor": {"type": "color", "default": "#AA0000"}
         }, 
         "routeSettings": {
 			"optimize" : { "type": "boolean", "default": true }, 
