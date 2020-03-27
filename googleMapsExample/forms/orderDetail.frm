@@ -287,7 +287,7 @@ dataProviderID:"enablePrivacy",
 displayType:4,
 location:"561,349",
 size:"216,20",
-text:"Privacy mode",
+text:"Radius",
 typeid:4,
 uuid:"F4952ED8-F276-4335-A307-F756A3F5CA0D"
 },
