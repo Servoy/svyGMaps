@@ -31,17 +31,17 @@ $scope.api.removeMarker = function(index) {
  * @param {Number} [index] optional starting point where to add the markers
  */
 $scope.api.newMarkers = function(newMarkers, index) {
-    if(newMarkers) {
-        if($scope.model.markers.length > 0) {
-            if(index != null) {
-                $scope.model.markers.splice(index, 0, markers);
-            } else {
-                $scope.model.markers.concat(newMarkers);
-            }
-        } else {
-            $scope.model.markers = newMarkers;
-        }
-        return true;
-    }
-    return false;
+	if (newMarkers && newMarkers.length > 0) {
+		if ($scope.model.markers.length > 0) {
+			if (index != null) {
+				$scope.model.markers = [].concat($scope.model.markers, newMarkers, $scope.model.markers.splice(index));
+			} else {
+				$scope.model.markers = $scope.model.markers.concat(newMarkers);
+			}
+		} else {
+			$scope.model.markers = newMarkers;
+		}
+		return true;
+	}
+	return false;
 }
