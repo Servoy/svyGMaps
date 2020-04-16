@@ -123,7 +123,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 }
 
                 var mapOptions = {
-                    center: (location.length == 1 ? new google.maps.LatLng(location[0].lat(), location[0].lng()) : null),
+                    center: (location.length == 1 ? new google.maps.LatLng(location[0].lat(), location[0].lng()) : new google.maps.LatLng(0, 0)),
                     zoom: $scope.model.zoomLevel === null || $scope.model.zoomLevel === undefined ? 7 : $scope.model.zoomLevel,
                     zoomControl: $scope.model.zoomControl,
                     mapTypeControl: $scope.model.mapTypeControl,
