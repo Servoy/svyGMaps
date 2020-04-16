@@ -19,10 +19,10 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 var location = [];
                 for(var i in $scope.model.markers) {
                     var googleMarker = $scope.model.markers[i];
-                    if(googleMarker.latitude && googleMarker.longitude) {
-                        location[i] = new google.maps.LatLng(googleMarker.latitude, googleMarker.longitude);
+                    if(googleMarker.latitude != null && googleMarker.longitude != null) {
+                        location.push(new google.maps.LatLng(googleMarker.latitude, googleMarker.longitude));
                     } else if (googleMarker.addressDataprovider || googleMarker.addressString) {
-                        location[i] = $scope.getLatLng(googleMarker.addressDataprovider || googleMarker.addressString);
+                    	location.push($scope.getLatLng(googleMarker.addressDataprovider || googleMarker.addressString));
                     }
                 }
                 Promise.all(location).then(function(returnVals) {
