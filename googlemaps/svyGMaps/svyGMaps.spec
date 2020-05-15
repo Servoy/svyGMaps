@@ -1,8 +1,9 @@
 {
 	"name": "googlemaps-svy-G-Maps",
-	"displayName": "svyGMaps",
+	"displayName": "Google Maps",
     "categoryName": "Visualization",
 	"version": 1,
+    "icon": "googlemaps/svyGMaps/icon.png",
     "definition": "googlemaps/svyGMaps/svyGMaps.js",
     "serverscript" : "googlemaps/svyGMaps/svyGMaps_server.js",
 	"libraries": [
