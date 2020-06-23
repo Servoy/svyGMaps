@@ -10,6 +10,7 @@
         {"version":"1.0.0","url":"https://github.com/Servoy/svyGMaps/releases/download/1.0.0/googlemaps.zip"},
         {"version":"1.0.1","url":"https://github.com/Servoy/svyGMaps/releases/download/1.0.1/googlemaps.zip"},
         {"version":"2.0.0","url":"https://github.com/Servoy/svyGMaps/releases/download/2.0.0/googlemaps.zip"},
-        {"version":"2.1.0","url":"https://github.com/Servoy/svyGMaps/releases/download/2.1.0/googlemaps.zip"}
+        {"version":"2.1.0","url":"https://github.com/Servoy/svyGMaps/releases/download/2.1.0/googlemaps.zip"},
+        {"version":"2.1.1","url":"https://github.com/Servoy/svyGMaps/releases/download/2.1.1/googlemaps.zip"}
     ]
 }

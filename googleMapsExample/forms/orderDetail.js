@@ -220,6 +220,7 @@ function applyCenter(event) {
 }
 
 /**
+<<<<<<< HEAD
  * @param {string} event
  * @param {CustomType<googlemaps-svy-G-Maps.googleMarkers>} marker
  * @param {CustomType<googlemaps-svy-G-Maps.latLng>} [latLng]
@@ -264,4 +265,34 @@ function getCenter() {
 function fitBounds() {
 	var latLngBounds = {sw:{lng:0.5480615944616041,lat:49.64885696873385},ne:{lng:11.951870188211604,lat:52.95102524260337}}
 	elements.map.fitBounds(latLngBounds);
+}
+
+/**
+* Perform the element onclick action.
+ *
+ * @param {JSEvent} event the event that triggered the action
+ *
+ * @properties={typeid:24,uuid:"4EFC7CEB-335B-40A6-AAFB-734FEB7605A6"}
+ */
+function clearMarkers(event) {
+	elements.map.removeAllMarkers();
+	/**@type {Array<CustomType<googlemaps-svy-G-Maps.googleMarkers>>} */
+	var gMapsZeroMarker = [{lat: 0, lng:0}]
+	elements.map.newMarkers(gMapsZeroMarker)
+}
+
+/**
+ * Perform the element onclick action.
+ *
+ * @param {JSEvent} event the event that triggered the action
+ *
+ * @protected
+ *
+ * @properties={typeid:24,uuid:"51EBAB8A-7DE0-454F-A595-3FC5EBEDF3CF"}
+ */
+function addServoyNLMarker(event) {
+	/**@type {CustomType<googlemaps-svy-G-Maps.googleMarkers>} */
+	var gMapsZeroMarker = {}
+		gMapsZeroMarker.addressString = 'Fred. Roeskestraat 97, 1076 EC Amsterdam'
+	elements.map.newMarkers([gMapsZeroMarker])
 }

@@ -152,6 +152,16 @@ uuid:"430F201E-B757-4006-BEF6-815534B4FD7D"
 },
 {
 anchors:3,
+location:"668,473",
+name:"enableKMLcc",
+onActionMethodID:"51EBAB8A-7DE0-454F-A595-3FC5EBEDF3CF",
+size:"109,23",
+text:"Add Servoy NL",
+typeid:7,
+uuid:"43CD49E7-F170-48F5-974F-D0755F1DF450"
+},
+{
+anchors:3,
 location:"668,446",
 name:"centerLoc",
 onActionMethodID:"07A118DF-55C8-491D-8DFC-BBE868506F72",
@@ -283,6 +293,16 @@ text:"Country",
 transparent:true,
 typeid:7,
 uuid:"DFE2B6A5-E79E-4C89-868C-DBCB6BB0BED9"
+},
+{
+anchors:3,
+location:"560,473",
+name:"enableKMLc",
+onActionMethodID:"4EFC7CEB-335B-40A6-AAFB-734FEB7605A6",
+size:"103,23",
+text:"Clear markers",
+typeid:7,
+uuid:"E4C0E924-A016-4F0B-BDB7-66D676BBA9E6"
 },
 {
 dataProviderID:"customerid",
