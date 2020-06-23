@@ -133,7 +133,8 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     gestureHandling: $scope.model.gestureHandling
                 }
 
-                map = new google.maps.Map($element[0], mapOptions)
+                map = new google.maps.Map($element[0], mapOptions);
+                
                 //If google maps directions is enabled, create route map.
                 if($scope.model.useGoogleMapDirections == true) {
                     $log.log('Google Directions enabled, start building route');
@@ -152,7 +153,15 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                             position: new google.maps.LatLng(loc.lat(), loc.lng()),
                             map: map,
                             title: $scope.model.markers[i].tooltip,
-                            label: $scope.model.markers[i].iconLabel
+                            label: $scope.model.markers[i].iconLabel,
+							markerIndex: i,
+							draggable: $scope.model.markers[i].draggable,
+							animation: $scope.model.markers[i].animation ? google.maps.Animation[$scope.model.markers[i].animation.toUpperCase()] : null,
+							clickable: $scope.model.markers[i].clickable,
+							crossOnDrag: $scope.model.markers[i].crossOnDrag,
+							opacity: $scope.model.markers[i].opacity != null ? $scope.model.markers[i].opacity : null,
+							visible: $scope.model.markers[i].visible,
+							zIndex: $scope.model.markers[i].zIndex != null ? $scope.model.markers[i].zIndex : null
                         }
 
                         if($scope.model.markers[i].iconUrl) {

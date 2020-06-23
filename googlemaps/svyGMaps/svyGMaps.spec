@@ -38,7 +38,16 @@
             "infoWindowString": {"type": "tagstring"},
             "drawRadius": {"type": "boolean", "default": false},
             "radiusMeters": {"type": "int", "default": 2000},
-            "radiusColor": {"type": "color", "default": "#AA0000"}
+            "radiusColor": {"type": "color", "default": "#AA0000"},
+            "draggable": {"type": "boolean", "default": false},
+            "animation": {"type": "string", "values": ["BOUNCE", "DROP"], "default": null},
+            "clickable": {"type": "boolean", "default": true},
+            "crossOnDrag": {"type": "boolean", "default": true},
+            "opacity": {"type": "double"},
+            "visible": {"type": "boolean", "default": true},
+            "zIndex": {"type": "int"},
+            "markerId": {"type": "string"},
+            "userObject": {"type": "object"}
         }, 
         "routeSettings": {
 			"optimize" : { "type": "boolean", "default": true }, 
