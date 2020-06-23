@@ -84,7 +84,11 @@ function multiMarkerAPI(event, records) {
 		var marker = {
 			addressString: record.shipaddress + ' ' + record.shipcity + ' ' + record.shipcountry,
 			tooltip: record.orders_to_customers.companyname,
-			iconUrl: 'http://maps.google.com/mapfiles/ms/icons/orange.png'
+			iconUrl: 'http://maps.google.com/mapfiles/ms/icons/orange.png',
+			markerId: record.customerid,
+			infoWindowString: record.orders_to_customers.companyname,
+			draggable: true,
+			animation: 'drop'
 		}
 		
 		if(enablePrivacy) {
@@ -213,4 +217,51 @@ function applyCenter(event) {
 	} else {
 		elements.map.centerAtLatLng(33,-111);
 	}
+}
+
+/**
+ * @param {string} event
+ * @param {CustomType<googlemaps-svy-G-Maps.googleMarkers>} marker
+ * @param {CustomType<googlemaps-svy-G-Maps.latLng>} [latLng]
+ *
+ * @private
+ *
+ * @properties={typeid:24,uuid:"59D528EA-4132-4E24-BD1B-369945E5B123"}
+ */
+function onMarkerEvent(event, marker, latLng) {
+	application.output('Marker event "' + event + '" detected for marker with markerId "' + marker.markerId + '"' + (latLng ? ' at ' + latLng.lat + ', ' + latLng.lng : ''));
+}
+
+/**
+ * @param {string} event
+ * @param {{lat: Number, lng: Number}} [latLng]
+ *
+ * @private
+ *
+ * @properties={typeid:24,uuid:"3B40ECC0-B12A-4C9E-95F4-ED46496AB8F1"}
+ */
+function onMapEvent(event, latLng) {
+	application.output('Map event "' + event + '" detected ' + (latLng ? ' at ' + latLng.lat + ', ' + latLng.lng : ''));
+}
+
+/**
+ * @properties={typeid:24,uuid:"62DB2D11-78E2-43E1-AE3B-8D3F99D18088"}
+ */
+function getBounds() {
+	application.output(elements.map.getBounds());
+}
+
+/**
+ * @properties={typeid:24,uuid:"E7DE6A38-3DF1-47E1-AE7D-3E9331BFF26D"}
+ */
+function getCenter() {
+	application.output(elements.map.getCenter());
+}
+
+/**
+ * @properties={typeid:24,uuid:"4BB36E1B-0AA9-460A-8E42-2C20F6360627"}
+ */
+function fitBounds() {
+	var latLngBounds = {sw:{lng:0.5480615944616041,lat:49.64885696873385},ne:{lng:11.951870188211604,lat:52.95102524260337}}
+	elements.map.fitBounds(latLngBounds);
 }
