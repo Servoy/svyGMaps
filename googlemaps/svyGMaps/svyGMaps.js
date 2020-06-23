@@ -270,6 +270,38 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 map.setCenter(latlong);
             }
             
+            $scope.getBounds = function() {
+            	if (map) {
+            		var latLngBounds = map.getBounds();
+            		if (latLngBounds) {
+	            		var sw = latLngBounds.getSouthWest();
+	            		var ne = latLngBounds.getNorthEast();
+	            		return {
+	            			sw:  {lat: sw.lat(), lng: sw.lng()},
+	            			ne:  {lat: ne.lat(), lng: ne.lng()},
+	            		}
+            		}
+            	}
+            	return null;
+            }
+            
+            $scope.fitBounds = function(boundsToFit) {
+            	if (map) {
+            		var bounds = new google.maps.LatLngBounds(boundsToFit.sw, boundsToFit.ne);
+            		map.fitBounds(bounds)
+            	}
+            }            
+            
+            $scope.getCenter = function() {
+            	if (map) {
+            		var center = map.getCenter();
+            		if (center) {
+	            		return {lat: center.lat(), lng: center.lng()};
+            		}
+            	}
+            	return null;
+            }
+
             $scope.$watch('googleMapsLoaded', function(newValue, oldValue) {
                 if ($scope.googleMapsLoaded == true) { // gmaps loaded. create geocoder and create map
                     $log.debug('Google maps loaded, create geocoder & map');
@@ -397,6 +429,32 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 }
                 return false;
             }
+            
+            /**
+             * Returns the lat/lng bounds of the current viewport. If more than one copy of the world is visible, the<br>
+             * bounds range in longitude from -180 to 180 degrees inclusive. If the map is not yet initialized (i.e.<br>
+             * the mapType is still null), or center and zoom have not been set then the result is <code>null</code> or <code>undefined</code>.
+             * @return {CustomType<googlemaps-svy-G-Maps.latLngBounds>}
+             */
+            $scope.api.getBounds = function() {
+            	return $scope.getBounds();
+            } 
+            
+            /**
+             * Returns the position displayed at the center of the map
+             * @return {CustomType<googlemaps-svy-G-Maps.latLng>}
+             */
+            $scope.api.getCenter = function() {
+            	return $scope.getCenter();
+            }  
+            
+            /**
+             * Sets the viewport to contain the given bounds.
+             * @return {CustomType<googlemaps-svy-G-Maps.latLngBounds>}
+             */
+            $scope.api.fitBounds = function(bounds) {
+            	return $scope.fitBounds(bounds);
+            }            
         },
         templateUrl: 'googlemaps/svyGMaps/svyGMaps.html'
     };

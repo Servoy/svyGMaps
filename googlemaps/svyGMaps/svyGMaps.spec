@@ -130,6 +130,20 @@
             }],
             "delayUntilFormLoads": true,
             "returns": "boolean"
+        },
+        "getBounds": {
+        	"delayUntilFormLoads": true,
+            "returns": "latLngBounds"
+        },
+        "getCenter": {
+        	"delayUntilFormLoads": true,
+            "returns": "latLng"
+        },
+        "fitBounds": {
+        	"parameters": [
+        		{ "name": "latLngBounds", "type": "object" }
+        	],
+        	"delayUntilFormLoads": true
         }
 	}
 }
