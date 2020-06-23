@@ -163,7 +163,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
 							visible: $scope.model.markers[i].visible,
 							zIndex: $scope.model.markers[i].zIndex != null ? $scope.model.markers[i].zIndex : null
                         }
-
+						
                         if($scope.model.markers[i].iconUrl) {
                             markerObj.icon = $scope.model.markers[i].iconUrl
                         } else if($scope.model.markers[i].drawRadius == true) {
@@ -187,6 +187,19 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                                 infowindow.open(map, marker);
                             });
                         }
+                        
+                        //marker listener closure
+                        function attachMarkerListener(markerObj, eventType) {
+                        	marker.addListener(eventType, function(evt) {
+                                $scope.handlers.onMarkerEvent(eventType, markerObj, getLatLngFromMouseEvent(evt));
+                            });
+                        }
+                        
+                        if ($scope.handlers.onMarkerEvent && $scope.model.markerEvents) {
+                        	for (var e = 0; e < $scope.model.markerEvents.length; e++) {
+								attachMarkerListener($scope.model.markers[i], $scope.model.markerEvents[e]);
+                        	}
+                        }
 
                         if($scope.model.markers[i].drawRadius == true) {
                             var circle = new google.maps.Circle({
@@ -207,8 +220,29 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                         }
                         map.fitBounds(bounds);
                     }
+                    
+                    //map listener closure
+                    function attachMapListener(eventType) {
+                    	map.addListener(eventType, function(evt) {
+                    		$scope.handlers.onMapEvent(eventType, getLatLngFromMouseEvent(evt));
+                    	})
+                    }
+                    
+                    function getLatLngFromMouseEvent(evt) {
+                    	if (evt && evt.latLng) {
+                			return {
+                				lat: evt.latLng.lat(),
+                				lng: evt.latLng.lng()
+                			}
+                		}
+                    	return null;
+                    }
 
-
+                    if ($scope.handlers.onMapEvent && $scope.model.mapEvents) {
+                    	for (var m = 0; m < $scope.model.mapEvents.length; m++) {
+                    		attachMapListener($scope.model.mapEvents[m]);
+                    	}
+                    }
                     
                     if($scope.model.useGoogleMapCluster == true) {
                         $log.log('Google Map Clusterview enabled');
@@ -235,7 +269,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
             $scope.centerMap = function(latlong) {
                 map.setCenter(latlong);
             }
-
+            
             $scope.$watch('googleMapsLoaded', function(newValue, oldValue) {
                 if ($scope.googleMapsLoaded == true) { // gmaps loaded. create geocoder and create map
                     $log.debug('Google maps loaded, create geocoder & map');
