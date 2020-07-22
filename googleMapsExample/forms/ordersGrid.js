@@ -9,5 +9,5 @@
  * @properties={typeid:24,uuid:"6E374EFD-64F0-4929-B5AE-285AA35512F5"}
  */
 function onRecordSelection(event) {
-	forms.orderDetail.multiMarkerAPI(event,foundset.getSelectedRecords());
+	forms.orderDetail.setMarkers(event, foundset.getSelectedRecords());
 }

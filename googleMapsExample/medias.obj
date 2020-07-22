@@ -12,5 +12,12 @@ mimeType:"image/png",
 name:"logo.png",
 typeid:37,
 uuid:"D9CD9F81-6A94-4BFA-85ED-D79F6771724F"
+},
+{
+encapsulation:0,
+mimeType:"image/png",
+name:"servoy_marker.png",
+typeid:37,
+uuid:"4E95A751-592B-41E5-B198-C30F4ADB34F9"
 }
 ]
