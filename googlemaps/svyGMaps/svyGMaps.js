@@ -1,4 +1,4 @@
-angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps', function($log) {
+angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps', function($log, $utils) {
     return {
         restrict: 'E',
         scope: {
@@ -9,30 +9,41 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
         },
         link: function($scope, $element, $attrs) {
             var map;
+            var mapMarkers;
 
-            $scope.createMap = function() {
-                if (!$scope.googleMapsLoaded == true) {
-                    //TODO return error
-                    return;
-                }
+			$scope.createMap = function() {
+				if (!$scope.googleMapsLoaded == true) {
+					//TODO return error
+					return;
+				}
+				//clear markers from map
+				if (mapMarkers) {
+					for ( var m in mapMarkers ) {
+						mapMarkers[m].setMap(null);
+					}
+				}
+				mapMarkers = {};
 
-                var location = [];
-                for(var i in $scope.model.markers) {
-                    var googleMarker = $scope.model.markers[i];
-                    if(googleMarker.latitude != null && googleMarker.longitude != null) {
-                        location.push(new google.maps.LatLng(googleMarker.latitude, googleMarker.longitude));
-                    } else if (googleMarker.addressDataprovider || googleMarker.addressString) {
-                    	location.push($scope.getLatLng(googleMarker.addressDataprovider || googleMarker.addressString));
-                    }
-                }
-                Promise.all(location).then(function(returnVals) {
-                    for(var i in returnVals) {
-                        location[i] = returnVals[i]
-                    }
-                }).then(function() {
-                    createMapAtPoint(location)
-                })
-            }
+				var location = [];
+				for (var i in $scope.model.markers) {
+					var googleMarker = $scope.model.markers[i];
+					if (googleMarker.position != null) {
+						location.push(new google.maps.LatLng(googleMarker.position.lat, googleMarker.position.lng));
+					} else if (googleMarker.latitude != null && googleMarker.longitude != null) {
+						//to support deprecated latitude/longitude properties
+						location.push(new google.maps.LatLng(googleMarker.latitude, googleMarker.longitude));
+					} else if (googleMarker.addressDataprovider || googleMarker.addressString) {
+						location.push($scope.getLatLng(googleMarker.addressDataprovider || googleMarker.addressString));
+					}
+				}
+				Promise.all(location).then(function(returnVals) {
+					for (var i in returnVals) {
+						location[i] = returnVals[i]
+					}
+				}).then(function() {
+					createMapAtPoint(location)
+				})
+			}
 
             $scope.getLatLng = function(address) {
                 return new Promise(function(resolve, reject) {
@@ -42,10 +53,12 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                         if (status == google.maps.GeocoderStatus.OK) {
                             resolve(results[0].geometry.location);
                         } else if(status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT){
+                        	console.warn('Google maps Geocoder query limit reached, geocoding pauses for 2 seconds');
                         	sleep(2000);
                         	resolve($scope.getLatLng(address));
                         } else {
-                           reject(new Error('Couldnt\'t find the location ' + address));
+                        	$log.error('Could not geocode location ' + address);
+                        	resolve(null);
                         }
                     });
                 })
@@ -73,54 +86,203 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                       });
                   }
 
-                directionsService.route({
-                    origin: new google.maps.LatLng(location[0].lat(), location[0].lng()),
-                    destination: new google.maps.LatLng(location[location.length -1].lat(), location[location.length -1].lng()),
-                    waypoints: waypts,
-                    travelMode: routeSettings.travelMode.toUpperCase(),
-                    optimizeWaypoints: routeSettings.optimize,
-                    avoidFerries: routeSettings.avoidFerries,
-                    avoidHighways: routeSettings.avoidHighways,
-                    avoidTolls: routeSettings.avoidTolls
-                  }, function(response, status) {
-                    if (status === 'OK') {
-                        directionsDisplay.setDirections(response);
-                        var calculatedRoute = {};
-                        calculatedRoute.legs = [];
+				directionsService.route({
+						origin: new google.maps.LatLng(location[0].lat(), location[0].lng()),
+						destination: new google.maps.LatLng(location[location.length - 1].lat(), location[location.length - 1].lng()),
+						waypoints: waypts,
+						travelMode: routeSettings.travelMode.toUpperCase(),
+						optimizeWaypoints: routeSettings.optimize,
+						avoidFerries: routeSettings.avoidFerries,
+						avoidHighways: routeSettings.avoidHighways,
+						avoidTolls: routeSettings.avoidTolls
+					}, function(response, status) {
+						if (status === 'OK') {
+							directionsDisplay.setDirections(response);
+							var calculatedRoute = { };
+							calculatedRoute.legs = [];
 
-                        var totalMeters = 0;
-                        var totalSeconds = 0;
-                        response.routes[0].legs.forEach(function(routeLeg) {
-                            var leg = {
-                                start_address: routeLeg.start_address,
-                                end_address: routeLeg.end_address,
-                                distance: routeLeg.distance.text,
-                                distance_meters: routeLeg.distance.value,
-                                duration: routeLeg.duration.text,
-                                duration_seconds: routeLeg.duration.value,
-                            }
-                            totalMeters += leg.distance_meters;
-                            totalSeconds += leg.duration_seconds;
-                            calculatedRoute.legs.push(leg);
-                        });
-                        
-                        calculatedRoute.total_distance = totalMeters;
-                        calculatedRoute.total_duration = totalSeconds;
+							var totalMeters = 0;
+							var totalSeconds = 0;
+							response.routes[0].legs.forEach(function(routeLeg) {
+								var leg = {
+									start_address: routeLeg.start_address,
+									end_address: routeLeg.end_address,
+									distance: routeLeg.distance.text,
+									distance_meters: routeLeg.distance.value,
+									duration: routeLeg.duration.text,
+									duration_seconds: routeLeg.duration.value,
+								}
+								totalMeters += leg.distance_meters;
+								totalSeconds += leg.duration_seconds;
+								calculatedRoute.legs.push(leg);
+							});
 
-                        if($scope.handlers.onRouteChanged) {
-                            $scope.handlers.onRouteChanged(calculatedRoute);
-                        }
+							calculatedRoute.total_distance = totalMeters;
+							calculatedRoute.total_duration = totalSeconds;
 
-                    } else {
-                      window.alert('Directions request failed due to ' + status);
-                    }
-                  });
+							if ($scope.handlers.onRouteChanged) {
+								$scope.handlers.onRouteChanged(calculatedRoute);
+							}
+
+						} else {
+//							window.alert('Directions request failed due to ' + status);
+							console.warn('Directions request failed due to ' + status);
+						}
+					});
             }
+            
+            function createMarker(location, markerIndex) {
+            	if (!location) {
+            		return null;
+            	}
+            	
+            	var marker = $scope.model.markers[markerIndex];
+            	
+            	//add geocode result to marker
+            	if (!marker.position || !marker.position.lat || !marker.position.lng) {
+            		marker.position = {
+            			lat: location.lat(),
+            			lng: location.lng()
+            		}
+            		if ($scope.handlers.onMarkerGeocoded) {
+            			$scope.handlers.onMarkerGeocoded(marker, createLatLngObj(location));
+            		}
+            	}
+            	
+            	var markerObj = {
+                    position: new google.maps.LatLng(location.lat(), location.lng()),
+                    map: map,
+                    title: marker.title || marker.tooltip, //TODO remove tooltip (deprecated)
+                    label: marker.iconLabel,
+					draggable: marker.draggable,
+					animation: marker.animation ? google.maps.Animation[marker.animation.toUpperCase()] : null,
+					clickable: marker.clickable,
+					crossOnDrag: marker.crossOnDrag,
+					opacity: marker.opacity != null ? marker.opacity : null,
+					visible: marker.visible,
+					zIndex: marker.zIndex != null ? marker.zIndex : null,
+					markerId: marker.markerId || ('marker-' + markerIndex),
+					markerIndex: markerIndex
+                }
+				
+				if (marker.iconUrl || marker.iconMedia) {
+					markerObj.icon = marker.iconUrl || marker.iconMedia;
+				} else if (marker.drawRadius == true) {
+					markerObj.icon = {
+						path: google.maps.SymbolPath.CIRCLE,
+						scale: 0,
+						fillColor: marker.radiusColor || "#AA0000",
+						fillOpacity: 0.4,
+						strokeColor: marker.radiusColor || "#AA0000",
+						strokeWeight: 0.4
+					}
+				}
+
+                var gMarker = new google.maps.Marker(markerObj)
+                mapMarkers[marker.markerId || ('marker-' + markerIndex)] = gMarker;
+				
+                if (marker.infoWindowString) {
+                	var infowindow = new google.maps.InfoWindow({
+                        content: marker.infoWindowString
+                      });
+                	gMarker.addListener('click', function() {
+                        infowindow.open(map, gMarker);
+                    });
+                }
+                
+                //marker listener closure
+                function attachMarkerListener(markerObj, eventType) {
+                	gMarker.addListener(eventType, function(evt) {
+                		var jsEvent = createJSEvent(evt, eventType);
+            			jsEvent.data.marker = markerObj;
+            			var index = -1;
+            			for (var i = 0; i < $scope.model.markers.length; i++) {
+            				if ($scope.model.markers[i].markerId == this.markerId) {
+            					index = i;
+            					break;
+            				}
+            			}
+                        $scope.handlers.onMarkerEvent(jsEvent, index, jsEvent.data && jsEvent.data.latLng ? jsEvent.data.latLng : null);
+                    });
+                }
+                
+                if ($scope.handlers.onMarkerEvent && $scope.model.markerEvents) {
+                	for (var e = 0; e < $scope.model.markerEvents.length; e++) {
+						attachMarkerListener(marker, $scope.model.markerEvents[e]);
+                	}
+                }
+
+                if(marker.drawRadius == true) {
+                    var circle = new google.maps.Circle({
+                        map: map,
+                        radius: marker.radiusMeters||2000,
+                        fillColor: marker.radiusColor||"#AA0000",
+                        strokeColor: marker.radiusColor||"#AA0000"
+                      });
+                      circle.bindTo('center', gMarker, 'position');
+                }
+                return gMarker
+            }
+            
+            function createLatLngObj(latLng) {
+            	var result = null;
+            	if (latLng) {
+            		result = {
+            			lat: latLng.lat(),
+        				lng: latLng.lng()
+            		}
+            	}
+            	return result;
+            }
+            
+            function createJSEvent(evt, eventType) {
+            	var mouseEvent = null;
+            	for ( var p in evt ) {
+            		if (evt[p] instanceof MouseEvent) {
+            			mouseEvent = evt[p];
+            			break;
+            		}
+            	}
+        		if (!mouseEvent || !mouseEvent.target) {
+        			//create fake event
+        			var me = {};
+        			me.target = $element[0];
+        			if (mouseEvent) {
+	        			me.altKey = mouseEvent.altKey;
+        				me.shiftKey = mouseEvent.shiftKey;
+        				me.ctrlKey = mouseEvent.ctrlKey;
+        				me.metaKey = mouseEvent.metaKey;
+        				me.pageX = mouseEvent.pageX;
+        				me.pageY = mouseEvent.pageY;
+        			}
+        			mouseEvent = me;
+        		}
+        		
+    			var jsEvent = $utils.createJSEvent(mouseEvent, eventType);
+    			if (evt && evt.latLng) {
+	    			jsEvent.data = {
+	    				latLng: createLatLngObj(evt.latLng)
+	    			}
+    			}
+    			
+    			if (jsEvent.x === undefined) {
+    				jsEvent.x = -1;
+    			}
+    			if (jsEvent.y === undefined) {
+    				jsEvent.y = -1;
+    			}
+    			
+            	return jsEvent;
+            }           
 
             function createMapAtPoint(location) {
                 if ($($element).length == 0) {
                     return;
                 }
+                
+                location = location.filter(function removeEmpty(loc) {
+                	return loc != null;
+                })
 
                 var mapOptions = {
                     center: (location.length == 1 ? new google.maps.LatLng(location[0].lat(), location[0].lng()) : new google.maps.LatLng(0, 0)),
@@ -136,9 +298,9 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 map = new google.maps.Map($element[0], mapOptions);
                 
                 //If google maps directions is enabled, create route map.
-                if($scope.model.useGoogleMapDirections == true) {
+                if ($scope.model.useGoogleMapDirections == true) {
                     $log.log('Google Directions enabled, start building route');
-                    if(location.length > 1) {
+                    if (location.length > 1) {
                         var directionsService = new google.maps.DirectionsService;
                         var directionsDisplay = new google.maps.DirectionsRenderer;
     
@@ -148,94 +310,17 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                         $log.error('Google maps directions needs a minimum of 2 locations')
                     }
                 } else {
+                	mapMarkers = {};
                     var markers = location.map(function(loc, i) {
-                        var markerObj = {
-                            position: new google.maps.LatLng(loc.lat(), loc.lng()),
-                            map: map,
-                            title: $scope.model.markers[i].tooltip,
-                            label: $scope.model.markers[i].iconLabel,
-							markerIndex: i,
-							draggable: $scope.model.markers[i].draggable,
-							animation: $scope.model.markers[i].animation ? google.maps.Animation[$scope.model.markers[i].animation.toUpperCase()] : null,
-							clickable: $scope.model.markers[i].clickable,
-							crossOnDrag: $scope.model.markers[i].crossOnDrag,
-							opacity: $scope.model.markers[i].opacity != null ? $scope.model.markers[i].opacity : null,
-							visible: $scope.model.markers[i].visible,
-							zIndex: $scope.model.markers[i].zIndex != null ? $scope.model.markers[i].zIndex : null
-                        }
-						
-                        if($scope.model.markers[i].iconUrl) {
-                            markerObj.icon = $scope.model.markers[i].iconUrl
-                        } else if($scope.model.markers[i].drawRadius == true) {
-                            markerObj.icon = {
-                                path: google.maps.SymbolPath.CIRCLE,
-                                scale: 0,
-                                fillColor: $scope.model.markers[i].radiusColor||"#AA0000",
-                                fillOpacity: 0.4,
-                                strokeColor: $scope.model.markers[i].radiusColor||"#AA0000",
-                                strokeWeight: 0.4
-                            }
-                        }
-
-                        var marker = new google.maps.Marker(markerObj)
-
-                        if ($scope.model.markers[i].infoWindowString) {
-                        	var infowindow = new google.maps.InfoWindow({
-                                content: $scope.model.markers[i].infoWindowString
-                              });
-                              marker.addListener('click', function() {
-                                infowindow.open(map, marker);
-                            });
-                        }
-                        
-                        //marker listener closure
-                        function attachMarkerListener(markerObj, eventType) {
-                        	marker.addListener(eventType, function(evt) {
-                                $scope.handlers.onMarkerEvent(eventType, markerObj, getLatLngFromMouseEvent(evt));
-                            });
-                        }
-                        
-                        if ($scope.handlers.onMarkerEvent && $scope.model.markerEvents) {
-                        	for (var e = 0; e < $scope.model.markerEvents.length; e++) {
-								attachMarkerListener($scope.model.markers[i], $scope.model.markerEvents[e]);
-                        	}
-                        }
-
-                        if($scope.model.markers[i].drawRadius == true) {
-                            var circle = new google.maps.Circle({
-                                map: map,
-                                radius: $scope.model.markers[i].radiusMeters||2000,
-                                fillColor: $scope.model.markers[i].radiusColor||"#AA0000",
-                                strokeColor: $scope.model.markers[i].radiusColor||"#AA0000"
-                              });
-                              circle.bindTo('center', marker, 'position');
-                        }
-                        return marker
+                        return createMarker(loc, i);
                     });
-
-                    if(location.length > 1) {
-                        var bounds = new google.maps.LatLngBounds();
-                        for(var i in markers) {
-                            bounds.extend(markers[i].position);
-                        }
-                        map.fitBounds(bounds);
-                    }
                     
                     //map listener closure
                     function attachMapListener(eventType) {
                     	map.addListener(eventType, function(evt) {
-                    		$scope.handlers.onMapEvent(eventType, getLatLngFromMouseEvent(evt));
+                    		var jsEvent = createJSEvent(evt, eventType);
+                    		$scope.handlers.onMapEvent(jsEvent, jsEvent.data && jsEvent.data.latLng ? jsEvent.data.latLng : null);
                     	})
-                    }
-                    
-                    function getLatLngFromMouseEvent(evt) {
-                    	if (evt && evt.latLng) {
-                			return {
-                				lat: evt.latLng.lat(),
-                				lng: evt.latLng.lng()
-                			}
-                		}
-                    	return null;
                     }
 
                     if ($scope.handlers.onMapEvent && $scope.model.mapEvents) {
@@ -244,11 +329,18 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     	}
                     }
                     
-                    if($scope.model.useGoogleMapCluster == true) {
-                        $log.log('Google Map Clusterview enabled');
-                        new MarkerClusterer(map, markers, {imagePath: 'googlemaps/svyGMaps/libs/images/m'});
-                    } 
-                                        
+					if ($scope.model.useGoogleMapCluster == true) {
+						$log.log('Google Map Clusterview enabled');
+						new MarkerClusterer(map, markers, { imagePath: 'googlemaps/svyGMaps/libs/images/m' });
+					}
+
+					if (location.length > 1) {
+						var bounds = new google.maps.LatLngBounds();
+						for (var i in markers) {
+							bounds.extend(markers[i].position);
+						}
+						map.fitBounds(bounds);
+					}                   
                 }
 
                 //when resizing page re-center the map marker
@@ -258,12 +350,15 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     map.setCenter(center);
                 });
 
-                map.addListener('zoom_changed', function() {
-                    if($scope.model.zoomLevel !== null && $scope.model.zoomLevel !== undefined) {
-                        $scope.model.zoomLevel = map.getZoom();
-                        $scope.svyServoyapi.apply("zoomLevel");
-                    }
-                });
+				map.addListener('zoom_changed', function() {
+					if ($scope.model.zoomLevel !== null && $scope.model.zoomLevel !== undefined) {
+						var currLevel = map.getZoom();
+						if ($scope.model.zoomLevel != currLevel) {
+							$scope.model.zoomLevel = currLevel;
+							$scope.svyServoyapi.apply("zoomLevel");
+						}
+					}
+				});
             }
 
             $scope.centerMap = function(latlong) {
@@ -277,8 +372,8 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
 	            		var sw = latLngBounds.getSouthWest();
 	            		var ne = latLngBounds.getNorthEast();
 	            		return {
-	            			sw:  {lat: sw.lat(), lng: sw.lng()},
-	            			ne:  {lat: ne.lat(), lng: ne.lng()},
+	            			sw:  createLatLngObj(sw),
+	            			ne:  createLatLngObj(ne),
 	            		}
             		}
             	}
@@ -294,10 +389,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
             
             $scope.getCenter = function() {
             	if (map) {
-            		var center = map.getCenter();
-            		if (center) {
-	            		return {lat: center.lat(), lng: center.lng()};
-            		}
+            		return createLatLngObj(map.getCenter());
             	}
             	return null;
             }
@@ -311,10 +403,90 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 }
             }, true)
             
-            $scope.$watch('model.markers', function(newValue, oldValue) {
-                $log.debug('Google Maps Markers changed');
-                $scope.createMap()
-            }, true);
+			$scope.$watch('model.markers', function(newValue, oldValue) {
+					$log.debug('Google Maps Markers changed');
+					if ($scope.googleMapsLoaded == true && !angular.equals(newValue, oldValue)) {
+						var location = [];
+						for (var i in $scope.model.markers) {
+							var googleMarker = $scope.model.markers[i];
+							if (mapMarkers && googleMarker.markerId && mapMarkers.hasOwnProperty(googleMarker.markerId)) {
+								location.push(mapMarkers[googleMarker.markerId].getPosition());
+							} else if (googleMarker.position != null) {
+								location.push(new google.maps.LatLng(googleMarker.position.lat, googleMarker.position.lng));
+							} else if (googleMarker.latitude != null && googleMarker.longitude != null) {
+								//support for deprecated properties latitude/longitude
+								location.push(new google.maps.LatLng(googleMarker.latitude, googleMarker.longitude));
+							} else if (googleMarker.addressDataprovider || googleMarker.addressString) {
+								location.push($scope.getLatLng(googleMarker.addressDataprovider || googleMarker.addressString));
+							}
+						}
+						Promise.all(location).then(function(returnVals) {
+							for (var i in returnVals) {
+								location[i] = returnVals[i]
+							}
+						}).then(function() {
+							//update markers and clear removed markers
+							for ( var m in mapMarkers ) {
+								var modelMarker = null;
+								for (var n = 0; n < newValue.length; n++) {
+									if (newValue[n].markerId == m) {
+										modelMarker = newValue[n];
+										break;
+									}
+								}
+								if (!modelMarker) {
+									mapMarkers[m].setMap(null);
+									delete mapMarkers[m];
+								} else {
+									//set changed properties
+									var markerOptions = {
+										animation: modelMarker.animation ? google.maps.Animation[modelMarker.animation.toUpperCase()] : null,
+										clickable: modelMarker.clickable,
+										crossOnDrag: modelMarker.crossOnDrag,
+										cursor: modelMarker.cursor,
+										icon: modelMarker.iconUrl || modelMarker.iconMedia,
+										opacity: modelMarker.opacity,
+										title: modelMarker.title || modelMarker.tooltip, //TODO remove tooltip (deprecated)
+										visible: modelMarker.visible,
+										zIndex: modelMarker.zIndex
+									}
+									mapMarkers[m].setOptions(markerOptions);
+								}
+							}
+							
+							if ($scope.model.useGoogleMapDirections == true) {
+								//remove markers
+								mapMarkers = {};
+								var directionsService = new google.maps.DirectionsService;
+								var directionsDisplay = new google.maps.DirectionsRenderer;
+
+								directionsDisplay.setMap(map);
+								calculateAndDisplayRoute(directionsService, directionsDisplay, location);
+							} else {
+								var markers = location.map(function(loc, i) {
+									//return existing marker or create new marker
+									return mapMarkers[$scope.model.markers[i].markerId] || createMarker(loc, i);
+								});
+
+								location = location.filter(function removeEmpty(loc) {
+									return loc != null;
+								})
+
+								if (location.length > 1) {
+									var bounds = new google.maps.LatLngBounds();
+									for (var i in markers) {
+										bounds.extend(markers[i].position);
+									}
+									map.fitBounds(bounds);
+								} else if (location.length == 1) {
+									map.setCenter(markers[0].position);
+								}
+							}
+						});
+					} else {						
+						$scope.createMap();
+					}
+				}, true);
 
             $scope.$watch('model.zoomLevel', function(nv) {
                 try {
@@ -335,7 +507,6 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     }
                 }
             });
-
 
         },
         controller: function($scope, $element, $attrs) {
@@ -422,8 +593,8 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
              * @example %%prefix%%%%elementName%%.centerAtLatLng(lat, lng);
              * @returns {Boolean}
              */
-            $scope.api.centerAtLatLng= function(lat, lng) {
-                if(lat && lng) {
+            $scope.api.centerAtLatLng = function(lat, lng) {
+                if (lat != null && lng != null) {
                     $scope.centerMap(new google.maps.LatLng(lat, lng))
                     return true;
                 }
