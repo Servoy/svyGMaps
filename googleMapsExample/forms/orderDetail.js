@@ -78,18 +78,17 @@ function onShow(firstShow, event) {
 /**
  * @public
  * 
- * @param {JSEvent} event the event that triggered the action
  * @param {Array<JSRecord<db:/example_data/orders>>} records
  * @properties={typeid:24,uuid:"46A16B75-8A0F-4EC5-939F-2D7886A73656"}
  */
-function setMarkers(event, records) {
+function setMarkers(records) {
 	var arrayMarkers = [],
 		record;
 	
 	//check for markers to remove
 	var mapMarkers = elements.map.getMarkers();
 	if (mapMarkers && mapMarkers.length > 0) {
-		for (var m = 0; m < mapMarkers.length; m++) {
+		for (var m = mapMarkers.length - 1 ; m >= 0 ; m-- ) {
 			if (mapMarkers[m].userObject != CREATED_FROM_RECORD) {
 				//when not created from record, no need to remove
 				continue;
@@ -153,12 +152,20 @@ function setMarkers(event, records) {
  * @properties={typeid:24,uuid:"1162BE1C-9833-4717-B179-F589CDE762E5"}
  */
 function onRouteChanged(route) {
-	if(route) {
-		routeDetails = 'Total distance: ' + route.total_distance + ' meters\nTotal duration:' + route.total_duration + ' seconds' 
+	var routeDetailsArray = [];
+	if (route) {
+		routeDetailsArray.push('Total distance: ' + utils.numberFormat(Math.ceil(route.total_distance / 1000), i18n.getDefaultNumberFormat()) + ' km');
+		routeDetailsArray.push('Total duration: ' + Math.ceil(route.total_duration / 60) + ' minutes');
+		routeDetailsArray.push('');
+		var legs = route.legs;
+		for (var l = 0; l < legs.length; l++) {
+			routeDetailsArray.push('Leg ' + (l + 1) + ' distance: ' + utils.numberFormat(Math.ceil(legs[l].distance_meters / 1000), i18n.getDefaultNumberFormat()) + ' km');
+			routeDetailsArray.push('Leg ' + (l + 1) + ' duration: ' + legs[l].duration);
+		}
+		routeDetails = routeDetailsArray.join('<br>');
 	} else {
 		routeDetails = null;
 	}
-
 }
 
 /**
@@ -222,30 +229,13 @@ function onDataChangeCluster(oldValue, newValue, event) {
  *
  * @properties={typeid:24,uuid:"6914FAA1-EA79-4865-A249-740EE6551BA6"}
  */
-function enableSwissKML(event) {
-	if (elements.enableKML.text == 'Enable Chicago KML') {
+function onAction_btnEnableKML(event) {
+	if (elements.btnEnableKML.text == 'Enable Chicago KML') {
 		KmlLayerURL = 'https://googlearchive.github.io/js-v2-samples/ggeoxml/cta.kml';
-		elements.enableKML.text = "Disable Chicago KML";
+		elements.btnEnableKML.text = "Disable Chicago KML";
 	} else {
 		KmlLayerURL = null;
-		elements.enableKML.text = "Enable Chicago KML";
-	}
-}
-
-/**
- * Perform the element onclick action.
- *
- * @param {JSEvent} event the event that triggered the action
- *
- * @private
- *
- * @properties={typeid:24,uuid:"07A118DF-55C8-491D-8DFC-BBE868506F72"}
- */
-function applyCenter(event) {
-	if (event.getElementName() == 'centerAddress') {
-		elements.map.centerAtAddress(shipaddress + ' ' + shipcity + ' ' + shipcountry);
-	} else {
-		elements.map.centerAtLatLng(33, -111);
+		elements.btnEnableKML.text = "Enable Chicago KML";
 	}
 }
 
@@ -345,7 +335,7 @@ function fitBounds() {
  *
  * @properties={typeid:24,uuid:"4EFC7CEB-335B-40A6-AAFB-734FEB7605A6"}
  */
-function clearMarkers(event) {
+function onAction_btnClearMarkers(event) {
 	elements.map.removeAllMarkers();
 	elements.map.centerAtLatLng(0, 0);
 	zoomLevel = 4;
@@ -360,7 +350,7 @@ function clearMarkers(event) {
  *
  * @properties={typeid:24,uuid:"51EBAB8A-7DE0-454F-A595-3FC5EBEDF3CF"}
  */
-function addServoyNLMarker(event) {
+function onAction_btnAddServoy(event) {
 	var servoyMarker = elements.map.createMarker('svyMarker', 'Fred. Roeskestraat 97, 1076 EC Amsterdam', 'Servoy B.V.');
 	servoyMarker.iconMedia = 'media:///servoy_marker.png';
 	elements.map.addMarker(servoyMarker);
@@ -381,7 +371,7 @@ function addServoyNLMarker(event) {
  */
 function onDataChange_enabledPrivacy(oldValue, newValue, event) {
 	elements.map.removeAllMarkers();
-	setMarkers(event, foundset.getSelectedRecords());
+	setMarkers(foundset.getSelectedRecords());
 	elements.map.refresh();
 	return true
 }
@@ -396,4 +386,44 @@ function onDataChange_enabledPrivacy(oldValue, newValue, event) {
  */
 function onMarkerGeocoded(marker, latLng) {
 	application.output('Marker ' + marker.markerId + ' geocoded as [' + latLng.lat + ', ' + latLng.lng + ']');
+}
+
+/**
+ * @param {JSEvent} event
+ *
+ * @private
+ *
+ * @properties={typeid:24,uuid:"9B935D3F-6D16-43B6-9162-18F4AE2A88D9"}
+ */
+function onAction_btnCenterAddress(event) {
+	elements.map.centerAtAddress(shipaddress + ' ' + shipcity + ' ' + shipcountry);
+}
+
+/**
+ * @param {JSEvent} event
+ *
+ * @private
+ *
+ * @properties={typeid:24,uuid:"31809AA2-A97C-4A71-A501-1FC318AF7128"}
+ */
+function onAction_btnCenterLatLng(event) {
+	elements.map.centerAtLatLng(33, -111);
+}
+
+/**
+ * Called when the selected rows have changed.
+ *
+ * @private
+ *
+ * @properties={typeid:24,uuid:"862EF850-E97D-466A-ABDA-1682909B757F"}
+ */
+function onSelectedRowsChanged() {
+	/** @type {Array<JSRecord<db:/example_data/orders>>} */
+	var selectedRecords
+	if (elements.ordersTable.getGroupedSelection()) {
+		selectedRecords = elements.ordersTable.getGroupedSelection();
+	} else {
+		selectedRecords = elements.ordersTable.myFoundset.foundset.getSelectedRecords();
+	}
+	setMarkers(selectedRecords);
 }
