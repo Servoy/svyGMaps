@@ -153,7 +153,6 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     position: new google.maps.LatLng(location.lat(), location.lng()),
                     map: map,
                     title: marker.title || marker.tooltip, //TODO remove tooltip (deprecated)
-                    label: marker.iconLabel,
 					draggable: marker.draggable,
 					animation: marker.animation ? google.maps.Animation[marker.animation.toUpperCase()] : null,
 					clickable: marker.clickable,
@@ -162,21 +161,10 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
 					visible: marker.visible,
 					zIndex: marker.zIndex != null ? marker.zIndex : null,
 					markerId: marker.markerId || ('marker-' + markerIndex),
-					markerIndex: markerIndex
+					markerIndex: markerIndex,
+					icon: marker.iconUrl || marker.iconMedia,
+					label: marker.iconLabel
                 }
-				
-				if (marker.iconUrl || marker.iconMedia) {
-					markerObj.icon = marker.iconUrl || marker.iconMedia;
-				} else if (marker.drawRadius == true) {
-					markerObj.icon = {
-						path: google.maps.SymbolPath.CIRCLE,
-						scale: 0,
-						fillColor: marker.radiusColor || "#AA0000",
-						fillOpacity: 0.4,
-						strokeColor: marker.radiusColor || "#AA0000",
-						strokeWeight: 0.4
-					}
-				}
 
                 var gMarker = new google.maps.Marker(markerObj)
                 mapMarkers[marker.markerId || ('marker-' + markerIndex)] = gMarker;
@@ -215,9 +203,9 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 if(marker.drawRadius == true) {
                     var circle = new google.maps.Circle({
                         map: map,
-                        radius: marker.radiusMeters||2000,
-                        fillColor: marker.radiusColor||"#AA0000",
-                        strokeColor: marker.radiusColor||"#AA0000"
+                        radius: marker.radiusMeters || 2000,
+                        fillColor: marker.radiusColor || "#AA0000",
+                        strokeColor: marker.radiusColor || "#AA0000"
                       });
                       circle.bindTo('center', gMarker, 'position');
                 }
@@ -445,11 +433,13 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
 										crossOnDrag: modelMarker.crossOnDrag,
 										cursor: modelMarker.cursor,
 										icon: modelMarker.iconUrl || modelMarker.iconMedia,
+										label: modelMarker.iconLabel,
 										opacity: modelMarker.opacity,
-										title: modelMarker.title || modelMarker.tooltip, //TODO remove tooltip (deprecated)
 										visible: modelMarker.visible,
-										zIndex: modelMarker.zIndex
+										zIndex: modelMarker.zIndex,
+										title: modelMarker.title || modelMarker.tooltip //TODO remove tooltip (deprecated)
 									}
+									
 									mapMarkers[m].setOptions(markerOptions);
 								}
 							}
