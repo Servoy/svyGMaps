@@ -93,7 +93,7 @@ $scope.api.addMarker = function(marker, index) {
 	}
 	if ($scope.model.markers.length > 0) {
 		if (index != null) {
-			$scope.model.markers = [].concat($scope.model.markers, markers, $scope.model.markers.splice(index));
+			$scope.model.markers = [].concat($scope.model.markers, marker, $scope.model.markers.splice(index));
 		} else {
 			$scope.model.markers.splice(index, 0, marker);
 		}
