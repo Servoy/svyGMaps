@@ -104,10 +104,30 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
 
 							var totalMeters = 0;
 							var totalSeconds = 0;
-							response.routes[0].legs.forEach(function(routeLeg) {
+							
+							for (var l = 0; l < response.routes[0].legs.length; l++) {
+								var routeLeg = response.routes[0].legs[l];
+								var startMarkerIndex;
+								if (l == 0) {
+									//first leg starts at start marker
+									startMarkerIndex = 0;
+								} else {
+									//subsequent legs start at marker (waypoint + 1)
+									startMarkerIndex = response.routes[0].waypoint_order[l-1] + 1;
+								}
+								var endMarkerIndex;
+								if (l == (response.routes[0].legs.length - 1)) {
+									//last leg ends at end marker
+									endMarkerIndex = $scope.model.markers.length - 1;
+								} else {
+									//prior markers end at marker (waypoint + 1)
+									endMarkerIndex = response.routes[0].waypoint_order[l] + 1;
+								}
 								var leg = {
 									start_address: routeLeg.start_address,
+									start_markerId: $scope.model.markers[startMarkerIndex].markerId,
 									end_address: routeLeg.end_address,
+									end_markerId: $scope.model.markers[endMarkerIndex].markerId,
 									distance: routeLeg.distance.text,
 									distance_meters: routeLeg.distance.value,
 									duration: routeLeg.duration.text,
@@ -116,7 +136,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
 								totalMeters += leg.distance_meters;
 								totalSeconds += leg.duration_seconds;
 								calculatedRoute.legs.push(leg);
-							});
+							}
 
 							calculatedRoute.total_distance = totalMeters;
 							calculatedRoute.total_duration = totalSeconds;

@@ -79,7 +79,9 @@
 		},
 		"leg": {
 			"start_address": 			{ "type": "string" },
+			"start_markerId":			{ "type": "object" },
 	        "end_address": 				{ "type": "string" },
+			"end_markerId":				{ "type": "object" },
 	        "distance": 				{ "type": "string" },
 	        "distance_meters": 			{ "type": "int" },
 	        "duration": 				{ "type": "string" },
