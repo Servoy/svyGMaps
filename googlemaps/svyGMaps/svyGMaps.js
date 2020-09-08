@@ -10,6 +10,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
         link: function($scope, $element, $attrs) {
             var map;
             var mapMarkers;
+            var directionsDisplay;
 
 			$scope.createMap = function() {
 				if (!$scope.googleMapsLoaded == true) {
@@ -290,7 +291,12 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     $log.log('Google Directions enabled, start building route');
                     if (location.length > 1) {
                         var directionsService = new google.maps.DirectionsService;
-                        var directionsDisplay = new google.maps.DirectionsRenderer;
+                        
+                        if (directionsDisplay) {
+                        	directionsDisplay.setMap(null);
+                        }
+                        
+                        directionsDisplay = new google.maps.DirectionsRenderer;
     
                         directionsDisplay.setMap(map);
                         calculateAndDisplayRoute(directionsService, directionsDisplay, location);
@@ -448,7 +454,10 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
 								//remove markers
 								mapMarkers = {};
 								var directionsService = new google.maps.DirectionsService;
-								var directionsDisplay = new google.maps.DirectionsRenderer;
+								if (directionsDisplay) {
+		                        	directionsDisplay.setMap(null);
+		                        }
+								directionsDisplay = new google.maps.DirectionsRenderer;
 
 								directionsDisplay.setMap(map);
 								calculateAndDisplayRoute(directionsService, directionsDisplay, location);
