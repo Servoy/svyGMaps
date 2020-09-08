@@ -11,6 +11,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
             var map;
             var mapMarkers;
             var directionsDisplay;
+            var markersGeocoded = false;
 
 			$scope.createMap = function() {
 				if (!$scope.googleMapsLoaded == true) {
@@ -80,12 +81,12 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 }
 
                 var waypts = [];
-                for (var i = 1; i < (location.length -1); i++) {
-                      waypts.push({
-                        location: new google.maps.LatLng(location[i].lat(), location[i].lng()),
-                        stopover: true
-                      });
-                  }
+				for (var i = 1; i < (location.length - 1); i++) {
+					waypts.push({
+						location: new google.maps.LatLng(location[i].lat(), location[i].lng()),
+						stopover: true
+					});
+				}
 
 				directionsService.route({
 						origin: new google.maps.LatLng(location[0].lat(), location[0].lng()),
@@ -158,17 +159,6 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
             	}
             	
             	var marker = $scope.model.markers[markerIndex];
-            	
-            	//add geocode result to marker
-            	if (!marker.position || !marker.position.lat || !marker.position.lng) {
-            		marker.position = {
-            			lat: location.lat(),
-            			lng: location.lng()
-            		}
-            		if ($scope.handlers.onMarkerGeocoded) {
-            			$scope.handlers.onMarkerGeocoded(marker, createLatLngObj(location));
-            		}
-            	}
             	
             	var markerObj = {
                     position: new google.maps.LatLng(location.lat(), location.lng()),
@@ -419,7 +409,12 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
             
 			$scope.$watch('model.markers', function(newValue, oldValue) {
 					$log.debug('Google Maps Markers changed');
-					if ($scope.googleMapsLoaded == true && !angular.equals(newValue, oldValue)) {
+					if (markersGeocoded) {
+						//prevent a full cycle when the watch only fires because markers have been geocoded
+						markersGeocoded = false;
+						return;
+					}
+					if ($scope.googleMapsLoaded == true && !angular.equals(newValue, oldValue) && !markersGeocoded) {
 						var location = [];
 						for (var i in $scope.model.markers) {
 							var googleMarker = $scope.model.markers[i];
@@ -436,7 +431,17 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
 						}
 						Promise.all(location).then(function(returnVals) {
 							for (var i in returnVals) {
-								location[i] = returnVals[i]
+								location[i] = returnVals[i];
+								var marker = $scope.model.markers[i];
+				            	if (!marker.position || marker.position.lat == null || marker.position.lng == null) {
+				            		//add geocode result to marker		            		
+				            		marker.position = createLatLngObj(location[i]);
+				            		if ($scope.handlers.onMarkerGeocoded) {
+				            			$scope.handlers.onMarkerGeocoded(marker, marker.position);
+				            		}
+				            		//to prevent the watch from firing again only because the geocode result has been added
+				            		markersGeocoded = true;
+				            	}
 							}
 						}).then(function() {
 							//update markers and clear removed markers
