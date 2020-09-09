@@ -174,7 +174,8 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
 					markerId: marker.markerId || ('marker-' + markerIndex),
 					markerIndex: markerIndex,
 					icon: marker.iconUrl || marker.iconMedia,
-					label: marker.iconLabel
+					label: marker.iconLabel,
+					cursor: marker.cursor
                 }
 
                 var gMarker = new google.maps.Marker(markerObj)
@@ -461,6 +462,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
 									var markerOptions = {
 										animation: modelMarker.animation ? google.maps.Animation[modelMarker.animation.toUpperCase()] : null,
 										clickable: modelMarker.clickable,
+										draggable: modelMarker.draggable,
 										crossOnDrag: modelMarker.crossOnDrag,
 										cursor: modelMarker.cursor,
 										icon: modelMarker.iconUrl || modelMarker.iconMedia,
@@ -470,6 +472,14 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
 										zIndex: modelMarker.zIndex,
 										title: modelMarker.title || modelMarker.tooltip //TODO remove tooltip (deprecated)
 									}
+									
+									if (modelMarker.position != null) {
+										mapMarkers[m].setPosition(modelMarker.position);
+									} else if (modelMarker.latitude != null && modelMarker.longitude != null) {
+										//TODO remove support for deprecated latitude/longitude properties
+										mapMarkers[m].setPosition(new google.maps.LatLng(modelMarker.latitude, modelMarker.longitude));
+									}
+									
 									
 									mapMarkers[m].setOptions(markerOptions);
 								}
