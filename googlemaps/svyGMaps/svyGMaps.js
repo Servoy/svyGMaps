@@ -32,7 +32,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
 					if (googleMarker.position != null) {
 						location.push(new google.maps.LatLng(googleMarker.position.lat, googleMarker.position.lng));
 					} else if (googleMarker.latitude != null && googleMarker.longitude != null) {
-						//to support deprecated latitude/longitude properties
+						//TODO remove support for deprecated latitude/longitude properties
 						location.push(new google.maps.LatLng(googleMarker.latitude, googleMarker.longitude));
 					} else if (googleMarker.addressDataprovider || googleMarker.addressString) {
 						location.push($scope.getLatLng(googleMarker.addressDataprovider || googleMarker.addressString));
@@ -202,7 +202,14 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
             					break;
             				}
             			}
-                        $scope.handlers.onMarkerEvent(jsEvent, index, jsEvent.data && jsEvent.data.latLng ? jsEvent.data.latLng : null);
+            			if (eventType == 'dragend' && jsEvent.data.latLng) {
+            				//marker position changed
+            				$scope.model.markers[index].position = jsEvent.data.latLng;
+            				//apply changes before calling the handler
+            				$scope.svyServoyapi.apply('markers');
+            			}
+            			
+            			$scope.handlers.onMarkerEvent(jsEvent, index, jsEvent.data && jsEvent.data.latLng ? jsEvent.data.latLng : null);
                     });
                 }
                 
@@ -424,7 +431,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
 							} else if (googleMarker.position != null) {
 								location.push(new google.maps.LatLng(googleMarker.position.lat, googleMarker.position.lng));
 							} else if (googleMarker.latitude != null && googleMarker.longitude != null) {
-								//support for deprecated properties latitude/longitude
+								//TODO remove support for deprecated properties latitude/longitude
 								location.push(new google.maps.LatLng(googleMarker.latitude, googleMarker.longitude));
 							} else if (googleMarker.addressDataprovider || googleMarker.addressString) {
 								location.push($scope.getLatLng(googleMarker.addressDataprovider || googleMarker.addressString));
