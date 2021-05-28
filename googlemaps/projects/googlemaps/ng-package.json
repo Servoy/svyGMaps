@@ -1,0 +1,18 @@
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/servoy/googlemaps",
+     "assets": [
+        "svygmaps.css"
+    ],
+  "lib": {
+    "entryFile": "src/public-api.ts",
+    "umdId": "servoy.googlemaps",
+    "umdModuleIds": {
+      "@servoy/public": "servoy.public",
+      "@angular/core": "angular.core",
+      "@googlemaps/markerclustererplus": "googlemaps.markerclustererplus",
+      "@types/google.maps": "types.google.maps"
+    }
+  },
+  "allowedNonPeerDependencies": ["@googlemaps/markerclustererplus", "@types/google.maps"]
+}

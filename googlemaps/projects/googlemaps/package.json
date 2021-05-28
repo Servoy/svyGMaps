@@ -1,0 +1,21 @@
+{
+  "name": "@servoy/googlemaps",
+  "version": "2.2.0",
+  "peerDependencies": {
+    "@angular/animations": ">=12",
+    "@angular/cdk": ">=12",
+    "@angular/common": ">=12",
+    "@angular/core": ">=12",
+    "@angular/forms": ">=12"
+  },
+  "dependencies": {
+   "@googlemaps/markerclustererplus": "^1.1.2",
+   "@types/google.maps": "^3.44.4",
+    "tslib": "*"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Servoy/svyGMaps.git"
+  }
+}

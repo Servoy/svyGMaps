@@ -1,4 +1,8 @@
 Manifest-Version: 1.0
+NG2-CSS-ClientLibs: ~@servoy/googlemaps/svygmaps.css
+NPM-PackageName: @servoy/googlemaps
+NG2-Module: GoogleMapsModule
+Entry-Point: dist/servoy/googlemaps
 Bundle-SymbolicName: googlemaps
 Bundle-Name: googlemaps
 Bundle-Version: 2.2.0
