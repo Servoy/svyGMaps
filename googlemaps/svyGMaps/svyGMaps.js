@@ -291,7 +291,12 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                 	return loc != null;
                 })
 
-                var mapOptions = {
+				var mapOptions = {};
+				if($scope.model.options) {
+					Object.assign(mapOptions, $scope.model.options);
+				}
+
+                Object.assign(mapOptions, {
                     center: (location.length == 1 ? new google.maps.LatLng(location[0].lat(), location[0].lng()) : new google.maps.LatLng(0, 0)),
                     zoom: $scope.model.zoomLevel === null || $scope.model.zoomLevel === undefined ? 7 : $scope.model.zoomLevel,
                     zoomControl: $scope.model.zoomControl,
@@ -300,7 +305,7 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                     fullscreenControl: $scope.model.fullscreenControl,
                     mapTypeId: google.maps.MapTypeId[$scope.model.mapType],
                     gestureHandling: $scope.model.gestureHandling
-                }
+                });
 
                 map = new google.maps.Map($element[0], mapOptions);
                 
@@ -547,6 +552,12 @@ angular.module('googlemapsSvyGMaps', ['servoy']).directive('googlemapsSvyGMaps',
                         kmlLayer.setMap(null);
                     }
                 }
+            });
+
+            $scope.$watch('model.options', function(newValue) {
+				if(map) {
+					map.setOptions(newValue);
+				}
             });
 
         },

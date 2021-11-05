@@ -138,3 +138,12 @@ $scope.api.addMarkers = function(markers, index) {
 $scope.api.newMarkers = function(newMarkers, index) {
 	return $scope.api.addMarkers(newMarkers, index);
 }
+
+/**
+ * Set Google Maps options. See here: https://developers.google.com/maps/documentation/javascript/reference/map#MapOptions
+ * the list of available options.
+ * @param {Object} options
+ */
+$scope.api.setOptions = function(options) {
+	$scope.model.options = options;
+}

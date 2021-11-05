@@ -18,6 +18,7 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
     @Input() mapType: string;
     @Input() mapTypeControl: boolean;
     @Input() markerEvents: Array<string>;
+    @Input() options: any;
 
     @Input() markers: Array<Marker>;
     @Output() markersChange = new EventEmitter();
@@ -194,7 +195,9 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
                 }
             }
         }
-
+        if (changes['options'] && this.map) {
+            this.map.setOptions(this.options);
+        }
     }
 
     createMap() {
@@ -463,7 +466,12 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
             return loc != null;
         })
 
-        var mapOptions = {
+        let mapOptions = {};
+        if(this.options) {
+            Object.assign(mapOptions, this.options);
+        }
+
+        Object.assign(mapOptions, {
             center: (location.length == 1 ? new google.maps.LatLng(location[0].lat(), location[0].lng()) : new google.maps.LatLng(0, 0)),
             zoom: this.zoomLevel === null || this.zoomLevel === undefined ? 7 : this.zoomLevel,
             zoomControl: this.zoomControl,
@@ -472,7 +480,7 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
             fullscreenControl: this.fullscreenControl,
             mapTypeId: google.maps.MapTypeId[this.mapType],
             gestureHandling: this.gestureHandling
-        }
+        });
 
         this.map = new google.maps.Map(this.getNativeElement(), mapOptions);
 
