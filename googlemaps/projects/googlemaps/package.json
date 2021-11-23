@@ -2,15 +2,15 @@
   "name": "@servoy/googlemaps",
   "version": "2.3.0",
   "peerDependencies": {
-    "@angular/animations": ">=12",
-    "@angular/cdk": ">=12",
-    "@angular/common": ">=12",
-    "@angular/core": ">=12",
-    "@angular/forms": ">=12"
+    "@angular/animations": "^13",
+    "@angular/cdk": "^13",
+    "@angular/common": "^13",
+    "@angular/core": "^13",
+    "@angular/forms": "^13"
   },
   "dependencies": {
-   "@googlemaps/markerclustererplus": "^1.1.2",
-   "@types/google.maps": "^3.44.4",
+   "@googlemaps/markerclustererplus": "^1",
+   "@types/google.maps": "^3",
     "tslib": "*"
   },
   "license": "MIT",
