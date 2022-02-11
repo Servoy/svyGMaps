@@ -1,6 +1,6 @@
 {
   "name": "@servoy/googlemaps",
-  "version": "2.3.2",
+  "version": "2022.3.0",
   "peerDependencies": {
     "@angular/animations": "^13",
     "@angular/cdk": "^13",
