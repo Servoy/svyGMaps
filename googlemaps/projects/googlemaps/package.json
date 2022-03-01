@@ -9,8 +9,8 @@
     "@angular/forms": "^13"
   },
   "dependencies": {
-   "@googlemaps/markerclustererplus": "^1",
-   "@types/google.maps": "^3",
+   "@googlemaps/markerclustererplus": "<2",
+   "@types/google.maps": "<4",
     "tslib": "*"
   },
   "license": "MIT",
