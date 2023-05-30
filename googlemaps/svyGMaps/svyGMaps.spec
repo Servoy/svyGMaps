@@ -5,6 +5,7 @@
 	"version": 1,
     "icon": "googlemaps/svyGMaps/icon.png",
     "definition": "googlemaps/svyGMaps/svyGMaps.js",
+    "doc": "googlemaps/svyGMaps/svyGMaps_doc.js",
     "serverscript" : "googlemaps/svyGMaps/svyGMaps_server.js",
 	"libraries": [
                     {"name":"svyGMaps.css", "version":"1", "url":"googlemaps/svyGMaps/svyGMaps.css", "mimetype":"text/css"},
