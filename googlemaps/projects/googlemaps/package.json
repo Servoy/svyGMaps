@@ -1,10 +1,10 @@
 {
   "name": "@servoy/googlemaps",
-  "version": "2023.3.0",
+  "version": "2023.9.0",
   "peerDependencies": {
-    "@angular/common": "^15",
-    "@angular/core": "^15",
-    "@angular/forms": "^15"
+    "@angular/common": "^16",
+    "@angular/core": "^16",
+    "@angular/forms": "^16"
   },
   "dependencies": {
    "@googlemaps/markerclustererplus": "<2",
