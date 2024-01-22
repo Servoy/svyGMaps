@@ -3,7 +3,7 @@
     "displayName":"Google Maps",
     "packageType": "Web-Component",
     "icon": "https://github.com/Servoy/svyGMaps/raw/master/icon.png",
-    "description": "A component for viewing Google Maps in Servoy's NGClient",
+    "description": "A component for viewing Google Maps in Servoy's NG & Titanium Clients.",
     "wikiUrl": "https://github.com/Servoy/svyGMaps/wiki",
     "sourceUrl" : "https://github.com/Servoy/svyGMaps",
     "releases" : [
