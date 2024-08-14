@@ -46,7 +46,7 @@ var zoomLevel = 7;
  *
  * @properties={typeid:35,uuid:"22536E35-B972-4B7D-B562-7A1A14499C46"}
  */
-var CREATED_FROM_RECORD = 'createdFromRecord'
+var CREATED_FROM_RECORD = 'createdFromRecord';
 
 /**
  * @type {String}

@@ -1,0 +1,10 @@
+addEmptyValue:1,
+customProperties:"lazyLoading:false",
+dataProviderID1:"contactname",
+dataSource:"db:/example_data/customers",
+name:"contactCustomers",
+returnDataProviders:1,
+showDataProviders:1,
+typeid:34,
+uuid:"0A6FD23C-4DB0-470F-8B98-ADA11E31137F",
+valueListType:1

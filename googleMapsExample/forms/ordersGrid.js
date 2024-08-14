@@ -1,4 +1,3 @@
-
 /**
  * Handle record selected.
  *

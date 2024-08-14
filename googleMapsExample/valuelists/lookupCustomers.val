@@ -1,0 +1,10 @@
+dataProviderID1:"customerid",
+dataProviderID2:"companyname",
+dataSource:"db:/example_data/customers",
+name:"lookupCustomers",
+returnDataProviders:1,
+showDataProviders:2,
+sortOptions:"companyname asc",
+typeid:34,
+uuid:"AA351274-9032-481B-A0DB-21C7E8831877",
+valueListType:1

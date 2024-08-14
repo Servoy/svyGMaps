@@ -1,0 +1,10 @@
+allowCreationRelatedRecords:true,
+foreignDataSource:"db:/example_data/products",
+items:[
+{foreignColumnName:"discontinued",operator:5,primaryDataProviderID:"LITERAL:-1",typeid:23,uuid:"74BBC296-1BF7-41B6-9BFD-AC4CCBA04900"}
+],
+joinType:1,
+name:"products$active",
+primaryDataSource:"db:/example_data/products",
+typeid:22,
+uuid:"E79A3F41-B413-4A1E-AFB0-C49F2CBFB533"

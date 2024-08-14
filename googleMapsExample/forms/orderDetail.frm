@@ -126,6 +126,7 @@ zoomLevel:"zoomLevel"
 location:"20,290",
 name:"map",
 size:"534,322",
+styleClass:"tabpanel-border",
 typeName:"googlemaps-svy-G-Maps",
 typeid:47,
 uuid:"39852305-1923-42D7-B6EC-91B05C6A3493"

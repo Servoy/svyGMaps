@@ -1,0 +1,12 @@
+addEmptyValue:1,
+dataProviderID1:"productname",
+dataProviderID2:"productid",
+fallbackValueListID:"1F460D44-8F26-41CC-9B41-7843677D3B6F",
+name:"products$active",
+relationName:"products$active",
+returnDataProviders:2,
+showDataProviders:1,
+sortOptions:"productname asc",
+typeid:34,
+uuid:"2D1339B1-03AF-4242-A2C0-F11F1577BCBD",
+valueListType:1
