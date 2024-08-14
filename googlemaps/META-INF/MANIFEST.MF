@@ -5,7 +5,7 @@ NG2-Module: GoogleMapsModule
 Entry-Point: dist/servoy/googlemaps
 Bundle-SymbolicName: googlemaps
 Bundle-Name: googlemaps
-Bundle-Version: 2023.9.0
+Bundle-Version: 2024.3.0
 Package-Type: Web-Component
 
 Name: svyGMaps/svyGMaps.spec

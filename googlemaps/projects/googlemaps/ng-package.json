@@ -7,5 +7,5 @@
   "lib": {
     "entryFile": "src/public-api.ts"
   },
-  "allowedNonPeerDependencies": ["@googlemaps/markerclustererplus", "@types/google.maps"]
+  "allowedNonPeerDependencies": ["@googlemaps/markerclusterer", "@types/google.maps","@types/supercluster"]
 }

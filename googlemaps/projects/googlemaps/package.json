@@ -1,15 +1,16 @@
 {
   "name": "@servoy/googlemaps",
-  "version": "2023.9.0",
+  "version": "2024.3.0",
   "peerDependencies": {
-    "@angular/common": "^16",
-    "@angular/core": "^16",
-    "@angular/forms": "^16"
+    "@angular/common": "^17",
+    "@angular/core": "^17",
+    "@angular/forms": "^17"
   },
   "dependencies": {
-   "@googlemaps/markerclustererplus": "<2",
+   "@googlemaps/markerclusterer": "<2.6",
    "@types/google.maps": "<4",
-    "tslib": "*"
+   "@types/supercluster": "<7.2",
+   "tslib": "*"
   },
   "license": "MIT",
   "repository": {

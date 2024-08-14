@@ -1,7 +1,8 @@
 import { Component, SimpleChanges, Input, Renderer2, ChangeDetectorRef, Output, EventEmitter, Inject } from '@angular/core';
-import MarkerClusterer from '@googlemaps/markerclustererplus';
-import { ServoyBaseComponent, BaseCustomObject, ServoyPublicService, LoggerFactory, LoggerService, JSEvent, EventLike, WindowRefService } from '@servoy/public';
+import { MarkerClusterer} from "@googlemaps/markerclusterer";
+import { ServoyBaseComponent, ServoyPublicService, LoggerFactory, LoggerService, JSEvent, EventLike, WindowRefService } from '@servoy/public';
 import { DOCUMENT } from '@angular/common';
+
 
 @Component({
     selector: 'googlemaps-svy-G-Maps',
@@ -377,7 +378,8 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
                 ((eventType) => {
                     gMarker.addListener(eventType, (evt) => {
                         var jsEvent = this.createJSEvent(evt, eventType);
-                        jsEvent.data.marker = marker;
+                        var data = jsEvent.data as { marker: Marker, latLng: LatitudeLongitude}
+                        data.marker = marker;
                         var index = -1;
                         for (var i = 0; i < this.markers.length; i++) {
                             if (this.markers[i].markerId == marker.markerId) {
@@ -385,14 +387,14 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
                                 break;
                             }
                         }
-                        if (eventType == 'dragend' && jsEvent.data.latLng) {
+                        if (eventType == 'dragend' && data.latLng) {
                             //marker position changed
-                            this.markers[index].position = jsEvent.data.latLng;
+                            this.markers[index].position = data.latLng;
                             //apply changes before calling the handler
                             this.markersChange.emit(this.markers);
                         }
 
-                        this.onMarkerEvent(jsEvent, index, jsEvent.data && jsEvent.data.latLng ? jsEvent.data.latLng : null);
+                        this.onMarkerEvent(jsEvent, index, data && data.latLng ? data.latLng : null);
                     });
                 })(eventType);
             }
@@ -502,7 +504,7 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
                 this.log.error('Google maps directions needs a minimum of 2 locations')
             }
         } else {
-            this.mapMarkers = new Map();;
+            this.mapMarkers = new Map();
             let markers = location.map((loc, i) => {
                 return this.createMarker(loc, i);
             });
@@ -513,7 +515,8 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
                     ((eventType) => {
                         this.map.addListener(eventType, (evt) => {
                             var jsEvent = this.createJSEvent(evt, eventType);
-                            this.onMapEvent(jsEvent, jsEvent.data && jsEvent.data.latLng ? jsEvent.data.latLng : null);
+                            var data = jsEvent.data as { latLng: LatitudeLongitude};
+                            this.onMapEvent(jsEvent, jsEvent.data && data.latLng ? data.latLng : null);
                         })
                     })(eventType)
                 }
@@ -521,7 +524,9 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
 
             if (this.useGoogleMapCluster == true) {
                 this.log.info('Google Map Clusterview enabled');
-                new MarkerClusterer(this.map, markers, { imagePath: 'googlemaps/svyGMaps/libs/images/m' });
+                
+                const markerClusterer = new MarkerClusterer({ map: this.map, markers}); //  { imagePath: 'googlemaps/svyGMaps/libs/images/m' }
+//                markerClusterer.
             }
 
             if (location.length > 1) {
@@ -647,7 +652,7 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
 
 }
 
-export class Marker extends BaseCustomObject {
+export class Marker {
     addressDataprovider: any;
     addressString: string;
     cursor: string;
