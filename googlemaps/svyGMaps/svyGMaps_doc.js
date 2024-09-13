@@ -1,7 +1,7 @@
 /**
  * Remove all google markers
  * @example %%prefix%%%%elementName%%.removeAllMarkers();
- * @returns {Boolean}
+ * @return {Boolean}
  */
 function removeAllMarkers() {
 }
@@ -10,7 +10,7 @@ function removeAllMarkers() {
  * Remove google marker at given index
  * @example %%prefix%%%%elementName%%.removeMarker(index);
  * @param {Number} index
- * @returns {Boolean}
+ * @return {Boolean}
  */
 function removeMarker(index) {
 }
@@ -75,7 +75,7 @@ function newMarkers(newMarkers, index) {
 }
 
 /**
- * Set Google Maps options. See here: https://developers.google.com/maps/documentation/javascript/reference/map#MapOptions
+ * Set Google Maps options. See here: <a href="https://developers.google.com/maps/documentation/javascript/reference/map#MapOptions">https://developers.google.com/maps/documentation/javascript/reference/map#MapOptions</a>
  * the list of available options.
  * @param {Object} options
  */
@@ -85,7 +85,7 @@ function setOptions(options) {
 /**
  * Refresh google maps
  * @example %%prefix%%%%elementName%%.refresh();
- * @returns {Boolean}
+ * @return {Boolean}
  */
 function refresh() {
 }
@@ -93,7 +93,7 @@ function refresh() {
 /**
  * Center google maps at the given address
  * @example %%prefix%%%%elementName%%.centerAtAddress(address);
- * @returns {Boolean}
+ * @return {Boolean}
  */
 function centerAtAddress(address) {
 }
@@ -101,7 +101,7 @@ function centerAtAddress(address) {
  /**
  * Center google maps at LatLng
  * @example %%prefix%%%%elementName%%.centerAtLatLng(lat, lng);
- * @returns {Boolean}
+ * @return {Boolean}
  */
 function centerAtLatLng(lat, lng) {
 }
