@@ -1,12 +1,12 @@
 /* Map Component */
-googlemaps-svy-g-maps {
+.svy-wrapper > googlemaps-svy-g-maps {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
 }
-.svy-google-maps
+.svy-wrapper > .svy-google-maps
 {
     position : absolute;
     left: 0;

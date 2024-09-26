@@ -20,6 +20,7 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
     @Input() mapTypeControl: boolean;
     @Input() markerEvents: Array<string>;
     @Input() options: any;
+	@Input() responsiveHeight: number;
 
     @Input() markers: Array<Marker>;
     @Output() markersChange = new EventEmitter();
@@ -63,7 +64,9 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         } else {
             //set an interval to wait for apiKey dataprovider to be binded before trying to load google's api.
             this.getScriptInt = this.windowRefService.nativeWindow.setInterval(() => {
-                if (!this.apiKey) {
+				if (!this.apiKey && this.servoyApi.isInDesigner()) {
+					this.showErrMessage(true);
+				} else if (!this.apiKey) {
                     this.showErrMessage();
                     this.unloadScript();
                 } else {
@@ -72,6 +75,7 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
                 }
             });
         }
+		this.setHeight();
     }
 
 
@@ -199,6 +203,9 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         if (changes['options'] && this.map) {
             this.map.setOptions(this.options);
         }
+		if (changes['responsiveHeight']) {
+			this.setHeight();
+		}
     }
 
     createMap() {
@@ -576,10 +583,15 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         }
     }
     //show error message indicating API key not yet loaded.
-    showErrMessage() {
-        try {
-            this.getNativeElement().innerHTML = '<h2> : ( NO API KEY LOADED YET... </h2>'
-        } catch (e) { }
+    showErrMessage(isDesignerMode?: boolean) {
+		let message = '<h2> : ( NO API KEY LOADED YET... </h2>';
+        if (isDesignerMode) {
+			message = '<h2> Google maps in designer mode. </h2>';
+		}
+		
+		if (this.getNativeElement().innerHTML !== message) {
+			this.getNativeElement().innerHTML = message;
+		}
     }
 
     initMap() {
@@ -649,6 +661,18 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         d.setTime(d.getTime() + ms);
         while (new Date().getTime() < d.getTime()) { }
     }
+	
+	setHeight() {
+		if (!this.servoyApi.isInAbsoluteLayout()) {
+			if (this.responsiveHeight) {
+				this.getNativeElement().style.height = this.responsiveHeight + 'px';
+			} else {
+				// when responsive height is 0 or undefined, use 100% of the parent container.
+				this.getNativeElement().style.height = '100%';
+			}
+		}
+	}
+
 
 }
 
