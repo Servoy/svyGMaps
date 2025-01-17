@@ -6,7 +6,8 @@ import { DOCUMENT } from '@angular/common';
 
 @Component({
     selector: 'googlemaps-svy-G-Maps',
-    templateUrl: './svygmaps.html'
+    templateUrl: './svygmaps.html',
+    standalone: false
 })
 export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
     @Input() addressTitle: any;
