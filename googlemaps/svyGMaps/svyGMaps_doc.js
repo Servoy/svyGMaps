@@ -1,3 +1,69 @@
+var markers;
+
+var apiKey;
+
+var zoomLevel;
+
+var mapTypeControl;
+
+var zoomControl;
+
+var streetViewControl;
+
+var fullscreenControl;
+
+var mapType;
+
+var useGoogleMapCluster;
+
+var useGoogleMapDirections;
+
+var styleClass;
+
+var gestureHandling;
+
+var directionsSettings;
+
+var KmlLayerURL;
+
+var mapEvents;
+
+var markerEvents;
+
+var visible;
+
+/**
+ * GMaps height to be set in a responsive form. When responsiveHeight is set to 0, the component will use 100% height of the parent container
+ */
+var responsiveHeight;
+
+
+var handlers = {
+    /**
+     * @param {CustomType<googlemaps-svy-G-Maps.routeResult>} routeDetails
+     */
+    onRouteChanged: function() {},
+
+    /**
+     * @param {JSEvent} event
+     * @param {Number} markerIndex
+     * @param {CustomType<googlemaps-svy-G-Maps.latLng>} [latLng]
+     */
+    onMarkerEvent: function() {},
+
+    /**
+     * @param {JSEvent} event
+     * @param {CustomType<googlemaps-svy-G-Maps.latLng>} [latLng]
+     */
+    onMapEvent: function() {},
+
+    /**
+     * @param {CustomType<googlemaps-svy-G-Maps.marker>} marker
+     * @param {CustomType<googlemaps-svy-G-Maps.latLng>} latLng
+     */
+    onMarkerGeocoded: function() {}
+};
+
 /**
  * Remove all google markers
  * @example %%prefix%%%%elementName%%.removeAllMarkers();
