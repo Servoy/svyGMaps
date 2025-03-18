@@ -199,3 +199,119 @@ function getCenter() {
  */
 function fitBounds(bounds) {
 }            
+
+
+var svy_types = {
+
+    marker: {
+
+        addressDataprovider : null,
+
+        addressString : null,
+
+        cursor : null,
+
+        latitude : null,
+
+        longitude : null,
+
+        position : null,
+
+        iconLabel : null,
+
+        tooltip : null,
+
+        title : null,
+
+        iconUrl : null,
+
+        iconMedia : null,
+
+        infoWindowString : null,
+
+        drawRadius : null,
+
+        radiusMeters : null,
+
+        radiusColor : null,
+
+        draggable : null,
+
+        animation : null,
+
+        clickable : null,
+
+        crossOnDrag : null,
+
+        opacity : null,
+
+        visible : null,
+
+        zIndex : null,
+
+        markerId : null,
+
+        userObject : null,
+
+    },
+
+    routeSettings: {
+
+        optimize : null,
+
+        travelMode : null,
+
+        avoidFerries : null,
+
+        avoidHighways : null,
+
+        avoidTolls : null,
+
+    },
+
+    latLng: {
+
+        lat : null,
+
+        lng : null,
+
+    },
+
+    latLngBounds: {
+
+        sw : null,
+
+        ne : null,
+
+    },
+
+    routeResult: {
+
+        legs : null,
+
+        total_distance : null,
+
+        total_duration : null,
+
+    },
+
+    leg: {
+
+        start_address : null,
+
+        start_markerId : null,
+
+        end_address : null,
+
+        end_markerId : null,
+
+        distance : null,
+
+        distance_meters : null,
+
+        duration : null,
+
+        duration_seconds : null,
+
+    }
+}
