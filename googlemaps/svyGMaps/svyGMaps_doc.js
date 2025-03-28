@@ -1,35 +1,90 @@
+/**
+ * A Servoy Extra Component that wraps Google Maps functionality.
+ */
+
+/**
+ * Array of marker objects displayed on the map.
+ */
 var markers;
 
+/**
+ * API key for accessing Google Maps services.
+ */
 var apiKey;
 
+/**
+ * Data provider for setting the initial zoom level of the map.
+ */
 var zoomLevel;
 
+/**
+ * Flag indicating whether the map type control is displayed.
+ */
 var mapTypeControl;
 
+/**
+ * Flag indicating whether the zoom control is displayed.
+ */
 var zoomControl;
 
+/**
+ * Flag indicating whether the street view control is displayed.
+ */
 var streetViewControl;
 
+/**
+ * Flag indicating whether the fullscreen control is displayed.
+ */
 var fullscreenControl;
 
+/**
+ * The map type to display. Possible values include "ROADMAP", "SATELLITE", "HYBRID", and "TERRAIN".
+ */
 var mapType;
 
+/**
+ * Flag indicating whether Google Map clustering is enabled.
+ */
 var useGoogleMapCluster;
 
+/**
+ * Flag indicating whether Google Map directions are enabled.
+ */
 var useGoogleMapDirections;
 
+/**
+ * CSS style classes applied to the Google Maps component.
+ */
 var styleClass;
 
+/**
+ * Specifies how gesture handling is configured for the map.
+ */
 var gestureHandling;
 
+/**
+ * Configuration settings for directions functionality.
+ */
 var directionsSettings;
 
+/**
+ * URL of a KML Layer to overlay on the map.
+ */
 var KmlLayerURL;
 
+/**
+ * Configuration for map events.
+ */
 var mapEvents;
 
+/**
+ * Configuration for marker events.
+ */
 var markerEvents;
 
+/**
+ * Flag indicating whether the Google Maps component is visible.
+ */
 var visible;
 
 /**
@@ -40,26 +95,34 @@ var responsiveHeight;
 
 var handlers = {
     /**
-     * @param {CustomType<googlemaps-svy-G-Maps.routeResult>} routeDetails
+     * Called when the route on the map changes.
+     *
+     * @param {CustomType<googlemaps-svy-G-Maps.routeResult>} routeDetails The route result details.
      */
     onRouteChanged: function() {},
 
     /**
-     * @param {JSEvent} event
-     * @param {Number} markerIndex
-     * @param {CustomType<googlemaps-svy-G-Maps.latLng>} [latLng]
+     * Called when a marker event occurs.
+     *
+     * @param {JSEvent} event The event object associated with the marker event.
+     * @param {Number} markerIndex The index of the marker for which the event occurred.
+     * @param {CustomType<googlemaps-svy-G-Maps.latLng>} [latLng] The latitude/longitude coordinates associated with the event (optional).
      */
     onMarkerEvent: function() {},
 
     /**
-     * @param {JSEvent} event
-     * @param {CustomType<googlemaps-svy-G-Maps.latLng>} [latLng]
+     * Called when a map event occurs.
+     *
+     * @param {JSEvent} event The event object associated with the map event.
+     * @param {CustomType<googlemaps-svy-G-Maps.latLng>} [latLng] The latitude/longitude coordinates associated with the event (optional).
      */
     onMapEvent: function() {},
 
     /**
-     * @param {CustomType<googlemaps-svy-G-Maps.marker>} marker
-     * @param {CustomType<googlemaps-svy-G-Maps.latLng>} latLng
+     * Called when a marker is geocoded.
+     *
+     * @param {CustomType<googlemaps-svy-G-Maps.marker>} marker The marker that was geocoded.
+     * @param {CustomType<googlemaps-svy-G-Maps.latLng>} latLng The latitude/longitude coordinates of the geocoded marker.
      */
     onMarkerGeocoded: function() {}
 };
@@ -203,115 +266,215 @@ function fitBounds(bounds) {
 
 var svy_types = {
 
+    /**
+     * Represents a marker on the Google Map.
+     */
     marker: {
-
-        addressDataprovider : null,
-
-        addressString : null,
-
-        cursor : null,
-
-        latitude : null,
-
-        longitude : null,
-
-        position : null,
-
-        iconLabel : null,
-
-        tooltip : null,
-
-        title : null,
-
-        iconUrl : null,
-
-        iconMedia : null,
-
-        infoWindowString : null,
-
-        drawRadius : null,
-
-        radiusMeters : null,
-
-        radiusColor : null,
-
-        draggable : null,
-
-        animation : null,
-
-        clickable : null,
-
-        crossOnDrag : null,
-
-        opacity : null,
-
-        visible : null,
-
-        zIndex : null,
-
-        markerId : null,
-
-        userObject : null,
-
+        /**
+         * Data provider for the marker's address.
+         */
+        addressDataprovider: null,
+        /**
+         * The address string of the marker.
+         */
+        addressString: null,
+        /**
+         * Cursor style when hovering over the marker.
+         */
+        cursor: null,
+        /**
+         * Latitude of the marker (deprecated; use position instead).
+         */
+        latitude: null,
+        /**
+         * Longitude of the marker (deprecated; use position instead).
+         */
+        longitude: null,
+        /**
+         * The position of the marker as a latLng object.
+         */
+        position: null,
+        /**
+         * Label text for the marker's icon.
+         */
+        iconLabel: null,
+        /**
+         * Tooltip text for the marker (deprecated; use title instead).
+         */
+        tooltip: null,
+        /**
+         * Title of the marker.
+         */
+        title: null,
+        /**
+         * URL for the marker's icon image.
+         */
+        iconUrl: null,
+        /**
+         * Media object for the marker's icon.
+         */
+        iconMedia: null,
+        /**
+         * HTML content for the marker's info window.
+         */
+        infoWindowString: null,
+        /**
+         * Flag indicating whether to draw a radius around the marker.
+         */
+        drawRadius: null,
+        /**
+         * The radius in meters for drawing around the marker.
+         */
+        radiusMeters: null,
+        /**
+         * The color of the radius drawn around the marker.
+         */
+        radiusColor: null,
+        /**
+         * Flag indicating whether the marker is draggable.
+         */
+        draggable: null,
+        /**
+         * The animation applied to the marker (e.g. BOUNCE or DROP).
+         */
+        animation: null,
+        /**
+         * Flag indicating whether the marker is clickable.
+         */
+        clickable: null,
+        /**
+         * Flag indicating whether a cross is shown while dragging.
+         */
+        crossOnDrag: null,
+        /**
+         * The opacity of the marker.
+         */
+        opacity: null,
+        /**
+         * Flag indicating whether the marker is visible.
+         */
+        visible: null,
+        /**
+         * The z-index of the marker.
+         */
+        zIndex: null,
+        /**
+         * Unique identifier for the marker.
+         */
+        markerId: null,
+        /**
+         * User-defined object associated with the marker.
+         */
+        userObject: null,
     },
 
+    /**
+     * Represents settings for routing and directions on the map.
+     */
     routeSettings: {
-
-        optimize : null,
-
-        travelMode : null,
-
-        avoidFerries : null,
-
-        avoidHighways : null,
-
-        avoidTolls : null,
-
+        /**
+         * Flag indicating whether route optimization is enabled.
+         */
+        optimize: null,
+        /**
+         * The travel mode for the route (e.g. driving, walking, bicycling, transit).
+         */
+        travelMode: null,
+        /**
+         * Flag indicating whether to avoid ferries in route calculations.
+         */
+        avoidFerries: null,
+        /**
+         * Flag indicating whether to avoid highways in route calculations.
+         */
+        avoidHighways: null,
+        /**
+         * Flag indicating whether to avoid tolls in route calculations.
+         */
+        avoidTolls: null,
     },
 
+    /**
+     * Represents a latitude/longitude coordinate.
+     */
     latLng: {
-
-        lat : null,
-
-        lng : null,
-
+        /**
+         * The latitude value.
+         */
+        lat: null,
+        /**
+         * The longitude value.
+         */
+        lng: null,
     },
 
+    /**
+     * Represents the bounds of the map as a rectangle defined by southwest and northeast coordinates.
+     */
     latLngBounds: {
-
-        sw : null,
-
-        ne : null,
-
+        /**
+         * The southwest coordinate.
+         */
+        sw: null,
+        /**
+         * The northeast coordinate.
+         */
+        ne: null,
     },
 
+    /**
+     * Represents the result of a route calculation.
+     */
     routeResult: {
-
-        legs : null,
-
-        total_distance : null,
-
-        total_duration : null,
-
+        /**
+         * An array of legs representing segments of the route.
+         */
+        legs: null,
+        /**
+         * The total distance of the route.
+         */
+        total_distance: null,
+        /**
+         * The total duration of the route.
+         */
+        total_duration: null,
     },
 
+    /**
+     * Represents a segment (leg) of a route.
+     */
     leg: {
-
-        start_address : null,
-
-        start_markerId : null,
-
-        end_address : null,
-
-        end_markerId : null,
-
-        distance : null,
-
-        distance_meters : null,
-
-        duration : null,
-
-        duration_seconds : null,
-
+        /**
+         * The starting address of the leg.
+         */
+        start_address: null,
+        /**
+         * The markerId of the starting marker.
+         */
+        start_markerId: null,
+        /**
+         * The ending address of the leg.
+         */
+        end_address: null,
+        /**
+         * The markerId of the ending marker.
+         */
+        end_markerId: null,
+        /**
+         * The distance of the leg as a formatted string.
+         */
+        distance: null,
+        /**
+         * The distance of the leg in meters.
+         */
+        distance_meters: null,
+        /**
+         * The duration of the leg as a formatted string.
+         */
+        duration: null,
+        /**
+         * The duration of the leg in seconds.
+         */
+        duration_seconds: null,
     }
 }
