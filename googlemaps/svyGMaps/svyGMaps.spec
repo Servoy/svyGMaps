@@ -15,6 +15,7 @@
 	{
         "markers": 					{ "type":"marker[]", "pushToServer": "shallow", "default": [], "tags": { "scope" :"design" }},
         "apiKey": 					{ "type": "dataprovider" },
+        "mapID": 					{ "type": "dataprovider" },
         "zoomLevel": 				{ "type": "dataprovider", "pushToServer": "allow", "tags": { "scope" :"design" }},
         "mapTypeControl": 			{ "type":"boolean", "default": true, "tags": { "scope" :"design" }},
         "zoomControl": 				{ "type":"boolean", "default": true, "tags": { "scope" :"design" }},

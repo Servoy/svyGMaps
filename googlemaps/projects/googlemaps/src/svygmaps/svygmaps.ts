@@ -12,6 +12,7 @@ import { DOCUMENT } from '@angular/common';
 export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
     @Input() addressTitle: any;
     @Input() apiKey: any;
+    @Input() mapID: any;
     @Input() directionsSettings: RouteSettings;
     @Input() fullscreenControl: boolean;
     @Input() gestureHandling: string;
@@ -48,6 +49,8 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
 
     private log: LoggerService;
 
+    private AdvancedMarkerElement: typeof google.maps.marker.AdvancedMarkerElement | undefined;
+
     constructor(renderer: Renderer2, cdRef: ChangeDetectorRef, logFactory: LoggerFactory,
         private servoyService: ServoyPublicService, private windowRefService: WindowRefService, @Inject(DOCUMENT) private document: Document) {
         super(renderer, cdRef);
@@ -65,9 +68,9 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         } else {
             //set an interval to wait for apiKey dataprovider to be binded before trying to load google's api.
             this.getScriptInt = this.windowRefService.nativeWindow.setInterval(() => {
-				if (!this.apiKey && this.servoyApi.isInDesigner()) {
-					this.showErrMessage(true);
-				} else if (!this.apiKey) {
+                if (!this.apiKey && this.servoyApi.isInDesigner()) {
+                    this.showErrMessage(true);
+                } else if (!this.apiKey) {
                     this.showErrMessage();
                     this.unloadScript();
                 } else {
@@ -122,29 +125,24 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
                             this.mapMarkers.delete(m);
                         } else {
                             //set changed properties
-                            var markerOptions = {
-                                animation: modelMarker.animation ? google.maps.Animation[modelMarker.animation.toUpperCase()] : null,
-                                clickable: modelMarker.clickable,
-                                draggable: modelMarker.draggable,
-                                crossOnDrag: modelMarker.crossOnDrag,
-                                cursor: modelMarker.cursor,
-                                icon: modelMarker.iconUrl || modelMarker.iconMedia,
-                                label: modelMarker.iconLabel,
-                                opacity: modelMarker.opacity,
-                                visible: modelMarker.visible,
-                                zIndex: modelMarker.zIndex,
-                                title: modelMarker.title || modelMarker.tooltip //TODO remove tooltip (deprecated)
-                            }
+                            this.mapMarkers[m].animation = modelMarker.animation ? google.maps.Animation[modelMarker.animation.toUpperCase()] : null;
+                            this.mapMarkers[m].clickable = modelMarker.clickable;
+                            this.mapMarkers[m].draggable = modelMarker.draggable;
+                            this.mapMarkers[m].crossOnDrag = modelMarker.crossOnDrag;
+                            this.mapMarkers[m].cursor = modelMarker.cursor;
+                            this.mapMarkers[m].icon = modelMarker.iconUrl || modelMarker.iconMedia;
+                            this.mapMarkers[m].label = modelMarker.iconLabel;
+                            this.mapMarkers[m].opacity = modelMarker.opacity;
+                            this.mapMarkers[m].visible = modelMarker.visible;
+                            this.mapMarkers[m].zIndex = modelMarker.zIndex;
+                            this.mapMarkers[m].title = modelMarker.title || modelMarker.tooltip; //TODO remove tooltip (deprecated)
+
 
                             if (modelMarker.position != null) {
-                                this.mapMarkers[m].setPosition(modelMarker.position);
+                                this.mapMarkers[m].position = modelMarker.position;
                             } else if (modelMarker.latitude != null && modelMarker.longitude != null) {
-                                //TODO remove support for deprecated latitude/longitude properties
-                                this.mapMarkers[m].setPosition(new google.maps.LatLng(modelMarker.latitude, modelMarker.longitude));
+                                this.mapMarkers[m].position = new google.maps.LatLng(modelMarker.latitude, modelMarker.longitude);
                             }
-
-
-                            this.mapMarkers[m].setOptions(markerOptions);
                         }
                     }
 
@@ -209,13 +207,22 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
 		}
     }
 
-    createMap() {
+    async createMap() {
+        
         if (!this.geocoder) {
             //TODO return error
             return;
         }
+        // Import the required "marker" library
+        const { AdvancedMarkerElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
+
+        // Store it as a class property
+        this.AdvancedMarkerElement = AdvancedMarkerElement;
+
+        console.log("Creating map with markers...");
+
         //clear markers from map
-        if (this.mapMarkers) {
+        if (this.mapMarkers  && this.mapMarkers.size > 0) {
             for (let m in this.mapMarkers) {
                 this.mapMarkers[m].setMap(null);
             }
@@ -230,13 +237,13 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
                 location.push(this.getLatLng(googleMarker.addressDataprovider || googleMarker.addressString));
             }
         }
-        Promise.all(location).then((returnVals) => {
-            for (let i in returnVals) {
-                location[i] = returnVals[i]
-            }
-        }).then(() => {
-            this.createMapAtPoint(location)
-        })
+
+        try {
+            const resolvedLocations = await Promise.all(location);
+            this.createMapAtPoint(resolvedLocations);
+        } catch (error) {
+            console.error("Error resolving locations:", error);
+        }
     }
 
     getLatLng(address) {
@@ -343,6 +350,67 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         });
     }
 
+    createCustomMarkerContent(markerData: Marker): HTMLElement {
+        const container = document.createElement("div");
+        container.style.flexDirection = "column";
+        container.style.alignItems = "center";
+
+        if (!markerData.visible) {
+            container.style.display = "none"; // Hide marker
+        }
+
+        if (markerData.opacity !== undefined && markerData.opacity >= 0 && markerData.opacity <= 1) {
+            container.style.opacity = markerData.opacity.toString();
+        }
+
+        if (markerData.cursor) {
+            container.style.cursor = markerData.cursor;
+        }
+
+        if (markerData.clickable === false) {
+            // If it's not clickable, disable interaction by setting pointer events to 'none'
+            container.style.setProperty("pointerEvents", "none", "important"); // Hide the cross element
+                 
+            container.addEventListener("click", (event) => {
+                event.stopPropagation(); // Prevent clicks from being propagated
+            });
+        }
+
+        if (markerData.animation) {
+            if (markerData.animation === "DROP" || markerData.animation === "drop") {
+                container.classList.add("drop-animation");
+            } else if (markerData.animation === "BOUNCE" || markerData.animation === "bounce") {
+                container.classList.add("bounce-animation");
+            }
+        }
+        // Create an image for the marker icon
+        if (markerData.iconUrl || markerData.iconMedia) {
+            const img = document.createElement("img");
+            img.src = markerData.iconUrl || markerData.iconMedia;
+            img.style.width = "25px";
+            img.style.height = "23px";
+
+            container.appendChild(img);
+        } else { /* this gets called when clicking on the map or when one does not set an image for the pin; AdvancedMarkerElement does not have a pin image, it has to be added.*/
+            const img = document.createElement("img");
+            img.src = "https://maps.google.com/mapfiles/ms/icons/red-dot.png"; // Google Maps default pin
+            img.style.width = "40px";
+            img.style.height = "40px";
+            container.appendChild(img);
+        }
+
+        // Add a label below the marker
+        if (markerData.iconLabel) {
+            const label = document.createElement("span");
+            label.innerText = markerData.iconLabel;
+            label.style.fontSize = "12px";
+            label.style.color = "black";
+            container.appendChild(label);
+        }
+    
+        return container;
+    }
+
     createMarker(location, markerIndex: number) {
         if (!location) {
             return null;
@@ -354,29 +422,33 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
             position: new google.maps.LatLng(location.lat(), location.lng()),
             map: this.map,
             title: marker.title,
-            draggable: marker.draggable,
-            animation: marker.animation ? google.maps.Animation[marker.animation.toUpperCase()] : null,
-            clickable: marker.clickable,
-            crossOnDrag: marker.crossOnDrag,
-            opacity: marker.opacity != null ? marker.opacity : null,
-            visible: marker.visible,
+            gmpDraggable: marker.draggable,
             zIndex: marker.zIndex != null ? marker.zIndex : null,
-            markerId: marker.markerId || ('marker-' + markerIndex),
-            markerIndex: markerIndex,
-            icon: marker.iconUrl || marker.iconMedia,
-            label: marker.iconLabel,
-            cursor: marker.cursor
         }
 
-        var gMarker = new google.maps.Marker(markerObj)
+
+        let gMarker;
+        // Now use AdvancedMarkerElement safely
+        if (this.AdvancedMarkerElement) {
+            gMarker = new this.AdvancedMarkerElement(markerObj);
+            console.log("Marker initialized:", gMarker);
+            const customContent = this.createCustomMarkerContent(marker);
+            if (gMarker.element) {
+                gMarker.element.appendChild(customContent);
+            }
+        } else {
+            console.error("AdvancedMarkerElement is undefined.");
+        }
         this.mapMarkers[marker.markerId || ('marker-' + markerIndex)] = gMarker;
 
         if (marker.infoWindowString) {
             var infowindow = new google.maps.InfoWindow({
                 content: marker.infoWindowString
             });
-            gMarker.addListener('click', () => {
+            // Now add the event listener to gMarker
+            gMarker.addEventListener('click', () => {
                 infowindow.open(this.map, gMarker);
+                console.log("Custom Marker clicked!", marker);
             });
         }
 
@@ -410,12 +482,16 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
 
         if (marker.drawRadius == true) {
             const circle = new google.maps.Circle({
+                center: gMarker.position,
                 map: this.map,
                 radius: marker.radiusMeters || 2000,
                 fillColor: marker.radiusColor || "#AA0000",
                 strokeColor: marker.radiusColor || "#AA0000"
             });
-            circle.bindTo('center', gMarker, 'position');
+            // Update the circle center when the marker position changes
+            gMarker.addEventListener("position_changed", () => {
+                circle.setCenter(gMarker.position);
+            });
         }
         return gMarker
     }
@@ -477,22 +553,45 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         })
 
         let mapOptions = {};
-        if(this.options) {
+        if (this.options) {
             Object.assign(mapOptions, this.options);
         }
 
+        // Always ensure location is defined and has valid lat/lng
+        const centerLocation = (location.length === 1)
+            ? new google.maps.LatLng(location[0].lat(), location[0].lng())
+            : new google.maps.LatLng(0, 0); // Default to 0,0 if no location is provided
+
+        let mapTypeId = google.maps.MapTypeId.ROADMAP; // this is the default
+        // Check if `this.mapType` is one of the allowed values
+        if (this.mapType === "SATELLITE") {
+            mapTypeId = google.maps.MapTypeId.SATELLITE;
+        } else if (this.mapType === "HYBRID") {
+            mapTypeId = google.maps.MapTypeId.HYBRID;
+        } else if (this.mapType === "TERRAIN") {
+            mapTypeId = google.maps.MapTypeId.TERRAIN;
+        }
+        // Merge all other map options
         Object.assign(mapOptions, {
-            center: (location.length == 1 ? new google.maps.LatLng(location[0].lat(), location[0].lng()) : new google.maps.LatLng(0, 0)),
-            zoom: this.zoomLevel === null || this.zoomLevel === undefined ? 7 : this.zoomLevel,
+            center: centerLocation,
+            zoom: this.zoomLevel ?? 7,  // Use nullish coalescing to fallback to 7 if zoomLevel is null/undefined
             zoomControl: this.zoomControl,
             mapTypeControl: this.mapTypeControl,
             streetViewControl: this.streetViewControl,
             fullscreenControl: this.fullscreenControl,
-            mapTypeId: google.maps.MapTypeId[this.mapType],
-            gestureHandling: this.gestureHandling
+            mapTypeId: mapTypeId,  // Ensure this.mapType is a valid MapTypeId string
+            gestureHandling: this.gestureHandling,
+            mapId: this.mapID != null ? this.mapID : 'DEMO_MAP_ID' // the new Google Maps api requires a new mapId and the default is DEMO_MAP_ID: https://developers.google.com/maps/documentation/javascript/reference/map#MapElement.mapId
         });
 
-        this.map = new google.maps.Map(this.getNativeElement(), mapOptions);
+        // Make sure getNativeElement() is returning a valid DOM element
+        const nativeElement = this.getNativeElement();
+        if (nativeElement) {
+            // Initialize the map
+            this.map = new google.maps.Map(nativeElement, mapOptions);
+        } else {
+            console.error("The map container element is invalid.");
+        }
 
         //If google maps directions is enabled, create route map.
         if (this.useGoogleMapDirections == true) {
@@ -540,14 +639,14 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
             if (location.length > 1) {
                 var bounds = new google.maps.LatLngBounds();
                 for (var i in markers) {
-                    bounds.extend(markers[i].getPosition());
+                    bounds.extend(markers[i].position);
                 }
                 this.map.fitBounds(bounds);
             }
         }
 
         //when resizing page re-center the map marker
-        google.maps.event.addDomListener(this.windowRefService.nativeWindow, "resize", () => {
+        this.windowRefService.nativeWindow.addEventListener("resize", () => {
             var center = this.map.getCenter();
             google.maps.event.trigger(this.map, "resize");
             this.map.setCenter(center);
@@ -568,7 +667,15 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         let script = this.document.createElement("script")
         script.id = "googleMapsScript"
         script.type = "text/javascript"
-        script.src = "https://maps.googleapis.com/maps/api/js?key=" + this.apiKey + "&callback=googleMapsLoadedCallback"
+        script.async = true;
+        script.defer = true;
+
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${this.apiKey}&libraries=geocoding,marker&callback=googleMapsLoadedCallback&loading=async`;
+
+        script.onload = () => {
+            console.log("Google Maps API loaded successfully. this in loadScript");
+        };    
+
         this.document.body.appendChild(script);
     }
 
@@ -634,7 +741,7 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
     }
 
     refresh() {
-        this.createMap()
+        this.createMap();
         return true;
     }
     centerAtAddress(address) {
@@ -691,14 +798,14 @@ export class Marker {
     radiusMeters: number;
     radiusColor: string;
     draggable: boolean;
-    animation: string;
-    clickable: boolean;
-    crossOnDrag: boolean;
     opacity: number;
-    visible: boolean;
     zIndex: number;
     markerId: any;
     userObject: any;
+    animation: string;
+    clickable: boolean;
+    crossOnDrag: boolean;
+    visible: boolean;
 }
 
 export class RouteSettings {
