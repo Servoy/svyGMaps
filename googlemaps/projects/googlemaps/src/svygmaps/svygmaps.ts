@@ -349,7 +349,7 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
             }
         });
     }
-
+    //TODO: handle crossOnDrag functionality
     createCustomMarkerContent(markerData: Marker): HTMLElement {
         const container = document.createElement("div");
         container.style.flexDirection = "column";
@@ -396,6 +396,7 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
             img.src = "https://maps.google.com/mapfiles/ms/icons/red-dot.png"; // Google Maps default pin
             img.style.width = "40px";
             img.style.height = "40px";
+            container.style.display = "flex";
             container.appendChild(img);
         }
 
@@ -442,13 +443,12 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         this.mapMarkers[marker.markerId || ('marker-' + markerIndex)] = gMarker;
 
         if (marker.infoWindowString) {
-            var infowindow = new google.maps.InfoWindow({
+            let infowindow = new google.maps.InfoWindow({
                 content: marker.infoWindowString
             });
-            // Now add the event listener to gMarker
-            gMarker.addEventListener('click', () => {
+
+            gMarker.addListener("click", () => {
                 infowindow.open(this.map, gMarker);
-                console.log("Custom Marker clicked!", marker);
             });
         }
 
