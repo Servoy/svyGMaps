@@ -670,11 +670,7 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         script.async = true;
         script.defer = true;
 
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${this.apiKey}&libraries=geocoding,marker&callback=googleMapsLoadedCallback&loading=async`;
-
-        script.onload = () => {
-            console.log("Google Maps API loaded successfully. this in loadScript");
-        };    
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${this.apiKey}&libraries=geocoding,marker&callback=googleMapsLoadedCallback&loading=async`;  
 
         this.document.body.appendChild(script);
     }
@@ -821,13 +817,13 @@ export class LatitudeLongitude {
     lng: number;
 }
 
-class RouteResult {
+export class RouteResult {
     legs?: Array<Leg>;
     total_distance?: number;
     total_duration?: number;
 }
 
-class Leg {
+export class Leg {
     start_address: string;
     start_markerId: any;
     end_address: string;
