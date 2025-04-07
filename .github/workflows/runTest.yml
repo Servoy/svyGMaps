@@ -45,9 +45,7 @@ jobs:
         working-directory: ${{ env.COMPONENT_DIR }}
         run: |
           npm install
-          npm run cy:run
-        env:
-              GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          npm run cy:run --env GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}
           
       - name: Upload artifacts on failure
         if: failure()
