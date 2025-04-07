@@ -17,6 +17,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Use secret API key
+        run: echo "The secret is ${{ secrets.GOOGLE_API_KEY }}"
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+               
       - name: Find component directory
         id: find_component_dir
         run: echo "COMPONENT_DIR=$(find . -type d -name 'META-INF' -exec dirname {} \;)" >> $GITHUB_ENV
@@ -46,7 +51,9 @@ jobs:
         run: |
           npm install
           npm run cy:run --env GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}
-          
+        env:
+            GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}          
+
       - name: Upload artifacts on failure
         if: failure()
         uses: actions/upload-artifact@v4
