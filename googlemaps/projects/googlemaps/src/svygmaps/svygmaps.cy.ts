@@ -95,9 +95,13 @@ describe('SvyGMaps', () => {
 	}
 
 	beforeEach(() => {
+		const apiKey = Cypress.env('GOOGLE_API_KEY');
+		if (!Cypress.env('GOOGLE_API_KEY')) {
+			throw new Error('Missing API_KEY in Cypress environment variables');
+		}
 		config.componentProperties = {
 			servoyApi: servoyApiSpy,
-			apiKey: '',
+			apiKey: apiKey,
 			mapID: 'DEMO_MAP_ID',
 			gestureHandling: 'auto',
 			fullscreenControl: false,
