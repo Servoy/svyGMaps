@@ -389,6 +389,8 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
             img.src = markerData.iconUrl || markerData.iconMedia;
             img.style.width = "25px";
             img.style.height = "23px";
+			
+			container.style.display = "flex";
 
             container.appendChild(img);
         } else { /* this gets called when clicking on the map or when one does not set an image for the pin; AdvancedMarkerElement does not have a pin image, it has to be added.*/
