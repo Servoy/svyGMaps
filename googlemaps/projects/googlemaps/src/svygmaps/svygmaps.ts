@@ -583,7 +583,7 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
             fullscreenControl: this.fullscreenControl,
             mapTypeId: mapTypeId,  // Ensure this.mapType is a valid MapTypeId string
             gestureHandling: this.gestureHandling,
-            mapId: this.mapID != null ? this.mapID : 'DEMO_MAP_ID' // the new Google Maps api requires a new mapId and the default is DEMO_MAP_ID: https://developers.google.com/maps/documentation/javascript/reference/map#MapElement.mapId
+            mapId: !this.mapID ? 'DEMO_MAP_ID': this.mapID  // the new Google Maps api requires a new mapId and the default is DEMO_MAP_ID: https://developers.google.com/maps/documentation/javascript/reference/map#MapElement.mapId
         });
 
         // Make sure getNativeElement() is returning a valid DOM element
