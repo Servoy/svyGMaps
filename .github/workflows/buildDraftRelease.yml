@@ -14,7 +14,6 @@ jobs:
     permissions:
          contents: write
 
-
     runs-on: ubuntu-latest
 
     steps:
@@ -55,6 +54,10 @@ jobs:
     - name: Get branch name
       run: echo "BRANCH_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
+    - name: Check API rate limits
+      run: |
+        gh api rate_limit
+
     - name: Check if release exists and is prerelease
       id: check_release
       run: |
@@ -75,6 +78,10 @@ jobs:
       
     - name: Create release
       run: |
+        echo "Creating release with the following parameters:"
+        echo "Branch Name: ${{ env.BRANCH_NAME }}"
+        echo "Package Version: ${{ env.PACKAGE_VERSION }}"
+        echo "Commit SHA: ${{ github.sha }}"
         gh release create "_${{ github.ref_name }}" --target "${{ env.BRANCH_NAME }}" --prerelease --title "Nighlty Build ${{ env.BRANCH_NAME }}" --notes "Nightly build. Branch: ${{ env.BRANCH_NAME }} Commit: ${{ github.sha }} Package Version: ${{ env.PACKAGE_VERSION }}"
         echo "release_exists=true" >> $GITHUB_ENV
       env:
