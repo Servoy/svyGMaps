@@ -219,7 +219,7 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         // Store it as a class property
         this.AdvancedMarkerElement = AdvancedMarkerElement;
 
-        console.log("Creating map with markers...");
+        this.log.debug('Google Maps API loaded, creating map...');
 
         //clear markers from map
         if (this.mapMarkers  && this.mapMarkers.size > 0) {
@@ -242,7 +242,7 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
             const resolvedLocations = await Promise.all(location);
             this.createMapAtPoint(resolvedLocations);
         } catch (error) {
-            console.error("Error resolving locations:", error);
+            this.log.error("Error resolving locations:", error);
         }
     }
 
@@ -434,13 +434,13 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         // Now use AdvancedMarkerElement safely
         if (this.AdvancedMarkerElement) {
             gMarker = new this.AdvancedMarkerElement(markerObj);
-            console.log("Marker initialized:", gMarker);
+            this.log.debug("Marker initialized:", gMarker);
             const customContent = this.createCustomMarkerContent(marker);
             if (gMarker.element) {
                 gMarker.element.appendChild(customContent);
             }
         } else {
-            console.error("AdvancedMarkerElement is undefined.");
+            this.log.error("AdvancedMarkerElement is undefined.");
         }
         this.mapMarkers[marker.markerId || ('marker-' + markerIndex)] = gMarker;
 
@@ -592,7 +592,7 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
             // Initialize the map
             this.map = new google.maps.Map(nativeElement, mapOptions);
         } else {
-            console.error("The map container element is invalid.");
+            this.log.error("The map container element is invalid.");
         }
 
         //If google maps directions is enabled, create route map.
