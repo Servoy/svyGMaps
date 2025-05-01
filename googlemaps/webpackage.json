@@ -17,6 +17,9 @@
         {"version":"2.3.1","url":"https://github.com/Servoy/svyGMaps/releases/download/v2.3.1/googlemaps.zip","servoy-version":"2021.3"},
         {"version":"2022.3.0","url":"https://github.com/Servoy/svyGMaps/releases/download/v2022.3.0/googlemaps.zip","servoy-version":"2022.3"},
         {"version":"2022.9.0","url":"https://github.com/Servoy/svyGMaps/releases/download/v2022.9.0/googlemaps.zip","servoy-version":"2022.9"},
-        {"version":"2024.9.0","url":"https://github.com/Servoy/svyGMaps/releases/download/v2024.9.0/googlemaps.zip","servoy-version":"2024.9"}
+        {"version":"2024.9.0","url":"https://github.com/Servoy/svyGMaps/releases/download/v2024.9.0/googlemaps.zip","servoy-version":"2024.9"},
+        {"version":"2025.3.0","url":"https://github.com/Servoy/svyGMaps/releases/download/v2025.3.0/googlemaps.zip","servoy-version":"2025.3"}
+
+        
     ]
 }
