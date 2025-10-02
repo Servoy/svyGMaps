@@ -12,6 +12,12 @@ var markers;
  */
 var apiKey;
 
+
+/**
+ * A map ID is a unique identifier that represents Google Map styling and configuration settings that are stored in Google Cloud
+ */
+var mapID;
+
 /**
  * Data provider for setting the initial zoom level of the map.
  */
