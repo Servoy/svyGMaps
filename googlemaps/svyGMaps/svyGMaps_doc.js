@@ -1,5 +1,5 @@
-/**
- * A Servoy Extra Component that wraps Google Maps functionality.
+/*
+ * A component for viewing and interacting with Google Maps in Servoy's NG & Titanium Clients.
  */
 
 /**
