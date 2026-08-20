@@ -2,11 +2,10 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "../../out-tsc/spec",
-    "types": []
+    "types": ["@types/google.maps"]
   },
   "include": [
     "**/*.spec.ts",
-    "**/*.cy.ts",
     "**/*.d.ts"
   ],
   "angularCompilerOptions": {

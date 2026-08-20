@@ -10,10 +10,7 @@
     "make_release": "ng build --configuration production @servoy/googlemaps && node scripts/build.js",
     "test": "ng test --no-watch",
     "test:watch": "ng test",
-    "lint": "ng lint",
-    "cy:open": "cypress open",
-    "cy:run": "cypress run --config video=false --component --browser chrome",
-    "cy:run_spec": "cypress run --config video=false --component --browser chrome --headed --no-exit --spec "
+    "lint": "ng lint"
   },
   "private": true,
   "dependencies": {
@@ -46,15 +43,13 @@
     "@typescript-eslint/parser": "^8.67.0",
     "adm-zip": "0.6.0",
     "angular-eslint": "^22.1.0",
-    "css-loader": "^7.1.4",
-    "cypress": "^15.21.0",
     "eslint": "^10.8.1",
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-jsdoc": "64.2.1",
     "eslint-plugin-only-warn": "1.2.1",
     "eslint-plugin-prefer-arrow": "1.2.3",
+    "happy-dom": "^20.11.6",
     "ng-packagr": "22.1.1",
-    "style-loader": "^4.0.0",
     "typescript": "6.0.3",
     "typescript-eslint": "^8.67.0",
     "vitest": "^4.1.11"
