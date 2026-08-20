@@ -3,11 +3,8 @@ import { NgModule } from '@angular/core';
 import {SvyGMaps} from './svygmaps/svygmaps';
  
 @NgModule({
-    declarations: [
-        SvyGMaps
-    ],
-    providers: [],
     imports: [
+        SvyGMaps
     ],
     exports: [ 
         SvyGMaps

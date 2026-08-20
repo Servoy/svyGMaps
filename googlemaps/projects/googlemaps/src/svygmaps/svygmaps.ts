@@ -1,76 +1,72 @@
-import { Component, SimpleChanges, Input, Renderer2, ChangeDetectorRef, Output, EventEmitter, Inject } from '@angular/core';
+import { Component, SimpleChanges, ChangeDetectionStrategy, inject, input, model } from '@angular/core';
 import { MarkerClusterer} from "@googlemaps/markerclusterer";
-import { ServoyBaseComponent, ServoyPublicService, LoggerFactory, LoggerService, JSEvent, EventLike, WindowRefService } from '@servoy/public';
+import { ServoyBaseComponent, ServoyPublicService, LoggerFactory, JSEvent, EventLike, WindowRefService } from '@servoy/public';
 import { DOCUMENT } from '@angular/common';
+
 
 
 @Component({
     selector: 'googlemaps-svy-G-Maps',
     templateUrl: './svygmaps.html',
-    standalone: false
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true
 })
 export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
-    @Input() addressTitle: any;
-    @Input() apiKey: any;
-    @Input() mapID: any;
-    @Input() directionsSettings: RouteSettings;
-    @Input() fullscreenControl: boolean;
-    @Input() gestureHandling: string;
-    @Input() KmlLayerURL: any;
-    @Input() mapEvents: Array<string>;
-    @Input() mapType: string;
-    @Input() mapTypeControl: boolean;
-    @Input() markerEvents: Array<string>;
-    @Input() options: any;
-	@Input() responsiveHeight: number;
+    readonly addressTitle = input<any>(undefined as any);
+    readonly apiKey = input<any>(undefined as any);
+    readonly mapID = input<any>(undefined as any);
+    readonly directionsSettings = input<RouteSettings>(undefined as any);
+    readonly fullscreenControl = input<boolean>(undefined as any);
+    readonly gestureHandling = input<string>(undefined as any);
+    readonly KmlLayerURL = input<any>(undefined as any);
+    readonly mapEvents = input<Array<string>>(undefined as any);
+    readonly mapType = input<string>(undefined as any);
+    readonly mapTypeControl = input<boolean>(undefined as any);
+    readonly markerEvents = input<Array<string>>(undefined as any);
+    readonly options = input<any>(undefined as any);
+    readonly responsiveHeight = input<number>(undefined as any);
 
-    @Input() markers: Array<Marker>;
-    @Output() markersChange = new EventEmitter();
+    readonly markers = model<Array<Marker>>([] as any);
 
-    @Input() streetViewControl: boolean;
-    @Input() styleClass: string;
-    @Input() useGoogleMapCluster: boolean;
-    @Input() useGoogleMapDirections: boolean;
-    @Input() zoomControl: boolean;
-    @Input() zoomLevel: any;
-    @Output() zoomLevelChange = new EventEmitter();
+    readonly streetViewControl = input<boolean>(undefined as any);
+    readonly styleClass = input<string>(undefined as any);
+    readonly useGoogleMapCluster = input<boolean>(undefined as any);
+    readonly useGoogleMapDirections = input<boolean>(undefined as any);
+    readonly zoomControl = input<boolean>(undefined as any);
+    readonly zoomLevel = model<any>(undefined as any);
 
-    @Input() onMapEvent: (e: JSEvent, latlng: any) => void;
-    @Input() onMarkerEvent: (e: JSEvent, index: number, latlng: any) => void;
-    @Input() onMarkerGeocoded: (marker: Marker, ltdlng: LatitudeLongitude) => void;
-    @Input() onRouteChanged: (route: RouteResult) => void;
+    readonly onMapEvent = input<(e: JSEvent, latlng: any) => void>(undefined as any);
+    readonly onMarkerEvent = input<(e: JSEvent, index: number, latlng: any) => void>(undefined as any);
+    readonly onMarkerGeocoded = input<(marker: Marker, ltdlng: LatitudeLongitude) => void>(undefined as any);
+    readonly onRouteChanged = input<(route: RouteResult) => void>(undefined as any);
 
-    map: google.maps.Map;
-    mapMarkers: Map<string, google.maps.Marker>;
-    directionsDisplay: google.maps.DirectionsRenderer;
-    geocoder: google.maps.Geocoder;
-    kmlLayer: google.maps.KmlLayer;
+    map!: google.maps.Map;
+    mapMarkers!: Map<string, google.maps.marker.AdvancedMarkerElement>;
+    directionsDisplay!: google.maps.DirectionsRenderer;
+    geocoder!: google.maps.Geocoder;
+    kmlLayer!: google.maps.KmlLayer;
     getScriptInt: any;
-
-    private log: LoggerService;
 
     private AdvancedMarkerElement: typeof google.maps.marker.AdvancedMarkerElement | undefined;
 
-    constructor(renderer: Renderer2, cdRef: ChangeDetectorRef, logFactory: LoggerFactory,
-        private servoyService: ServoyPublicService, private windowRefService: WindowRefService, @Inject(DOCUMENT) private document: Document) {
-        super(renderer, cdRef);
-        this.log = logFactory.getLogger('svy-google-maps');
-    }
+    private servoyService = inject(ServoyPublicService);
+    private windowRefService = inject(WindowRefService);
+    private document = inject(DOCUMENT);
+    private log = inject(LoggerFactory).getLogger('svy-google-maps');
 
     svyOnInit() {
         super.svyOnInit();
-        this.windowRefService.nativeWindow['googleMapsLoadedCallback'] = () => {
+        (this.windowRefService.nativeWindow as any)['googleMapsLoadedCallback'] = () => {
             this.initMap();
         }
 
-        if (this.windowRefService.nativeWindow['google'] && this.windowRefService.nativeWindow['google'].maps) {
+        if ((this.windowRefService.nativeWindow as any)['google'] && (this.windowRefService.nativeWindow as any)['google'].maps) {
             this.initMap();
         } else {
-            //set an interval to wait for apiKey dataprovider to be binded before trying to load google's api.
             this.getScriptInt = this.windowRefService.nativeWindow.setInterval(() => {
-                if (!this.apiKey && this.servoyApi.isInDesigner()) {
+                if (!this.apiKey() && this.servoyApi().isInDesigner()) {
                     this.showErrMessage(true);
-                } else if (!this.apiKey) {
+                } else if (!this.apiKey()) {
                     this.showErrMessage();
                     this.unloadScript();
                 } else {
@@ -87,10 +83,10 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         super.svyOnChanges(changes);
         if (changes['markers']) {
             if (this.geocoder) {
-                let location = [];
-                for (const googleMarker of this.markers) {
+                const location: Array<any> = [];
+                for (const googleMarker of this.markers()) {
                     if (this.mapMarkers && googleMarker.markerId && this.mapMarkers.has(googleMarker.markerId)) {
-                        location.push(this.mapMarkers[googleMarker.markerId].getPosition());
+                        location.push(this.mapMarkers.get(googleMarker.markerId)!.position);
                     } else if (googleMarker.position != null) {
                         location.push(new google.maps.LatLng(googleMarker.position.lat, googleMarker.position.lng));
                     }
@@ -98,83 +94,80 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
                         location.push(this.getLatLng(googleMarker.addressDataprovider || googleMarker.addressString));
                     }
                 }
-                Promise.all(location).then((returnVals) => {
-                    for (var i in returnVals) {
+                Promise.all(location).then((returnVals: any[]) => {
+                    for (let i = 0; i < returnVals.length; i++) {
                         location[i] = returnVals[i];
-                        var marker = this.markers[i];
+                        const marker = this.markers()[i];
                         if (!marker.position || marker.position.lat == null || marker.position.lng == null) {
-                            //add geocode result to marker                          
                             marker.position = this.createLatLngObj(location[i]);
-                            if (this.onMarkerGeocoded) {
-                                this.onMarkerGeocoded(marker, marker.position);
+                            if (this.onMarkerGeocoded()) {
+                                this.onMarkerGeocoded()(marker, marker.position);
                             }
                         }
                     }
                 }).then(() => {
-                    //update markers and clear removed markers
-                    for (var m in this.mapMarkers) {
-                        var modelMarker = null;
-                        for (var n = 0; n < this.markers.length; n++) {
-                            if (this.markers[n].markerId == m) {
-                                modelMarker = this.markers[n];
+                    this.mapMarkers.forEach((_value, m) => {
+                        let modelMarker: Marker | null = null;
+                        for (let n = 0; n < this.markers().length; n++) {
+                            if (this.markers()[n].markerId == m) {
+                                modelMarker = this.markers()[n];
                                 break;
                             }
                         }
                         if (!modelMarker) {
-                            this.mapMarkers[m].setMap(null);
+                            const existing = this.mapMarkers.get(m);
+                            if (existing) existing.map = null;
                             this.mapMarkers.delete(m);
                         } else {
-                            //set changed properties
-                            this.mapMarkers[m].animation = modelMarker.animation ? google.maps.Animation[modelMarker.animation.toUpperCase()] : null;
-                            this.mapMarkers[m].clickable = modelMarker.clickable;
-                            this.mapMarkers[m].draggable = modelMarker.draggable;
-                            this.mapMarkers[m].crossOnDrag = modelMarker.crossOnDrag;
-                            this.mapMarkers[m].cursor = modelMarker.cursor;
-                            this.mapMarkers[m].icon = modelMarker.iconUrl || modelMarker.iconMedia;
-                            this.mapMarkers[m].label = modelMarker.iconLabel;
-                            this.mapMarkers[m].opacity = modelMarker.opacity;
-                            this.mapMarkers[m].visible = modelMarker.visible;
-                            this.mapMarkers[m].zIndex = modelMarker.zIndex;
-                            this.mapMarkers[m].title = modelMarker.title || modelMarker.tooltip; //TODO remove tooltip (deprecated)
+                            const existing = this.mapMarkers.get(m)!;
+                            (existing as any).animation = modelMarker.animation ? (google.maps.Animation as any)[modelMarker.animation.toUpperCase()] : null;
+                            (existing as any).clickable = modelMarker.clickable;
+                            existing.gmpDraggable = modelMarker.draggable;
+                            (existing as any).crossOnDrag = modelMarker.crossOnDrag;
+                            (existing as any).cursor = modelMarker.cursor;
+                            (existing as any).icon = modelMarker.iconUrl || modelMarker.iconMedia;
+                            (existing as any).label = modelMarker.iconLabel;
+                            (existing as any).opacity = modelMarker.opacity;
+                            (existing as any).visible = modelMarker.visible;
+                            existing.zIndex = modelMarker.zIndex;
+                            existing.title = modelMarker.title || modelMarker.tooltip;
 
 
                             if (modelMarker.position != null) {
-                                this.mapMarkers[m].position = modelMarker.position;
+                                existing.position = new google.maps.LatLng(modelMarker.position.lat, modelMarker.position.lng);
                             } else if (modelMarker.latitude != null && modelMarker.longitude != null) {
-                                this.mapMarkers[m].position = new google.maps.LatLng(modelMarker.latitude, modelMarker.longitude);
+                                existing.position = new google.maps.LatLng(modelMarker.latitude, modelMarker.longitude);
                             }
                         }
-                    }
+                    });
 
-                    if (this.useGoogleMapDirections == true) {
-                        //remove markers
+                    if (this.useGoogleMapDirections() == true) {
                         this.mapMarkers = new Map()
-                        var directionsService = new google.maps.DirectionsService;
+                        const directionsService = new google.maps.DirectionsService;
                         if (this.directionsDisplay) {
                             this.directionsDisplay.setMap(null);
                         }
                         this.directionsDisplay = new google.maps.DirectionsRenderer;
 
                         this.directionsDisplay.setMap(this.map);
-                        this.calculateAndDisplayRoute(directionsService, location);
+                        this.calculateAndDisplayRoute(directionsService, location as Array<google.maps.LatLng>);
                     } else {
-                        var markers = location.map((loc, i) => {
-                            //return existing marker or create new marker
-                            return this.mapMarkers[this.markers[i].markerId] || this.createMarker(loc, i);
+                        const markers = location.map((loc: any, i: number) => {
+                            return this.mapMarkers.get(this.markers()[i].markerId) || this.createMarker(loc, i);
                         });
 
-                        location = location.filter((loc) => {
+                        const filteredLocation = location.filter((loc: any) => {
                             return loc != null;
-                        })
+                        });
 
-                        if (location.length > 1) {
-                            var bounds = new google.maps.LatLngBounds();
-                            for (var i in markers) {
-                                bounds.extend(markers[i].position);
+                        if (filteredLocation.length > 1) {
+                            const bounds = new google.maps.LatLngBounds();
+                            for (let i = 0; i < markers.length; i++) {
+                                if (markers[i]) bounds.extend(markers[i]!.position!);
                             }
                             this.map.fitBounds(bounds);
-                        } else if (location.length == 1) {
-                            this.map.setCenter(markers[0].position);
+                        } else if (filteredLocation.length == 1) {
+                            if (markers[0]) this.map.setCenter(markers[0]!.position!);
                         }
                     }
                 });
@@ -184,13 +177,13 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         }
         if (changes['zoomLevel'] && this.map) {
             try {
-                this.map.setZoom(this.zoomLevel);
-            } catch (e) { }
+                this.map.setZoom(this.zoomLevel());
+            } catch (_e) { /* ignored */ }
         }
         if (changes['KmlLayerURL'] && this.map) {
-            if (this.KmlLayerURL) {
+            if (this.KmlLayerURL()) {
                 this.kmlLayer = new google.maps.KmlLayer({
-                    url: this.KmlLayerURL,
+                    url: this.KmlLayerURL(),
                     map: this.map
                 });
             } else {
@@ -200,7 +193,7 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
             }
         }
         if (changes['options'] && this.map) {
-            this.map.setOptions(this.options);
+            this.map.setOptions(this.options());
         }
 		if (changes['responsiveHeight']) {
 			this.setHeight();
@@ -210,27 +203,23 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
     async createMap() {
         
         if (!this.geocoder) {
-            //TODO return error
             return;
         }
-        // Import the required "marker" library
         const { AdvancedMarkerElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
 
-        // Store it as a class property
         this.AdvancedMarkerElement = AdvancedMarkerElement;
 
         this.log.debug('Google Maps API loaded, creating map...');
 
-        //clear markers from map
-        if (this.mapMarkers  && this.mapMarkers.size > 0) {
-            for (let m in this.mapMarkers) {
-                this.mapMarkers[m].setMap(null);
-            }
+        if (this.mapMarkers && this.mapMarkers.size > 0) {
+            this.mapMarkers.forEach((marker) => {
+                marker.map = null;
+            });
         }
         this.mapMarkers = new Map();
 
-        var location = [];
-        for (let googleMarker of this.markers) {
+        const location: Array<any> = [];
+        for (const googleMarker of this.markers()) {
             if (googleMarker.position != null) {
                 location.push(new google.maps.LatLng(googleMarker.position.lat, googleMarker.position.lng));
             } else if (googleMarker.addressDataprovider || googleMarker.addressString) {
@@ -239,24 +228,24 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         }
 
         try {
-            const resolvedLocations = await Promise.all(location);
+            const resolvedLocations = await Promise.all(location) as Array<google.maps.LatLng>;
             this.createMapAtPoint(resolvedLocations);
         } catch (error) {
             this.log.error("Error resolving locations:", error);
         }
     }
 
-    getLatLng(address) {
-        return new Promise((resolve, reject) => {
+    getLatLng(address: any): Promise<google.maps.LatLng | null> {
+        return new Promise((resolve) => {
             this.geocoder.geocode({
                 address: address
             }, (results, status) => {
                 if (status == google.maps.GeocoderStatus.OK) {
-                    resolve(results[0].geometry.location);
+                    resolve(results![0].geometry.location);
                 } else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT) {
                     this.log.warn('Google maps Geocoder query limit reached, geocoding pauses for 2 seconds');
                     this.sleep(2000);
-                    resolve(this.getLatLng(address));
+                    resolve(this.getLatLng(address) as any);
                 } else {
                     this.log.error('Could not geocode location ' + address);
                     resolve(null);
@@ -266,20 +255,19 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
     }
 
     calculateAndDisplayRoute(directionsService: google.maps.DirectionsService, location: Array<google.maps.LatLng>) {
-        let routeSettings = this.directionsSettings;
-        //When not set go for defaults
+        let routeSettings = this.directionsSettings();
         if (!routeSettings) {
             routeSettings = {
-                "optimize": true,
-                "travelMode": "driving",
-                "avoidFerries": false,
-                "avoidHighways": false,
-                "avoidTolls": false
-            }
+                optimize: true,
+                travelMode: "driving",
+                avoidFerries: false,
+                avoidHighways: false,
+                avoidTolls: false
+            } as RouteSettings;
         }
 
-        let waypts = [];
-        for (var i = 1; i < (location.length - 1); i++) {
+        const waypts: google.maps.DirectionsWaypoint[] = [];
+        for (let i = 1; i < (location.length - 1); i++) {
             waypts.push({
                 location: new google.maps.LatLng(location[i].lat(), location[i].lng()),
                 stopover: true
@@ -290,47 +278,43 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
             origin: new google.maps.LatLng(location[0].lat(), location[0].lng()),
             destination: new google.maps.LatLng(location[location.length - 1].lat(), location[location.length - 1].lng()),
             waypoints: waypts,
-            travelMode: google.maps.TravelMode[routeSettings.travelMode.toUpperCase()],
+            travelMode: google.maps.TravelMode[routeSettings.travelMode.toUpperCase() as keyof typeof google.maps.TravelMode],
             optimizeWaypoints: routeSettings.optimize,
             avoidFerries: routeSettings.avoidFerries,
             avoidHighways: routeSettings.avoidHighways,
             avoidTolls: routeSettings.avoidTolls
         }, (response, status) => {
-            if (status === 'OK') {
+            if (status === 'OK' && response) {
                 this.directionsDisplay.setDirections(response);
-                let calculatedRoute: RouteResult = {};
+                const calculatedRoute: RouteResult = {};
                 calculatedRoute.legs = [];
 
                 let totalMeters = 0;
                 let totalSeconds = 0;
 
                 for (let l = 0; l < response.routes[0].legs.length; l++) {
-                    let routeLeg = response.routes[0].legs[l];
-                    let startMarkerIndex;
+                    const routeLeg = response.routes[0].legs[l];
+                    let startMarkerIndex: number;
                     if (l == 0) {
-                        //first leg starts at start marker
                         startMarkerIndex = 0;
                     } else {
-                        //subsequent legs start at marker (waypoint + 1)
                         startMarkerIndex = response.routes[0].waypoint_order[l - 1] + 1;
                     }
-                    let endMarkerIndex;
+                    let endMarkerIndex: number;
                     if (l == (response.routes[0].legs.length - 1)) {
-                        //last leg ends at end marker
-                        endMarkerIndex = this.markers.length - 1;
+                        endMarkerIndex = this.markers().length - 1;
                     } else {
-                        //prior markers end at marker (waypoint + 1)
                         endMarkerIndex = response.routes[0].waypoint_order[l] + 1;
                     }
-                    var leg = {
+                    const leg = {
                         start_address: routeLeg.start_address,
-                        start_markerId: this.markers[startMarkerIndex].markerId,
+                        start_markerId: this.markers()[startMarkerIndex].markerId,
                         end_address: routeLeg.end_address,
-                        end_markerId: this.markers[endMarkerIndex].markerId,
-                        distance: routeLeg.distance.text,
-                        distance_meters: routeLeg.distance.value,
-                        duration: routeLeg.duration.text,
-                        duration_seconds: routeLeg.duration.value,
+                        end_markerId: this.markers()[endMarkerIndex].markerId,
+                        distance: routeLeg.distance!.text,
+                        distance_meters: routeLeg.distance!.value,
+                        duration: routeLeg.duration!.text,
+                        duration_seconds: routeLeg.duration!.value,
                     }
                     totalMeters += leg.distance_meters;
                     totalSeconds += leg.duration_seconds;
@@ -340,8 +324,8 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
                 calculatedRoute.total_distance = totalMeters;
                 calculatedRoute.total_duration = totalSeconds;
 
-                if (this.onRouteChanged) {
-                    this.onRouteChanged(calculatedRoute);
+                if (this.onRouteChanged()) {
+                    this.onRouteChanged()(calculatedRoute);
                 }
 
             } else {
@@ -349,14 +333,14 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
             }
         });
     }
-    //TODO: handle crossOnDrag functionality
+
     createCustomMarkerContent(markerData: Marker): HTMLElement {
         const container = document.createElement("div");
         container.style.flexDirection = "column";
         container.style.alignItems = "center";
 
         if (!markerData.visible) {
-            container.style.display = "none"; // Hide marker
+            container.style.display = "none";
         }
 
         if (markerData.opacity !== undefined && markerData.opacity >= 0 && markerData.opacity <= 1) {
@@ -368,11 +352,10 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         }
 
         if (markerData.clickable === false) {
-            // If it's not clickable, disable interaction by setting pointer events to 'none'
-            container.style.setProperty("pointerEvents", "none", "important"); // Hide the cross element
+            container.style.setProperty("pointerEvents", "none", "important");
                  
             container.addEventListener("click", (event) => {
-                event.stopPropagation(); // Prevent clicks from being propagated
+                event.stopPropagation();
             });
         }
 
@@ -383,7 +366,6 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
                 container.classList.add("bounce-animation");
             }
         }
-        // Create an image for the marker icon
         if (markerData.iconUrl || markerData.iconMedia) {
             const img = document.createElement("img");
             img.src = markerData.iconUrl || markerData.iconMedia;
@@ -393,16 +375,15 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
 			container.style.display = "flex";
 
             container.appendChild(img);
-        } else { /* this gets called when clicking on the map or when one does not set an image for the pin; AdvancedMarkerElement does not have a pin image, it has to be added.*/
+        } else {
             const img = document.createElement("img");
-            img.src = "https://maps.google.com/mapfiles/ms/icons/red-dot.png"; // Google Maps default pin
+            img.src = "https://maps.google.com/mapfiles/ms/icons/red-dot.png";
             img.style.width = "40px";
             img.style.height = "40px";
             container.style.display = "flex";
             container.appendChild(img);
         }
 
-        // Add a label below the marker
         if (markerData.iconLabel) {
             const label = document.createElement("span");
             label.innerText = markerData.iconLabel;
@@ -414,24 +395,23 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         return container;
     }
 
-    createMarker(location, markerIndex: number) {
+    createMarker(location: any, markerIndex: number): google.maps.marker.AdvancedMarkerElement | null {
         if (!location) {
             return null;
         }
 
-        let marker = this.markers[markerIndex];
+        const marker = this.markers()[markerIndex];
 
-        let markerObj = {
+        const markerObj: google.maps.marker.AdvancedMarkerElementOptions = {
             position: new google.maps.LatLng(location.lat(), location.lng()),
             map: this.map,
             title: marker.title,
             gmpDraggable: marker.draggable,
-            zIndex: marker.zIndex != null ? marker.zIndex : null,
+            zIndex: marker.zIndex != null ? marker.zIndex : undefined,
         }
 
 
-        let gMarker;
-        // Now use AdvancedMarkerElement safely
+        let gMarker: google.maps.marker.AdvancedMarkerElement | undefined;
         if (this.AdvancedMarkerElement) {
             gMarker = new this.AdvancedMarkerElement(markerObj);
             this.log.debug("Marker initialized:", gMarker);
@@ -442,41 +422,39 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         } else {
             this.log.error("AdvancedMarkerElement is undefined.");
         }
-        this.mapMarkers[marker.markerId || ('marker-' + markerIndex)] = gMarker;
+        this.mapMarkers.set(marker.markerId || ('marker-' + markerIndex), gMarker!);
 
         if (marker.infoWindowString) {
-            let infowindow = new google.maps.InfoWindow({
+            const infowindow = new google.maps.InfoWindow({
                 content: marker.infoWindowString
             });
 
-            gMarker.addListener("click", () => {
+            gMarker!.addListener("click", () => {
                 infowindow.open(this.map, gMarker);
             });
         }
 
-        if (this.onMarkerEvent && this.markerEvents) {
-            for (var e = 0; e < this.markerEvents.length; e++) {
-                let eventType = this.markerEvents[e];
-                ((eventType) => {
-                    gMarker.addListener(eventType, (evt) => {
-                        var jsEvent = this.createJSEvent(evt, eventType);
-                        var data = jsEvent.data as { marker: Marker, latLng: LatitudeLongitude}
+        if (this.onMarkerEvent() && this.markerEvents()) {
+            for (let e = 0; e < this.markerEvents().length; e++) {
+                const eventType = this.markerEvents()[e];
+                ((eventType: string) => {
+                    gMarker!.addListener(eventType, (evt: any) => {
+                        const jsEvent = this.createJSEvent(evt, eventType);
+                        const data = jsEvent.data as { marker: Marker, latLng: LatitudeLongitude}
                         data.marker = marker;
-                        var index = -1;
-                        for (var i = 0; i < this.markers.length; i++) {
-                            if (this.markers[i].markerId == marker.markerId) {
+                        let index = -1;
+                        for (let i = 0; i < this.markers().length; i++) {
+                            if (this.markers()[i].markerId == marker.markerId) {
                                 index = i;
                                 break;
                             }
                         }
                         if (eventType == 'dragend' && data.latLng) {
-                            //marker position changed
-                            this.markers[index].position = data.latLng;
-                            //apply changes before calling the handler
-                            this.markersChange.emit(this.markers);
+                            this.markers()[index].position = data.latLng;
+                            this.markers.set([...this.markers()]);
                         }
 
-                        this.onMarkerEvent(jsEvent, index, data && data.latLng ? data.latLng : null);
+                        this.onMarkerEvent()(jsEvent, index, data && data.latLng ? data.latLng : null);
                     });
                 })(eventType);
             }
@@ -484,22 +462,21 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
 
         if (marker.drawRadius == true) {
             const circle = new google.maps.Circle({
-                center: gMarker.position,
+                center: gMarker!.position!,
                 map: this.map,
                 radius: marker.radiusMeters || 2000,
                 fillColor: marker.radiusColor || "#AA0000",
                 strokeColor: marker.radiusColor || "#AA0000"
             });
-            // Update the circle center when the marker position changes
-            gMarker.addEventListener("position_changed", () => {
-                circle.setCenter(gMarker.position);
+            gMarker!.addEventListener("position_changed", () => {
+                circle.setCenter(gMarker!.position!);
             });
         }
-        return gMarker
+        return gMarker!;
     }
 
-    createLatLngObj(latLng: google.maps.LatLng) {
-        let result = null;
+    createLatLngObj(latLng: google.maps.LatLng | null | undefined): any {
+        let result: any = null;
         if (latLng) {
             result = {
                 lat: latLng.lat(),
@@ -509,17 +486,16 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         return result;
     }
 
-    createJSEvent(evt, eventType) {
-        var mouseEvent = null;
-        for (let p in evt) {
+    createJSEvent(evt: any, eventType: string) {
+        let mouseEvent: any = null;
+        for (const p in evt) {
             if (evt[p] instanceof MouseEvent) {
                 mouseEvent = evt[p];
                 break;
             }
         }
         if (!mouseEvent || !mouseEvent.target) {
-            //create fake event
-            let me: EventLike = { target: this.getNativeElement() };
+            const me: EventLike = { target: this.getNativeElement() };
             if (mouseEvent) {
                 me.altKey = mouseEvent.altKey;
                 me.shiftKey = mouseEvent.shiftKey;
@@ -531,7 +507,7 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
             mouseEvent = me;
         }
 
-        var jsEvent = this.servoyService.createJSEvent(mouseEvent, eventType);
+        const jsEvent = this.servoyService.createJSEvent(mouseEvent as EventLike, eventType);
         if (evt && evt.latLng) {
             jsEvent.data = {
                 latLng: this.createLatLngObj(evt.latLng)
@@ -554,52 +530,46 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
             return loc != null;
         })
 
-        let mapOptions = {};
-        if (this.options) {
-            Object.assign(mapOptions, this.options);
+        const mapOptions: any = {};
+        if (this.options()) {
+            Object.assign(mapOptions, this.options());
         }
 
-        // Always ensure location is defined and has valid lat/lng
         const centerLocation = (location.length === 1)
             ? new google.maps.LatLng(location[0].lat(), location[0].lng())
-            : new google.maps.LatLng(0, 0); // Default to 0,0 if no location is provided
+            : new google.maps.LatLng(0, 0);
 
-        let mapTypeId = google.maps.MapTypeId.ROADMAP; // this is the default
-        // Check if `this.mapType` is one of the allowed values
-        if (this.mapType === "SATELLITE") {
+        let mapTypeId = google.maps.MapTypeId.ROADMAP;
+        if (this.mapType() === "SATELLITE") {
             mapTypeId = google.maps.MapTypeId.SATELLITE;
-        } else if (this.mapType === "HYBRID") {
+        } else if (this.mapType() === "HYBRID") {
             mapTypeId = google.maps.MapTypeId.HYBRID;
-        } else if (this.mapType === "TERRAIN") {
+        } else if (this.mapType() === "TERRAIN") {
             mapTypeId = google.maps.MapTypeId.TERRAIN;
         }
-        // Merge all other map options
         Object.assign(mapOptions, {
             center: centerLocation,
-            zoom: this.zoomLevel ?? 7,  // Use nullish coalescing to fallback to 7 if zoomLevel is null/undefined
-            zoomControl: this.zoomControl,
-            mapTypeControl: this.mapTypeControl,
-            streetViewControl: this.streetViewControl,
-            fullscreenControl: this.fullscreenControl,
-            mapTypeId: mapTypeId,  // Ensure this.mapType is a valid MapTypeId string
-            gestureHandling: this.gestureHandling,
-            mapId: !this.mapID ? 'DEMO_MAP_ID': this.mapID  // the new Google Maps api requires a new mapId and the default is DEMO_MAP_ID: https://developers.google.com/maps/documentation/javascript/reference/map#MapElement.mapId
+            zoom: this.zoomLevel() ?? 7,
+            zoomControl: this.zoomControl(),
+            mapTypeControl: this.mapTypeControl(),
+            streetViewControl: this.streetViewControl(),
+            fullscreenControl: this.fullscreenControl(),
+            mapTypeId: mapTypeId,
+            gestureHandling: this.gestureHandling(),
+            mapId: !this.mapID() ? 'DEMO_MAP_ID': this.mapID()
         });
 
-        // Make sure getNativeElement() is returning a valid DOM element
         const nativeElement = this.getNativeElement();
         if (nativeElement) {
-            // Initialize the map
             this.map = new google.maps.Map(nativeElement, mapOptions);
         } else {
             this.log.error("The map container element is invalid.");
         }
 
-        //If google maps directions is enabled, create route map.
-        if (this.useGoogleMapDirections == true) {
+        if (this.useGoogleMapDirections() == true) {
             this.log.info('Google Directions enabled, start building route');
             if (location.length > 1) {
-                var directionsService = new google.maps.DirectionsService;
+                const directionsService = new google.maps.DirectionsService;
 
                 if (this.directionsDisplay) {
                     this.directionsDisplay.setMap(null);
@@ -614,81 +584,75 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
             }
         } else {
             this.mapMarkers = new Map();
-            let markers = location.map((loc, i) => {
+            const markers = location.map((loc, i) => {
                 return this.createMarker(loc, i);
             });
 
-            if (this.onMapEvent && this.mapEvents) {
-                for (let m = 0; m < this.mapEvents.length; m++) {
-                    let eventType = this.mapEvents[m];
-                    ((eventType) => {
-                        this.map.addListener(eventType, (evt) => {
-                            var jsEvent = this.createJSEvent(evt, eventType);
-                            var data = jsEvent.data as { latLng: LatitudeLongitude};
-                            this.onMapEvent(jsEvent, jsEvent.data && data.latLng ? data.latLng : null);
+            if (this.onMapEvent() && this.mapEvents()) {
+                for (let m = 0; m < this.mapEvents().length; m++) {
+                    const eventType = this.mapEvents()[m];
+                    ((eventType: string) => {
+                        this.map.addListener(eventType, (evt: any) => {
+                            const jsEvent = this.createJSEvent(evt, eventType);
+                            const data = jsEvent.data as { latLng: LatitudeLongitude};
+                            this.onMapEvent()(jsEvent, jsEvent.data && data.latLng ? data.latLng : null);
                         })
                     })(eventType)
                 }
             }
 
-            if (this.useGoogleMapCluster == true) {
+            if (this.useGoogleMapCluster() == true) {
                 this.log.info('Google Map Clusterview enabled');
                 
-                const markerClusterer = new MarkerClusterer({ map: this.map, markers}); //  { imagePath: 'googlemaps/svyGMaps/libs/images/m' }
-//                markerClusterer.
+                new MarkerClusterer({ map: this.map, markers: markers as any[]});
             }
 
             if (location.length > 1) {
-                var bounds = new google.maps.LatLngBounds();
-                for (var i in markers) {
-                    bounds.extend(markers[i].position);
+                const bounds = new google.maps.LatLngBounds();
+                for (let i = 0; i < markers.length; i++) {
+                    if (markers[i]) bounds.extend(markers[i]!.position!);
                 }
                 this.map.fitBounds(bounds);
             }
         }
 
-        //when resizing page re-center the map marker
         this.windowRefService.nativeWindow.addEventListener("resize", () => {
-            var center = this.map.getCenter();
+            const center = this.map.getCenter();
             google.maps.event.trigger(this.map, "resize");
-            this.map.setCenter(center);
+            if (center) this.map.setCenter(center);
         });
 
         this.map.addListener('zoom_changed', () => {
-            if (this.zoomLevel !== null && this.zoomLevel !== undefined) {
-                var currLevel = this.map.getZoom();
-                if (this.zoomLevel != currLevel) {
-                    this.zoomLevel = currLevel;
-                    this.zoomLevelChange.emit(this.zoomLevel);
+            if (this.zoomLevel() !== null && this.zoomLevel() !== undefined) {
+                const currLevel = this.map.getZoom();
+                if (this.zoomLevel() != currLevel) {
+                    this.zoomLevel.set(currLevel);
                 }
             }
         });
     }
 
     loadScript() {
-        let script = this.document.createElement("script")
+        const script = this.document.createElement("script")
         script.id = "googleMapsScript"
         script.type = "text/javascript"
         script.async = true;
         script.defer = true;
 
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${this.apiKey}&libraries=geocoding,marker&callback=googleMapsLoadedCallback&loading=async`;  
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${this.apiKey()}&libraries=geocoding,marker&callback=googleMapsLoadedCallback&loading=async`;  
 
         this.document.body.appendChild(script);
     }
 
-    //unload google api
     unloadScript() {
         try {
-            var script = this.document.getElementById('googleMapsScript');
-            script.parentElement.removeChild(script);
-            var errContainer = this.document.getElementsByClassName('gm-err-container')[0];
-            errContainer.parentElement.removeChild(errContainer);
-        } catch (e) {
-
-        }
+            const script = this.document.getElementById('googleMapsScript');
+            if (script?.parentElement) script.parentElement.removeChild(script);
+            const errContainer = this.document.getElementsByClassName('gm-err-container')[0];
+            if (errContainer?.parentElement) errContainer.parentElement.removeChild(errContainer);
+        } catch (_e) { /* ignored */ }
     }
-    //show error message indicating API key not yet loaded.
+
     showErrMessage(isDesignerMode?: boolean) {
 		let message = '<h2> : ( NO API KEY LOADED YET... </h2>';
         if (isDesignerMode) {
@@ -705,16 +669,16 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         this.createMap();
     }
 
-    centerMap(latlong) {
+    centerMap(latlong: any) {
         this.map.setCenter(latlong);
     }
 
     getBounds() {
         if (this.map) {
-            var latLngBounds = this.map.getBounds();
+            const latLngBounds = this.map.getBounds();
             if (latLngBounds) {
-                var sw = latLngBounds.getSouthWest();
-                var ne = latLngBounds.getNorthEast();
+                const sw = latLngBounds.getSouthWest();
+                const ne = latLngBounds.getNorthEast();
                 return {
                     sw: this.createLatLngObj(sw),
                     ne: this.createLatLngObj(ne),
@@ -724,9 +688,9 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         return null;
     }
 
-    fitBounds(boundsToFit) {
+    fitBounds(boundsToFit: any) {
         if (this.map) {
-            let bounds = new google.maps.LatLngBounds(boundsToFit.sw, boundsToFit.ne);
+            const bounds = new google.maps.LatLngBounds(boundsToFit.sw, boundsToFit.ne);
             this.map.fitBounds(bounds)
         }
     }
@@ -742,7 +706,7 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         this.createMap();
         return true;
     }
-    centerAtAddress(address) {
+    centerAtAddress(address: any) {
         if (address) {
             this.getLatLng(address).then((location) => {
                 this.centerMap(location);
@@ -752,7 +716,7 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
         return false;
     }
 
-    centerAtLatLng(lat, lng) {
+    centerAtLatLng(lat: any, lng: any) {
         if (lat != null && lng != null) {
             this.centerMap(new google.maps.LatLng(lat, lng))
             return true;
@@ -763,17 +727,16 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
 
 
     sleep(ms: number) {
-        var d = new Date();
+        const d = new Date();
         d.setTime(d.getTime() + ms);
-        while (new Date().getTime() < d.getTime()) { }
+        while (new Date().getTime() < d.getTime()) { /* busy wait */ }
     }
 	
 	setHeight() {
-		if (!this.servoyApi.isInAbsoluteLayout()) {
-			if (this.responsiveHeight) {
-				this.getNativeElement().style.height = this.responsiveHeight + 'px';
+		if (!this.servoyApi().isInAbsoluteLayout()) {
+			if (this.responsiveHeight()) {
+				this.getNativeElement().style.height = this.responsiveHeight() + 'px';
 			} else {
-				// when responsive height is 0 or undefined, use 100% of the parent container.
 				this.getNativeElement().style.height = '100%';
 			}
 		}
@@ -783,40 +746,43 @@ export class SvyGMaps extends ServoyBaseComponent<HTMLDivElement> {
 }
 
 export class Marker {
-    addressDataprovider: any;
-    addressString: string;
-    cursor: string;
-    position: LatitudeLongitude;
-    iconLabel: string;
-    title: string;
-    iconUrl: string;
-    iconMedia: string;
-    infoWindowString: string;
-    drawRadius: boolean;
-    radiusMeters: number;
-    radiusColor: string;
-    draggable: boolean;
-    opacity: number;
-    zIndex: number;
-    markerId: any;
-    userObject: any;
-    animation: string;
-    clickable: boolean;
-    crossOnDrag: boolean;
-    visible: boolean;
+    addressDataprovider!: any;
+    addressString!: string;
+    cursor!: string;
+    position!: LatitudeLongitude;
+    iconLabel!: string;
+    title!: string;
+    tooltip!: string;
+    iconUrl!: string;
+    iconMedia!: string;
+    infoWindowString!: string;
+    drawRadius!: boolean;
+    radiusMeters!: number;
+    radiusColor!: string;
+    draggable!: boolean;
+    latitude!: number;
+    longitude!: number;
+    opacity!: number;
+    zIndex!: number;
+    markerId!: any;
+    userObject!: any;
+    animation!: string;
+    clickable!: boolean;
+    crossOnDrag!: boolean;
+    visible!: boolean;
 }
 
 export class RouteSettings {
-    optimize: boolean;
-    travelMode: string;
-    avoidFerries: boolean;
-    avoidHighways: boolean;
-    avoidTolls: boolean;
+    optimize!: boolean;
+    travelMode!: string;
+    avoidFerries!: boolean;
+    avoidHighways!: boolean;
+    avoidTolls!: boolean;
 }
 
 export class LatitudeLongitude {
-    lat: number;
-    lng: number;
+    lat!: number;
+    lng!: number;
 }
 
 export class RouteResult {
@@ -826,12 +792,12 @@ export class RouteResult {
 }
 
 export class Leg {
-    start_address: string;
-    start_markerId: any;
-    end_address: string;
-    end_markerId: any;
-    distance: string;
-    distance_meters: number;
-    duration: string;
-    duration_seconds: number;
+    start_address!: string;
+    start_markerId!: any;
+    end_address!: string;
+    end_markerId!: any;
+    distance!: string;
+    distance_meters!: number;
+    duration!: string;
+    duration_seconds!: number;
 }

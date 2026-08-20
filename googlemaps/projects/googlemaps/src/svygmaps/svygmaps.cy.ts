@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
+/* eslint-disable @angular-eslint/prefer-on-push-component-change-detection, @angular-eslint/prefer-standalone */
 import { SvyGMaps, RouteSettings, RouteResult, LatitudeLongitude, Marker } from './svygmaps'
 import { MountConfig } from 'cypress/angular'
 import { ServoyApi, ServoyApiTesting, ServoyPublicTestingModule, JSEvent } from '@servoy/public'
-import { Component, SimpleChanges, Input, Renderer2, ChangeDetectorRef, Output, EventEmitter, Inject, ViewChild } from '@angular/core';
+import { Component, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 
 import './../../svygmaps.css';
 
@@ -38,6 +38,7 @@ import './../../svygmaps.css';
         </googlemaps-svy-G-Maps>
 	</div>
     `,
+	changeDetection: ChangeDetectionStrategy.Eager,
 	standalone: false
 })
 class WrapperComponent {
